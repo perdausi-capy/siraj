@@ -1,0 +1,38 @@
+{{!
+    @template theme_siraj/sidebar
+
+    Left navigation.
+
+    Example context (json):
+    {"loggedin": true, "homeurl": "#", "flame": "", "sections": [{"label": "Workspace", "items": [{"text": "Home", "url": "#", "icon": "", "active": true}]}],
+     "user": {"fullname": "Layla Hassan", "initials": "LH", "sub": "Engineering · Dubai", "profileurl": "#"}, "icon_collapse": ""}
+}}
+<aside class="siraj-sidebar" id="siraj-sidebar" aria-label="{{#str}}nav_label, theme_siraj{{/str}}">
+    <a class="siraj-brand" href="{{homeurl}}">
+        {{{flame}}}
+        <span class="siraj-brandname">SIRAJ<small>LEARNING</small></span>
+    </a>
+    {{#sections}}
+        <div class="siraj-navlabel">{{label}}</div>
+        <nav class="siraj-nav">
+            {{#items}}
+                <a href="{{url}}" class="{{#active}}active{{/active}}" {{#active}}aria-current="page"{{/active}} title="{{text}}">{{{icon}}}<span>{{text}}</span></a>
+            {{/items}}
+        </nav>
+    {{/sections}}
+    <div class="siraj-sidefoot">
+        {{#editmode}}
+        {{#disabled}}<span class="siraj-editbtn is-disabled" role="img" title="{{label}}" aria-label="{{label}}">{{{icon}}}</span>{{/disabled}}
+        {{^disabled}}
+        <form method="post" action="{{url}}">
+            <input type="hidden" name="setmode" value="{{setmode}}">
+            <input type="hidden" name="context" value="{{context}}">
+            <input type="hidden" name="pageurl" value="{{pageurl}}">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <button type="submit" class="siraj-editbtn {{#on}}is-on{{/on}}" title="{{label}}" aria-label="{{label}}" aria-pressed="{{#on}}true{{/on}}{{^on}}false{{/on}}">{{{icon}}}</button>
+        </form>
+        {{/disabled}}
+        {{/editmode}}
+        <button type="button" class="siraj-collapse" data-siraj-action="collapse" aria-label="{{#str}}collapse, theme_siraj{{/str}}" title="{{#str}}collapse, theme_siraj{{/str}}">{{{icon_collapse}}}</button>
+    </div>
+</aside>

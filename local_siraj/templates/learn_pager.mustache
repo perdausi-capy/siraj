@@ -1,0 +1,12 @@
+{{!
+    @template local_siraj/learn_pager
+
+    Previous / next page links for long lists.
+
+    Example context (json):
+    {"prevurl": "#", "nexturl": "#"}
+}}
+{{#prevurl}}<nav class="siraj-pager">{{/prevurl}}{{^prevurl}}{{#nexturl}}<nav class="siraj-pager">{{/nexturl}}{{/prevurl}}
+{{#prevurl}}<a class="btn btn-secondary" href="{{prevurl}}">{{{icon_back}}} {{#str}}previous{{/str}}</a>{{/prevurl}}
+{{#nexturl}}<a class="btn btn-secondary" href="{{nexturl}}">{{#str}}next{{/str}} {{{icon_arrow}}}</a>{{/nexturl}}
+{{#prevurl}}</nav>{{/prevurl}}{{^prevurl}}{{#nexturl}}</nav>{{/nexturl}}{{/prevurl}}

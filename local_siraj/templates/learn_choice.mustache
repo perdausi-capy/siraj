@@ -1,0 +1,35 @@
+{{!
+    @template local_siraj/learn_choice
+
+    Siraj choice: options as cards, and results as bars when the teacher shows them.
+
+    Example context (json):
+    {"intro": "", "options": [{"id": 1, "text": "Yes", "count": 2, "pct": 50, "bar": 100}], "canvote": true,
+     "action": "#", "sesskey": "x"}
+}}
+<div class="siraj-av siraj-choice">
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    {{#notopen}}<div class="siraj-act-note">{{#str}}choice_notopen, local_siraj, {{notopen}}{{/str}}</div>{{/notopen}}
+    {{#closed}}<div class="siraj-act-note">{{#str}}choice_closed, local_siraj{{/str}}</div>{{/closed}}
+    <form method="post" action="{{action}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="action" value="vote">
+        <div class="siraj-choice-options">
+            {{#options}}
+            <label class="siraj-choice-option {{#checked}}is-mine{{/checked}} {{#disabled}}is-disabled{{/disabled}}" for="ch{{id}}">
+                <input type="{{#multiple}}checkbox{{/multiple}}{{^multiple}}radio{{/multiple}}" id="ch{{id}}" name="answer{{#multiple}}[]{{/multiple}}" value="{{id}}" {{#checked}}checked{{/checked}} {{#disabled}}disabled{{/disabled}}>
+                <span class="siraj-choice-text" dir="auto">{{text}}{{#full}} <small>· {{#str}}choice_full, local_siraj{{/str}}</small>{{/full}}</span>
+                {{#showresults}}<span class="siraj-choice-result"><i style="width: {{bar}}%"></i><b>{{pct}}%</b></span>{{/showresults}}
+            </label>
+            {{/options}}
+        </div>
+        <div class="siraj-act-actions siraj-choice-foot">
+            <span class="siraj-sub">
+                {{#answered}}{{#str}}choice_yours, local_siraj{{/str}}{{/answered}}
+                {{#showresults}} · {{#str}}choice_votes, local_siraj, {{voters}}{{/str}}{{/showresults}}
+                {{#closes}} · {{#str}}choice_closes, local_siraj, {{closes}}{{/str}}{{/closes}}
+            </span>
+            {{#canvote}}<button type="submit" class="btn siraj-btn-flame">{{#answered}}{{#str}}choice_change, local_siraj{{/str}}{{/answered}}{{^answered}}{{#str}}choice_vote, local_siraj{{/str}}{{/answered}} {{{icon_arrow}}}</button>{{/canvote}}
+        </div>
+    </form>
+</div>

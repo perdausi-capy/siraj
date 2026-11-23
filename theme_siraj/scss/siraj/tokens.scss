@@ -1,0 +1,86 @@
+// ---------- Self-hosted fonts (no third-party requests) ----------
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 400 700; font-display: swap;
+    src: url([[font:theme|inter-latin.woff2]]) format("woff2"); }
+@font-face { font-family: "Instrument Serif"; font-style: normal; font-weight: 400; font-display: swap;
+    src: url([[font:theme|instrumentserif-latin.woff2]]) format("woff2"); }
+@font-face { font-family: "IBM Plex Sans Arabic"; font-style: normal; font-weight: 400; font-display: swap;
+    src: url([[font:theme|plexarabic-400.woff2]]) format("woff2");
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+@font-face { font-family: "IBM Plex Sans Arabic"; font-style: normal; font-weight: 600 700; font-display: swap;
+    src: url([[font:theme|plexarabic-600.woff2]]) format("woff2");
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0898-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC; }
+
+// ---------- Smooth page changes (cross-document View Transitions; ignored by browsers without support) ----------
+@view-transition { navigation: auto; }
+.siraj-sidebar { view-transition-name: siraj-sidebar; }
+.siraj-topbar { view-transition-name: siraj-topbar; }
+.siraj-mobilebar { view-transition-name: siraj-mobilebar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+
+// ---------- Siraj design tokens (runtime, light + dark) ----------
+:root, [data-bs-theme="light"] {
+    --si-bg: #F5F7F8;
+    --si-surface: #FFFFFF;
+    --si-surface-2: #F0F4F6;
+    --si-ink: #102536;
+    --si-muted: #5A6975;        // 5.4:1 on --si-bg
+    --si-faint: #7A8893;
+    --si-line: #E4EAED;
+    --si-accent-ink: #0F3F66;   // accent used as text
+    --si-mint: #00C98C;
+    --si-mint-ink: #067A58;     // mint as text, passes 4.5:1 on white
+    --si-cyan: #33CCFF;
+    --si-blue: #3A70B8;
+    --si-amber: #B8791B;
+    --si-red: #C2412F;
+    --si-flame: linear-gradient(110deg, #00C98C, #33CCFF 65%, #3A70B8);
+    --si-mint-soft: color-mix(in srgb, #00C98C 11%, var(--si-surface));
+    --si-shadow: 0 14px 40px rgba(15, 45, 65, .08);
+    --si-soft: 0 3px 14px rgba(15, 45, 65, .05);
+    --si-radius: 18px;
+    --si-radius-sm: 11px;
+    --si-side-w: 248px;
+    --si-top-h: 72px;
+    --si-head: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif;
+    --si-serif: "Instrument Serif", "IBM Plex Sans Arabic", Georgia, serif;
+}
+[data-bs-theme="dark"] {
+    --si-bg: #0A1119;
+    --si-surface: #111D28;
+    --si-surface-2: #172633;
+    --si-ink: #E9F1F5;
+    --si-muted: #A3B3BE;
+    --si-faint: #7F909C;
+    --si-line: #263744;
+    --si-accent-ink: #8BCAFF;
+    --si-mint-ink: #3EDCAB;
+    --si-amber: #E9B35B;
+    --si-red: #F08A7A;
+    --si-shadow: 0 18px 44px rgba(0, 0, 0, .3);
+    --si-soft: 0 3px 14px rgba(0, 0, 0, .2);
+    --bs-body-bg: #0A1119;
+    --bs-body-color: #E9F1F5;
+    --bs-secondary-bg: #172633;
+    --bs-tertiary-bg: #111D28;
+    --bs-border-color: #263744;
+    color-scheme: dark;
+}
+body.siraj-collapsed, .siraj-collapsed-early body { --si-side-w: 76px; }
+
+body {
+    background: var(--si-bg);
+    color: var(--si-ink);
+    -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 { font-family: var(--si-head); letter-spacing: -.02em; color: var(--si-ink); }
+.si-icon {
+    width: 18px; height: 18px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round;
+}
+.si-flame { width: 26px; height: 31px; flex: none; filter: drop-shadow(0 3px 7px rgba(0, 201, 140, .35)); }
+[data-bs-theme="dark"] .si-show-light, :root:not([data-bs-theme="dark"]) .si-show-dark { display: none; }
+.siraj-eyebrow {
+    font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--si-muted);
+}
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--si-cyan) 70%, transparent) !important; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

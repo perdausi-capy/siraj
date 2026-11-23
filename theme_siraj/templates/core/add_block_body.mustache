@@ -1,0 +1,27 @@
+{{!
+    @template core/add_block_body
+
+    Siraj: the blocks someone can add, as cards with their icon (Moodle's script only needs the data attributes).
+
+    Example context (json):
+    {
+        "blocks" : [
+            { "name": "timeline", "title": "Timeline" },
+            { "name": "html", "title": "Text", "blockform": "block_edit_form" }
+        ],
+        "url" : "?a=b"
+    }
+}}
+<div class="siraj-addblock">
+{{#blocks}}
+    <a href="{{url}}&amp;bui_addblock={{name}}" class="siraj-addblock-item"
+        data-blockname="{{name}}" data-blocktitle="{{title}}" data-blockregion="{{blockregion}}"
+        {{#blockform}}data-action="showaddblockform" data-blockform="{{blockform}}"{{/blockform}}
+    ><span class="siraj-bicon" data-block="{{name}}" aria-hidden="true"></span><span class="siraj-addblock-name">{{title}}</span>{{#blockform}}<span class="siraj-addblock-note">{{#str}}settings{{/str}}</span>{{/blockform}}</a>
+{{/blocks}}
+{{^blocks}}
+    <div class="alert alert-primary" role="alert">
+        {{#str}} noblockstoaddhere {{/str}}
+    </div>
+{{/blocks}}
+</div>

@@ -1,0 +1,58 @@
+{{!
+    @template local_siraj/learn_feedback
+
+    Siraj feedback: the questionnaire on one page, or a thank-you once sent.
+
+    Example context (json):
+    {"intro": "", "form": true, "action": "#", "sesskey": "x", "questions": [{"n": 1, "key": "textarea_1", "id": "fb1",
+     "label": "What did you learn?", "required": true, "textarea": true}]}
+}}
+<div class="siraj-av siraj-fb">
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    {{#message}}<div class="siraj-act-note">{{message}}</div>{{/message}}
+    {{#fallback}}<div class="siraj-act-note"><a class="btn siraj-btn-flame" href="{{fallback}}">{{#str}}fb_open, local_siraj{{/str}}</a></div>{{/fallback}}
+    {{#done}}
+    <div class="siraj-act-done">
+        <span class="siraj-act-doneicon">{{{icon_check}}}</span>
+        <div><b>{{#str}}fb_done_title, local_siraj{{/str}}</b><p>{{#str}}fb_done_text, local_siraj{{/str}}</p></div>
+    </div>
+    {{#after}}<div class="siraj-prose" dir="auto">{{{after}}}</div>{{/after}}
+    {{/done}}
+    {{#form}}
+    <form class="siraj-fb-form" method="post" action="{{action}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="action" value="fbsubmit">
+        {{#anonymous}}<p class="siraj-fb-anon">{{{icon_lock}}} {{#str}}fb_anonymous, local_siraj{{/str}}</p>{{/anonymous}}
+        {{#questions}}
+        {{#text}}<div class="siraj-prose siraj-fb-text" dir="auto">{{{text}}}</div>{{/text}}
+        {{^text}}
+        <fieldset class="siraj-fb-q">
+            <legend><span class="siraj-fb-n">{{n}}</span><span class="siraj-fb-label" dir="auto">{{{label}}}{{#required}} <abbr title="{{#str}}required{{/str}}">*</abbr>{{/required}}</span></legend>
+            {{#textarea}}<textarea class="form-control" id="{{id}}" name="{{key}}" rows="4" dir="auto" {{#required}}required{{/required}}></textarea>{{/textarea}}
+            {{#textfield}}<input class="form-control" id="{{id}}" type="text" name="{{key}}" maxlength="{{maxlength}}" dir="auto" {{#required}}required{{/required}}>{{/textfield}}
+            {{#numeric}}<input class="form-control siraj-fb-num" id="{{id}}" type="number" step="any" name="{{key}}" {{#min}}min="{{min}}"{{/min}} {{#max}}max="{{max}}"{{/max}} {{#required}}required{{/required}}>{{/numeric}}
+            {{#choices}}
+            {{#select}}
+            <select class="form-select" id="{{id}}" name="{{key}}" {{#required}}required{{/required}}>
+                <option value="">{{#str}}choosedots{{/str}}</option>
+                {{#options}}<option value="{{value}}">{{text}}</option>{{/options}}
+            </select>
+            {{/select}}
+            {{^select}}
+            <div class="siraj-fb-options {{#scale}}is-scale{{/scale}}">
+                {{#options}}
+                <label class="siraj-fb-option" for="{{id}}">
+                    <input type="{{#multiple}}checkbox{{/multiple}}{{^multiple}}radio{{/multiple}}" id="{{id}}" name="{{key}}{{#multiple}}[]{{/multiple}}" value="{{value}}" {{^multiple}}{{#required}}required{{/required}}{{/multiple}}>
+                    <span dir="auto">{{text}}</span>
+                </label>
+                {{/options}}
+            </div>
+            {{/select}}
+            {{/choices}}
+        </fieldset>
+        {{/text}}
+        {{/questions}}
+        <div class="siraj-act-actions"><button type="submit" class="btn siraj-btn-flame">{{#str}}fb_submit, local_siraj{{/str}} {{{icon_arrow}}}</button></div>
+    </form>
+    {{/form}}
+</div>

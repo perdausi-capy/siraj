@@ -1,0 +1,198 @@
+{{!
+    @template local_siraj/home
+
+    Siraj Home: greeting, the one next step, due soon, continue, weekly rhythm, recently completed.
+
+    Example context (json):
+    {
+        "eyebrow": "Tuesday, 10 November 2026 · Dubai", "greeting": "Good evening, Layla", "subline": "A little progress today goes a long way.",
+        "status": "On track", "statusclass": "green",
+        "hero": {"eyebrow": "Your next step · Mandatory", "title": "Finish Workplace Health & Safety.", "text": "One step left.",
+                 "meta": [{"icon": "", "text": "6 min"}], "url": "#", "button": "Continue learning", "progress": 80},
+        "continue": [], "hascontinue": false, "recommended": [], "hasrecommended": false,
+        "rhythm": {"count": 3, "goal": 4, "pct": 75, "title": "One more day", "text": "", "chip": "Good pace", "days": []}
+    }
+}}
+<div class="siraj-home">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{eyebrow}}</div>
+            <h1>{{greeting}}.</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        {{#overdue}}<span class="siraj-chip siraj-chip-status {{statusclass}}"><i></i>{{status}}</span>{{/overdue}}
+    </header>
+
+    <div class="siraj-a">
+    <div class="siraj-a-main">
+    {{#hasslides}}
+    <section class="siraj-carousel" data-region="siraj-carousel" aria-roledescription="carousel">
+        {{#manyslides}}<div class="siraj-carousel-bars" aria-hidden="true">{{#slides}}<i class="{{#first}}on{{/first}}"></i>{{/slides}}</div>{{/manyslides}}
+        {{#slides}}
+        <article class="siraj-slide{{#first}} on{{/first}}" {{#first}}{{#photo}}style="--si-photo: url('{{{.}}}')"{{/photo}}{{/first}}{{^first}}{{#photo}}data-photo="{{{.}}}"{{/photo}} aria-hidden="true"{{/first}}>
+            <div class="siraj-slide-copy">
+                <div class="siraj-eyebrow">{{eyebrow}}</div>
+                <h2>{{title}}</h2>
+                {{#text}}<p>{{text}}</p>{{/text}}
+                <div class="siraj-slide-row">
+                    <a class="btn siraj-btn-flame" href="{{url}}" {{^first}}tabindex="-1"{{/first}}>{{button}} {{{icon_arrow}}}</a>
+                    {{#meta}}<span>{{{icon}}}{{text}}</span>{{/meta}}
+                </div>
+            </div>
+        </article>
+        {{/slides}}
+        {{#manyslides}}
+        <div class="siraj-carousel-nav">
+            <span data-region="count">1 / {{slidecount}}</span>
+            <button type="button" data-action="prev" aria-label="{{#str}}previous{{/str}}">{{{icon_chevl}}}</button>
+            <button type="button" data-action="next" aria-label="{{#str}}next{{/str}}">{{{icon_chevr}}}</button>
+        </div>
+        {{/manyslides}}
+    </section>
+    {{/hasslides}}
+    {{#noactive}}{{^hasslides}}
+    <section class="siraj-carousel"><article class="siraj-slide on siraj-slide-calm"><div class="siraj-slide-copy">
+        <h2>{{#str}}noactive_title, local_siraj{{/str}}</h2><p>{{#str}}noactive_text, local_siraj{{/str}}</p>
+        <div class="siraj-slide-row"><a class="btn siraj-btn-flame" href="{{exploreurl}}">{{#str}}explorelibrary, local_siraj{{/str}} {{{icon_arrow}}}</a></div>
+    </div></article></section>
+    {{/hasslides}}{{/noactive}}
+
+    <section class="siraj-statstrip">
+        {{#stats}}<div class="siraj-stat"><span class="siraj-stat-icon">{{{icon}}}</span><span><b>{{value}}</b><small>{{label}}</small></span></div>{{/stats}}
+    </section>
+
+    {{#hascards}}
+    <section>
+        <div class="siraj-sectionhead"><h2>{{#str}}pickup, local_siraj{{/str}}</h2><a class="siraj-link" href="{{learningurl}}">{{#str}}alllearning, local_siraj{{/str}} {{{icon_arrow}}}</a></div>
+        <div class="siraj-photocards">
+            {{#cards}}
+            <a class="siraj-photocard" href="{{url}}">
+                <span class="siraj-cover {{coverclass}}">{{#cover}}<img src="{{cover}}" alt="" loading="lazy" decoding="async">{{/cover}}</span>
+                <span class="siraj-photocard-body">
+                    <span class="siraj-photocard-tag">{{tag}}</span>
+                    <b>{{name}}</b><small>{{sub}}</small>
+                    {{#inprogress}}<span class="siraj-photocard-row"><span class="siraj-progress" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100"><i style="width: {{progress}}%"></i></span><em>{{progress}}%</em></span>{{/inprogress}}
+                    {{^inprogress}}<span class="siraj-photocard-row"><span class="siraj-photocard-go">{{#str}}preview, local_siraj{{/str}} {{{icon_arrow}}}</span></span>{{/inprogress}}
+                </span>
+            </a>
+            {{/cards}}
+        </div>
+    </section>
+    {{/hascards}}
+    </div>
+
+    <aside class="siraj-a-rail">
+        {{#rhythm}}
+        <div class="siraj-panel">
+            <div class="siraj-panel-head"><h3>{{#str}}rhythm, local_siraj{{/str}}</h3><span class="siraj-chip green">{{chip}}</span></div>
+            <div class="siraj-rhythm">
+                <div class="siraj-ring" style="--p: {{pct}}"><b>{{count}}/{{goal}}</b></div>
+                <div><b class="siraj-rhythm-title">{{title}}</b><p>{{text}}</p></div>
+            </div>
+            <div class="siraj-days">{{#days}}<span class="siraj-day {{state}}">{{label}}</span>{{/days}}</div>
+        </div>
+        {{/rhythm}}
+
+        <div class="siraj-panel siraj-ai">
+            <div class="siraj-ai-head"><span class="siraj-ai-orb"></span><div><b>{{#str}}ai_title, local_siraj{{/str}}</b><small>{{#str}}ai_sub, local_siraj{{/str}}</small></div></div>
+            <p>{{#str}}ai_text, local_siraj{{/str}}</p>
+            <div class="siraj-ai-actions">{{#aiready}}<button type="button" class="btn btn-secondary" data-siraj-ai="{{#str}}ai_refresher, theme_siraj{{/str}}">{{{icon_sparkles}}} {{#str}}ai_button, local_siraj{{/str}}</button>{{/aiready}}{{^aiready}}<button type="button" class="btn btn-secondary" disabled>{{{icon_sparkles}}} {{#str}}ai_button, local_siraj{{/str}}</button><span class="siraj-chip">{{#str}}ai_soon, local_siraj{{/str}}</span>{{/aiready}}</div>
+        </div>
+
+        {{#hasupcoming}}
+        <div class="siraj-panel">
+            <div class="siraj-panel-head"><h3>{{#str}}comingup, local_siraj{{/str}}</h3><a class="siraj-link" href="{{calendarurl}}">{{#str}}calendar_link, local_siraj{{/str}}</a></div>
+            <div class="siraj-upcoming">
+                {{#upcoming}}<a href="{{url}}"><span class="siraj-datetile"><b>{{day}}</b><small>{{month}}</small></span><span class="siraj-upcoming-text"><b>{{name}}</b><small class="{{#late}}late{{/late}}">{{when}}</small></span></a>{{/upcoming}}
+            </div>
+        </div>
+        {{/hasupcoming}}
+
+        {{#earned}}
+        <div class="siraj-panel">
+            <h3>{{#str}}recent, local_siraj{{/str}}</h3>
+            <div class="siraj-earned">
+                <span class="siraj-earned-icon">{{{icon_award}}}</span>
+                <div><b>{{name}}</b><small>{{#str}}completedon, local_siraj, {{date}}{{/str}}</small>
+                <a class="siraj-link" href="{{url}}">{{#str}}viewcourselink, local_siraj{{/str}} {{{icon_arrow}}}</a></div>
+            </div>
+        </div>
+        {{/earned}}
+    </aside>
+    </div>
+
+    {{#dashboard}}
+    <section class="siraj-myblocks{{#editing}} is-editing{{/editing}}" aria-labelledby="siraj-myblocks-title">
+        <div class="siraj-sectionhead">
+            <h2 id="siraj-myblocks-title">{{#str}}mydashboard, local_siraj{{/str}}</h2>
+            {{#editing}}<div class="siraj-myblocks-actions">{{#sysurl}}<a class="siraj-link" href="{{sysurl}}">{{#str}}sitedashboard, local_siraj{{/str}} {{{icon_arrow}}}</a>{{/sysurl}}{{{reset}}}</div>{{/editing}}
+        </div>
+        {{#editing}}<p class="siraj-myblocks-hint">{{#str}}mydashboard_hint, local_siraj{{/str}}</p>{{/editing}}
+        {{#hiddenblocks}}<style>{{{hiddenblocks}}} { display: none !important; }</style>{{/hiddenblocks}}
+        {{{addblock}}}
+        {{{region}}}
+    </section>
+    {{/dashboard}}
+</div>
+{{#js}}
+(function() {
+    var box = document.querySelector('[data-region="siraj-carousel"]');
+    if (!box) {
+        return;
+    }
+    var slides = box.querySelectorAll('.siraj-slide');
+    var bars = box.querySelectorAll('.siraj-carousel-bars i');
+    var count = box.querySelector('[data-region="count"]');
+    if (slides.length < 2) {
+        return;
+    }
+    var n = 0;
+    var timer = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Slides after the first load their photo only when they are next to show (keeps the first visit light).
+    var warm = function(s) {
+        if (s && s.dataset.photo) {
+            s.style.setProperty('--si-photo', 'url("' + s.dataset.photo + '")');
+            delete s.dataset.photo;
+        }
+    };
+    var go = function(i) {
+        n = (i + slides.length) % slides.length;
+        warm(slides[n]);
+        setTimeout(function() {
+            warm(slides[(n + 1) % slides.length]);
+        }, 3000);
+        slides.forEach(function(s, j) {
+            s.classList.toggle('on', j === n);
+            s.setAttribute('aria-hidden', j === n ? 'false' : 'true');
+            var a = s.querySelector('a');
+            if (a) {
+                a.tabIndex = j === n ? 0 : -1;
+            }
+        });
+        bars.forEach(function(b, j) {
+            b.classList.toggle('on', j === n);
+        });
+        count.textContent = (n + 1) + ' / ' + slides.length;
+        clearInterval(timer);
+        if (!reduce) {
+            timer = setInterval(function() {
+                go(n + 1);
+            }, 8000);
+        }
+    };
+    box.querySelector('[data-action="prev"]').addEventListener('click', function() {
+        go(n - 1);
+    });
+    box.querySelector('[data-action="next"]').addEventListener('click', function() {
+        go(n + 1);
+    });
+    box.addEventListener('mouseenter', function() {
+        clearInterval(timer);
+    });
+    box.addEventListener('mouseleave', function() {
+        go(n);
+    });
+    go(0);
+})();
+{{/js}}

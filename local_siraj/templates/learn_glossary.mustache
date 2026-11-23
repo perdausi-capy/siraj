@@ -1,0 +1,41 @@
+{{!
+    @template local_siraj/learn_glossary
+
+    Siraj glossary: search, A-Z, and the entries as cards.
+
+    Example context (json):
+    {"intro": "", "browse": true, "entries": [{"concept": "Wellness", "definition": "<p>Being well.</p>"}],
+     "hasentries": true, "letters": [], "allurl": "#", "all": true, "searchurl": "#", "cmid": 1, "q": ""}
+}}
+<div class="siraj-av siraj-glossary">
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    {{#browse}}
+    <div class="siraj-act-bar">
+        <form class="siraj-act-search" method="get" action="{{searchurl}}" role="search">
+            <input type="hidden" name="cmid" value="{{cmid}}">
+            {{{icon_search}}}
+            <label class="visually-hidden" for="siraj-gq">{{#str}}glossary_search, local_siraj{{/str}}</label>
+            <input class="form-control" id="siraj-gq" type="search" name="q" value="{{q}}" placeholder="{{#str}}glossary_search, local_siraj{{/str}}">
+        </form>
+        {{#addurl}}<a class="btn btn-secondary" href="{{addurl}}">{{{icon_plus}}} {{#str}}glossary_add, local_siraj{{/str}}</a>{{/addurl}}
+    </div>
+    <nav class="siraj-az" aria-label="A-Z">
+        <a href="{{allurl}}" {{#all}}aria-current="page"{{/all}}>{{#str}}glossary_all, local_siraj{{/str}}</a>
+        {{#letters}}{{#disabled}}<span>{{letter}}</span>{{/disabled}}{{^disabled}}<a href="{{url}}" {{#current}}aria-current="page"{{/current}}>{{letter}}</a>{{/disabled}}{{/letters}}
+    </nav>
+    {{#hasentries}}
+    <dl class="siraj-entries">
+        {{#entries}}
+        <div class="siraj-entry">
+            <dt dir="auto">{{concept}}{{#pending}} <span class="siraj-chip amber">{{#str}}glossary_pending, local_siraj{{/str}}</span>{{/pending}}</dt>
+            <dd class="siraj-prose" dir="auto">{{{definition}}}</dd>
+        </div>
+        {{/entries}}
+    </dl>
+    {{/hasentries}}
+    {{^hasentries}}
+    <div class="siraj-act-empty"><span class="siraj-act-emptyicon">{{{icon_search}}}</span><b>{{#str}}glossary_none, local_siraj{{/str}}</b></div>
+    {{/hasentries}}
+    {{> local_siraj/learn_pager}}
+    {{/browse}}
+</div>

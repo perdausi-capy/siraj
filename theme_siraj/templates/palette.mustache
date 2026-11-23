@@ -1,0 +1,24 @@
+{{!
+    @template theme_siraj/palette
+
+    Ctrl/Cmd+K command palette: jump to any page, or search courses.
+
+    Example context (json):
+    {"loggedin": true, "searchurl": "#", "commands": [{"text": "Home", "url": "#", "icon": ""}]}
+}}
+{{#loggedin}}
+<div class="siraj-palette-back" id="siraj-palette" hidden>
+    <div class="siraj-palette" role="dialog" aria-modal="true" aria-label="{{#str}}searchanything, theme_siraj{{/str}}">
+        <form action="{{searchurl}}" method="get" class="siraj-palette-form">
+            {{{icon_search}}}
+            <input type="search" name="search" autocomplete="off" placeholder="{{#str}}palette_placeholder, theme_siraj{{/str}}" aria-label="{{#str}}palette_placeholder, theme_siraj{{/str}}">
+            <kbd>Esc</kbd>
+        </form>
+        <div class="siraj-palette-list" role="listbox">
+            <div class="siraj-palette-label">{{#str}}palette_goto, theme_siraj{{/str}}</div>
+            {{#commands}}<a href="{{url}}" role="option">{{{icon}}}<span>{{text}}</span></a>{{/commands}}
+            <a href="#" class="siraj-palette-searchrow" data-siraj-action="palette-search" role="option" hidden>{{{icon_search}}}<span></span></a>
+        </div>
+    </div>
+</div>
+{{/loggedin}}

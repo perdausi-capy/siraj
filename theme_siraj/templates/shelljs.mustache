@@ -1,0 +1,189 @@
+{{!
+    @template theme_siraj/shelljs
+
+    Shell behaviour: dark mode, sidebar collapse, command palette. Plain JS inside the page's js block.
+
+    Example context (json):
+    {}
+}}
+(function() {
+    var root = document.documentElement;
+    // Cookies, not localStorage: Moodle clears localStorage whenever its JavaScript version changes.
+    var store = {
+        get: function(k) {
+            var m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)'));
+            return m ? m[1] : null;
+        },
+        set: function(k, v) {
+            document.cookie = k + '=' + v + '; path=' + (M.cfg.wwwroot.replace(/^https?:\/\/[^/]+/, '') || '/')
+                + '; max-age=31536000; SameSite=Lax';
+        }
+    };
+    window.sirajStore = store;
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-siraj-action]');
+        if (!btn) {
+            return;
+        }
+        var action = btn.getAttribute('data-siraj-action');
+        if (action === 'theme') {
+            var dark = root.getAttribute('data-bs-theme') !== 'dark';
+            root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+            store.set('siraj-theme', dark ? 'dark' : 'light');
+            themeEditors();
+        } else if (action === 'collapse') {
+            var c = !document.body.classList.contains('siraj-collapsed');
+            document.body.classList.toggle('siraj-collapsed', c);
+            // The early class (set before the page paints, to avoid a wide-then-narrow flash) must go too.
+            root.classList.remove('siraj-collapsed-early');
+            store.set('siraj-collapsed', c ? '1' : '0');
+        } else if (action === 'palette') {
+            openPalette();
+        } else if (action === 'sidenav') {
+            var open = !document.body.classList.contains('siraj-sidenav-open');
+            document.body.classList.toggle('siraj-sidenav-open', open);
+            document.querySelectorAll('.siraj-sidenav-backdrop').forEach(function(b) { b.hidden = !open; });
+            document.querySelectorAll('.siraj-mobilebar [data-siraj-action="sidenav"]').forEach(function(b) {
+                b.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        }
+    });
+    // Rich text editors live in an iframe the theme CSS can't reach: give their writing area the same light/dark colours.
+    var EDITOR_CSS = 'html[data-siraj-dark] body{background:#111D28!important;color:#E9F1F5!important}'
+        + 'html[data-siraj-dark] a{color:#8BCAFF}html[data-siraj-dark] table td,html[data-siraj-dark] table th{border-color:#33475A}';
+    function themeEditor(frame) {
+        try {
+            var doc = frame.contentDocument;
+            if (!doc || !doc.documentElement) {
+                return;
+            }
+            if (!doc.getElementById('siraj-editor-theme')) {
+                var st = doc.createElement('style');
+                st.id = 'siraj-editor-theme';
+                st.textContent = EDITOR_CSS;
+                (doc.head || doc.documentElement).appendChild(st);
+            }
+            doc.documentElement.toggleAttribute('data-siraj-dark', root.getAttribute('data-bs-theme') === 'dark');
+        } catch (e) { /* Cross-origin frame: leave it. */ }
+    }
+    function themeEditors() {
+        document.querySelectorAll('iframe.tox-edit-area__iframe').forEach(themeEditor);
+    }
+    new MutationObserver(function(list) {
+        list.forEach(function(m) {
+            m.addedNodes.forEach(function(n) {
+                if (n.nodeType !== 1) {
+                    return;
+                }
+                var frames = n.matches && n.matches('iframe.tox-edit-area__iframe') ? [n] : n.querySelectorAll ? n.querySelectorAll('iframe.tox-edit-area__iframe') : [];
+                frames.forEach(function(f) {
+                    themeEditor(f);
+                    f.addEventListener('load', function() { themeEditor(f); });
+                });
+            });
+        });
+    }).observe(document.body, {childList: true, subtree: true});
+    themeEditors();
+
+    window.addEventListener('load', function() {
+        setTimeout(function() { document.body.classList.add('siraj-ready'); }, 400);
+    });
+    // Admin pages whose only heading is the site name: show the page's own title (from the browser tab) instead.
+    (function() {
+        var h1 = document.querySelector('body.pagelayout-admin #page-header .page-header-headings h1');
+        var parts = document.title.split(' | ');
+        if (h1 && parts.length > 1 && h1.textContent.trim() === parts[parts.length - 1].trim()) {
+            h1.textContent = parts[0];
+        }
+    })();
+    // In Arabic, course content written in English (activity descriptions, calendar notes, forum posts) takes the
+    // direction of its own text, so lists and full stops sit on the right side for it.
+    if (document.documentElement.dir === 'rtl') {
+        document.querySelectorAll('.activity-description .no-overflow, .activity-description > div, .event .description-content,'
+            + ' .calendar_event_course .description, .post-content-container, .submissionstatustable .no-overflow')
+            .forEach(function(el) { el.setAttribute('dir', 'auto'); });
+    }
+    // Welcome entrance after signing in: count the stat numbers up, then clear the flag and the class.
+    if (root.classList.contains('siraj-welcome')) {
+        try {
+            sessionStorage.removeItem('siraj-welcome');
+        } catch (e) {
+            // Nothing to clear.
+        }
+        document.querySelectorAll('.siraj-stat b').forEach(function(b, i) {
+            var m = b.textContent.match(/^(\d+)(.*)$/);
+            if (!m || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                return;
+            }
+            var end = parseInt(m[1], 10);
+            var rest = m[2];
+            var t0 = null;
+            var delay = 700 + i * 90;
+            var step = function(t) {
+                t0 = t0 || t;
+                var k = Math.min(1, Math.max(0, (t - t0 - delay) / 900));
+                b.textContent = Math.round(end * (1 - Math.pow(1 - k, 3))) + rest;
+                if (k < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+            b.textContent = '0' + rest;
+            requestAnimationFrame(step);
+        });
+        setTimeout(function() {
+            root.classList.remove('siraj-welcome');
+        }, 3200);
+    }
+    // Collapsed (icons only) unless the person opened it.
+    if (store.get('siraj-collapsed') !== '0') {
+        document.body.classList.add('siraj-collapsed');
+    }
+
+    var back = document.getElementById('siraj-palette');
+    function openPalette() {
+        if (!back) {
+            return;
+        }
+        back.hidden = false;
+        var input = back.querySelector('input');
+        input.value = '';
+        filter('');
+        input.focus();
+    }
+    function closePalette() {
+        if (back) {
+            back.hidden = true;
+        }
+    }
+    function filter(q) {
+        q = q.trim().toLowerCase();
+        back.querySelectorAll('.siraj-palette-list a:not(.siraj-palette-searchrow)').forEach(function(a) {
+            a.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) === -1;
+        });
+        var row = back.querySelector('.siraj-palette-searchrow');
+        row.hidden = q === '';
+        row.querySelector('span').textContent = M.util.get_string('palette_searchfor', 'theme_siraj', q);
+    }
+    if (back) {
+        back.addEventListener('click', function(e) {
+            if (e.target === back) {
+                closePalette();
+            }
+            if (e.target.closest('.siraj-palette-searchrow')) {
+                e.preventDefault();
+                back.querySelector('form').submit();
+            }
+        });
+        back.querySelector('input').addEventListener('input', function(e) {
+            filter(e.target.value);
+        });
+    }
+    document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            openPalette();
+        } else if (e.key === 'Escape') {
+            closePalette();
+        }
+    });
+})();

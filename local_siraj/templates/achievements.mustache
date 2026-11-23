@@ -1,0 +1,61 @@
+{{!
+    @template local_siraj/achievements
+
+    Siraj Achievements: certificate wallet, badges, milestones, next achievement.
+
+    Example context (json):
+    {"count": 1, "hascerts": true, "certs": [{"name": "Code of Conduct", "date": "02.11.2026", "category": "Compliance", "url": "#", "courseurl": "#"}],
+     "stats": [{"value": 1, "label": "Certificates", "icon": ""}], "hasnext": false}
+}}
+<div class="siraj-achievements">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}yourmilestones, local_siraj{{/str}}</div>
+            <h1>{{#str}}achievements, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{#str}}achievements_sub, local_siraj{{/str}}</p>
+        </div>
+        <span class="siraj-chip green">{{{icon_award}}} {{#str}}nearned, local_siraj, {{count}}{{/str}}</span>
+    </header>
+
+    <div class="siraj-stats">
+        {{#stats}}<div class="siraj-stat"><span class="siraj-stat-icon">{{{icon}}}</span><div><strong>{{value}}</strong><small>{{label}}</small></div></div>{{/stats}}
+    </div>
+
+    <div class="siraj-sectionhead"><h2>{{#str}}certificates, local_siraj{{/str}}</h2></div>
+    <div class="siraj-certs">
+        {{#certs}}
+        <article class="siraj-cert">
+            <div class="siraj-cert-face">
+                {{{flame}}}
+                <span class="siraj-eyebrow">{{#str}}certificateofcompletion, local_siraj{{/str}}</span>
+                <h3>{{name}}</h3>
+                <small>{{#str}}completedon, local_siraj, {{date}}{{/str}}</small>
+            </div>
+            <div class="siraj-cert-foot">
+                <span>{{category}}</span>
+                <a class="btn btn-secondary" href="{{url}}">{{{icon_download}}} {{#str}}viewcertificate, local_siraj{{/str}}</a>
+            </div>
+        </article>
+        {{/certs}}
+        {{#hasnext}}
+        <div class="siraj-cert siraj-cert-next">
+            <span class="siraj-ai-orb"></span>
+            <h3>{{#str}}nextachievement, local_siraj{{/str}}</h3>
+            {{#next}}
+            <a class="siraj-next-row" href="{{url}}">
+                <span><b>{{name}}</b><small>{{left}}</small></span>
+                <span class="siraj-mini-ring" style="--p: {{progress}}"><i>{{progress}}%</i></span>
+            </a>
+            {{/next}}
+        </div>
+        {{/hasnext}}
+    </div>
+    {{^hascerts}}<p class="siraj-sub">{{#str}}nocerts, local_siraj{{/str}}</p>{{/hascerts}}
+
+    {{#hasbadges}}
+    <div class="siraj-sectionhead"><h2>{{#str}}badges, local_siraj{{/str}}</h2></div>
+    <div class="siraj-badges">
+        {{#badges}}{{#url}}<a class="siraj-badge" href="{{url}}">{{/url}}{{^url}}<div class="siraj-badge">{{/url}}{{#image}}<img src="{{image}}" alt="" width="72" height="72" loading="lazy">{{/image}}{{^image}}<span class="siraj-badge-icon">{{{icon}}}</span>{{/image}}<b>{{name}}</b><small>{{date}}</small>{{#url}}</a>{{/url}}{{^url}}</div>{{/url}}{{/badges}}
+    </div>
+    {{/hasbadges}}
+</div>

@@ -1,0 +1,174 @@
+{{!
+    @template local_siraj/team
+
+    Siraj My team: KPIs, people worst first with instant filters and bulk reminders, status ring, by course, deadlines.
+
+    Example context (json):
+    {"subline": "12 people report to you", "kpis": [{"value": "64%", "label": "Mandatory training complete", "sub": "23 of 36", "tone": "mint"}],
+     "filters": [{"key": "all", "text": "All", "n": 12, "active": true}],
+     "rows": [{"id": 2, "name": "Layla Hassan", "initials": "LH", "sub": "Engineer · Engineering", "pct": 60, "progresslabel": "1 of 4 courses",
+               "next": "Knowledge check", "nextcourse": "Workplace Health & Safety", "due": "14.11", "chip": {"status": "ontrack", "label": "On track", "class": "blue"},
+               "reason": "", "attention": false, "remindable": true, "lastseen": "today", "reminded": "", "url": "#", "search": "layla"}],
+     "ring": {"style": "", "legend": [], "centre": 70, "total": 12}, "courses": [], "deadlines": [], "action": "#", "sesskey": "x"}
+}}
+<div class="siraj-dashboard" data-region="siraj-team">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}management, local_siraj{{/str}}</div>
+            <h1>{{#str}}myteam, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            <a class="btn btn-outline-secondary" href="{{reportsurl}}">{{{icon_chart}}} {{#str}}reports, local_siraj{{/str}}</a>
+            <a class="btn btn-outline-secondary" href="{{matrixurl}}">{{{icon_shield}}} {{#str}}compliance, local_siraj{{/str}}</a>
+        </div>
+    </header>
+
+    {{#empty}}
+    <div class="siraj-empty">
+        <span class="siraj-empty-icon">{{{icon_users}}}</span>
+        <h3>{{#str}}team_empty, local_siraj{{/str}}</h3>
+        <p>{{#str}}team_empty_text, local_siraj{{/str}}</p>
+    </div>
+    {{/empty}}
+    {{^empty}}
+    <div class="siraj-kpis">
+        {{#kpis}}
+        <div class="siraj-kpi tone-{{tone}}">
+            <span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span>
+            <div><strong>{{value}}</strong><span>{{label}}</span><small>{{sub}}</small></div>
+        </div>
+        {{/kpis}}
+    </div>
+
+    <div class="siraj-dash-grid">
+        <form class="siraj-panel siraj-people" method="post" action="{{action}}" data-region="people">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
+            <div class="siraj-panel-head">
+                <h3>{{#str}}people, local_siraj{{/str}}</h3>
+                <label class="siraj-search-inline">{{{icon_search}}}<input type="search" placeholder="{{#str}}findperson, local_siraj{{/str}}" aria-label="{{#str}}findperson, local_siraj{{/str}}" data-region="q"></label>
+            </div>
+            <div class="siraj-filterbar" role="group" aria-label="{{#str}}filterbystatus, local_siraj{{/str}}">
+                {{#filters}}<button type="button" class="siraj-filter{{#active}} active{{/active}}" data-status="{{key}}" aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{text}} · {{n}}</button>{{/filters}}
+            </div>
+            <div class="siraj-people-head" aria-hidden="true">
+                <span></span><span>{{#str}}person, local_siraj{{/str}}</span><span>{{#str}}mandatoryprogress, local_siraj{{/str}}</span>
+                <span>{{#str}}th_nextstep, local_siraj{{/str}}</span><span>{{#str}}status, local_siraj{{/str}}</span>
+            </div>
+            <div class="siraj-people-list">
+                {{#rows}}
+                <div class="siraj-person" data-status="{{chip.status}}" data-attention="{{#attention}}1{{/attention}}" data-search="{{search}}">
+                    <label class="siraj-check" title="{{#str}}select, local_siraj{{/str}}">
+                        <input type="checkbox" name="users[]" value="{{id}}" aria-label="{{#str}}selectperson, local_siraj, {{name}}{{/str}}" {{^remindable}}disabled{{/remindable}}>
+                    </label>
+                    <a class="siraj-person-who" href="{{url}}">
+                        <span class="siraj-avatar" aria-hidden="true">{{initials}}</span>
+                        <span><b>{{name}}</b><small>{{sub}}</small></span>
+                    </a>
+                    <div class="siraj-person-progress">
+                        <span class="siraj-progress" role="progressbar" aria-valuenow="{{pct}}" aria-valuemin="0" aria-valuemax="100" aria-label="{{progresslabel}}"><i style="width: {{pct}}%"></i></span>
+                        <small>{{progresslabel}} · {{pct}}%</small>
+                        <div class="siraj-person-seen"><small>{{#str}}lastseenwhen, local_siraj, {{lastseen}}{{/str}}</small>{{#reminded}}<small>{{reminded}}</small>{{/reminded}}</div>
+                    </div>
+                    <div class="siraj-person-next"><b>{{next}}</b><small>{{nextcourse}}{{#due}} · {{#str}}duedate, local_siraj, {{due}}{{/str}}{{/due}}</small></div>
+                    <div class="siraj-person-status"><span class="siraj-chip {{chip.class}}"><i></i>{{chip.label}}</span>{{#reason}}<small>{{reason}}</small>{{/reason}}</div>
+                </div>
+                {{/rows}}
+            </div>
+            <div class="siraj-empty-line" data-region="nomatch" hidden>{{#str}}nomatchpeople, local_siraj{{/str}}</div>
+            <div class="siraj-bulkbar">
+                <button type="button" class="btn btn-link siraj-link" data-action="select-attention">{{#str}}selectattention, local_siraj{{/str}}</button>
+                <span class="siraj-bulk-count" data-region="count" aria-live="polite"></span>
+                <button type="submit" class="btn siraj-btn-flame" data-region="send" disabled>{{{icon_bell}}} {{#str}}sendreminder, local_siraj{{/str}}</button>
+            </div>
+        </form>
+
+        <aside class="siraj-side">
+            <section class="siraj-panel">
+                <h3>{{#str}}teamstatus, local_siraj{{/str}}</h3>
+                <div class="siraj-ringwrap">
+                    <div class="siraj-statusring" style="{{ring.style}}" role="img" aria-label="{{#str}}ring_label, local_siraj, {{ring.centre}}{{/str}}">
+                        <div><strong>{{ring.centre}}%</strong><small>{{#str}}ontrackordone, local_siraj{{/str}}</small></div>
+                    </div>
+                    <ul class="siraj-legend">
+                        {{#ring.legend}}<li><i style="background: {{color}}"></i><span>{{label}}</span><b>{{n}}</b></li>{{/ring.legend}}
+                    </ul>
+                </div>
+            </section>
+            <section class="siraj-panel">
+                <div class="siraj-panel-head"><h3>{{#str}}bycourse, local_siraj{{/str}}</h3></div>
+                {{#courses}}
+                <div class="siraj-barrow">
+                    <div class="siraj-barrow-top"><span>{{name}}</span><b>{{pct}}%</b></div>
+                    <span class="siraj-progress{{#low}} low{{/low}}"><i style="width: {{pct}}%"></i></span>
+                    <small>{{sub}} {{#str}}finished, local_siraj{{/str}}{{#overdue}} · <span class="siraj-red">{{#str}}noverdue, local_siraj, {{overdue}}{{/str}}</span>{{/overdue}}</small>
+                </div>
+                {{/courses}}
+            </section>
+            <section class="siraj-panel">
+                <h3>{{#str}}deadlines, local_siraj{{/str}}</h3>
+                {{#hasdeadlines}}
+                <ul class="siraj-deadlines">
+                    {{#deadlines}}<li><span class="siraj-avatar sm" aria-hidden="true">{{initials}}</span><span><b>{{name}}</b><small>{{course}}</small></span><em class="{{#late}}late{{/late}}">{{when}}</em></li>{{/deadlines}}
+                </ul>
+                {{/hasdeadlines}}
+                {{^hasdeadlines}}<p class="siraj-empty-line">{{#str}}nodeadlines, local_siraj{{/str}}</p>{{/hasdeadlines}}
+            </section>
+        </aside>
+    </div>
+    {{/empty}}
+</div>
+{{#js}}
+(function() {
+    var root = document.querySelector('[data-region="people"]');
+    if (!root) {
+        return;
+    }
+    var state = {status: 'all', q: ''};
+    var rows = root.querySelectorAll('.siraj-person');
+    var count = root.querySelector('[data-region="count"]');
+    var send = root.querySelector('[data-region="send"]');
+    function apply() {
+        var shown = 0;
+        rows.forEach(function(el) {
+            var ok = (state.status === 'all' || el.dataset.status === state.status
+                    || (state.status === 'attention' && el.dataset.attention === '1'))
+                && (state.q === '' || el.dataset.search.indexOf(state.q) !== -1);
+            el.hidden = !ok;
+            shown += ok ? 1 : 0;
+        });
+        root.querySelector('[data-region="nomatch"]').hidden = shown > 0;
+    }
+    function selected() {
+        var n = root.querySelectorAll('input[name="users[]"]:checked').length;
+        count.textContent = n ? M.util.get_string('nselected', 'local_siraj', n) : '';
+        send.disabled = n === 0;
+        root.classList.toggle('has-selection', n > 0);
+    }
+    root.querySelectorAll('.siraj-filter').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            root.querySelectorAll('.siraj-filter').forEach(function(b) {
+                b.classList.toggle('active', b === btn);
+                b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+            });
+            state.status = btn.dataset.status;
+            apply();
+        });
+    });
+    root.querySelector('[data-region="q"]').addEventListener('input', function(e) {
+        state.q = e.target.value.trim().toLowerCase();
+        apply();
+    });
+    root.addEventListener('change', selected);
+    root.querySelector('[data-action="select-attention"]').addEventListener('click', function() {
+        rows.forEach(function(el) {
+            var box = el.querySelector('input');
+            if (!box.disabled) {
+                box.checked = el.dataset.attention === '1';
+            }
+        });
+        selected();
+    });
+    selected();
+})();
+{{/js}}

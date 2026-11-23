@@ -1,0 +1,27 @@
+{{!
+    @template local_siraj/learn_folder
+
+    Siraj folder: the files as a list, grouped by subfolder.
+
+    Example context (json):
+    {"intro": "", "count": "1 file", "groups": [{"path": "", "files": [{"name": "a.pdf", "size": "1 KB", "type": "PDF",
+     "url": "#", "download": "#", "icon": ""}]}]}
+}}
+<div class="siraj-av siraj-folder">
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    <div class="siraj-act-bar"><span class="siraj-act-count">{{count}}</span></div>
+    {{#empty}}<div class="siraj-act-empty"><span class="siraj-act-emptyicon">{{{icon_folder}}}</span><b>{{#str}}folder_empty, local_siraj{{/str}}</b></div>{{/empty}}
+    {{#groups}}
+    {{#path}}<h3 class="siraj-folder-path">{{{icon_folder}}} {{path}}</h3>{{/path}}
+    <ul class="siraj-files">
+        {{#files}}
+        <li>
+            <span class="siraj-file-icon">{{{icon}}}</span>
+            <a class="siraj-file-name" href="{{url}}" target="_blank" rel="noopener" dir="auto">{{name}}</a>
+            <small>{{type}} · {{size}}</small>
+            <a class="siraj-iconbtn" href="{{download}}" title="{{#str}}download{{/str}}" aria-label="{{#str}}download{{/str}} {{name}}">{{{icon_download}}}</a>
+        </li>
+        {{/files}}
+    </ul>
+    {{/groups}}
+</div>

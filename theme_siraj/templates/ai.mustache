@@ -1,0 +1,576 @@
+{{!
+    @template theme_siraj/ai
+
+    Siraj AI panel. Siraj draws it; the Capybots assistant answers (local_capybots makes a short-lived signed pass for
+    this person and page, and the browser sends questions straight to the Capybots hub). Anything with
+    data-siraj-ai="prompt" opens it with that prompt ready in the box (empty: just opens); data-siraj-ai-mode="quiz" starts practice
+    questions on the current lesson. The conversation is kept for the browser tab, so it follows the learner from
+    lesson to lesson.
+
+    Example context (json):
+    {"config": "{}", "context": "Workplace Health & Safety", "inlesson": true, "incourse": true}
+}}
+<div class="siraj-ai-backdrop" data-ai-close hidden></div>
+<section class="siraj-aipanel" id="siraj-ai" role="dialog" aria-modal="false" aria-labelledby="siraj-ai-title" hidden
+    data-config="{{config}}">
+    <header class="siraj-aipanel-head">
+        <span class="siraj-ai-orb" aria-hidden="true"></span>
+        <div class="siraj-aipanel-title">
+            <h2 id="siraj-ai-title">{{#str}}ai_name, theme_siraj{{/str}}</h2>
+            <small dir="auto">{{#context}}{{#str}}ai_about, theme_siraj, {{context}}{{/str}}{{/context}}{{^context}}{{#str}}ai_sub, theme_siraj{{/str}}{{/context}}</small>
+        </div>
+        <button type="button" class="siraj-iconbtn" data-ai-new title="{{#str}}ai_new, theme_siraj{{/str}}" aria-label="{{#str}}ai_new, theme_siraj{{/str}}">{{{icon_plus}}}</button>
+        <button type="button" class="siraj-iconbtn" data-ai-close title="{{#str}}closebuttontitle{{/str}}" aria-label="{{#str}}closebuttontitle{{/str}}">{{{icon_x}}}</button>
+    </header>
+    <div class="siraj-aipanel-scroll" data-ai-scroll>
+        <div class="siraj-aipanel-welcome" data-ai-welcome>
+            <span class="siraj-aipanel-mark" aria-hidden="true">{{{icon_sparkles}}}</span>
+            <h3>{{#str}}ai_welcome, theme_siraj{{/str}}</h3>
+            <p>{{#inlesson}}{{#str}}ai_welcome_lesson, theme_siraj{{/str}}{{/inlesson}}{{^inlesson}}{{#str}}ai_welcome_text, theme_siraj{{/str}}{{/inlesson}}</p>
+            <div class="siraj-aipanel-chips">
+                {{#inlesson}}
+                <button type="button" data-ai-ask="{{#str}}ai_s_explain, theme_siraj{{/str}}">{{#str}}ai_s_explain, theme_siraj{{/str}}</button>
+                <button type="button" data-ai-ask="{{#str}}ai_s_summary, theme_siraj{{/str}}">{{#str}}ai_s_summary, theme_siraj{{/str}}</button>
+                <button type="button" data-ai-quiz>{{#str}}ai_s_quiz, theme_siraj{{/str}}</button>
+                {{/inlesson}}
+                {{^inlesson}}{{#incourse}}
+                <button type="button" data-ai-ask="{{#str}}ai_s_course, theme_siraj{{/str}}">{{#str}}ai_s_course, theme_siraj{{/str}}</button>
+                <button type="button" data-ai-quiz>{{#str}}ai_s_quiz, theme_siraj{{/str}}</button>
+                {{/incourse}}{{/inlesson}}
+                <button type="button" data-ai-ask="{{#str}}ai_s_next, theme_siraj{{/str}}">{{#str}}ai_s_next, theme_siraj{{/str}}</button>
+                <button type="button" data-ai-ask="{{#str}}ai_s_due, theme_siraj{{/str}}">{{#str}}ai_s_due, theme_siraj{{/str}}</button>
+            </div>
+        </div>
+        <ol class="siraj-aipanel-log" data-ai-log aria-live="polite"></ol>
+    </div>
+    <form class="siraj-aipanel-compose" data-ai-form>
+        <label class="visually-hidden" for="siraj-ai-input">{{#str}}ai_placeholder, theme_siraj{{/str}}</label>
+        <textarea id="siraj-ai-input" rows="1" dir="auto" maxlength="2000" placeholder="{{#str}}ai_placeholder, theme_siraj{{/str}}" data-ai-input></textarea>
+        <button type="submit" class="siraj-aipanel-send" aria-label="{{#str}}ai_send, theme_siraj{{/str}}" title="{{#str}}ai_send, theme_siraj{{/str}}">{{{icon_send}}}</button>
+    </form>
+    <p class="siraj-aipanel-note">{{#str}}ai_disclaimer, theme_siraj{{/str}}</p>
+</section>
+<template id="siraj-ai-strings">{
+    "thinking": "{{#cleanstr}}ai_thinking, theme_siraj{{/cleanstr}}",
+    "error": "{{#cleanstr}}ai_error, theme_siraj{{/cleanstr}}",
+    "expired": "{{#cleanstr}}ai_expired, theme_siraj{{/cleanstr}}",
+    "retry": "{{#cleanstr}}ai_retry, theme_siraj{{/cleanstr}}",
+    "confirm": "{{#cleanstr}}ai_confirm, theme_siraj{{/cleanstr}}",
+    "cancel": "{{#cleanstr}}ai_cancel, theme_siraj{{/cleanstr}}",
+    "quiztitle": "{{#cleanstr}}ai_quiz_title, theme_siraj{{/cleanstr}}",
+    "quiznote": "{{#cleanstr}}ai_quiz_note, theme_siraj{{/cleanstr}}",
+    "quizscore": "{{#cleanstr}}ai_quiz_score, theme_siraj{{/cleanstr}}",
+    "quizask": "{{#cleanstr}}ai_s_quiz, theme_siraj{{/cleanstr}}",
+    "you": "{{#cleanstr}}ai_you, theme_siraj{{/cleanstr}}"
+}</template>
+{{#js}}
+(function() {
+    var panel = document.getElementById('siraj-ai');
+    if (!panel || panel.dataset.ready) {
+        return;
+    }
+    panel.dataset.ready = '1';
+    var cfg = JSON.parse(panel.dataset.config);
+    var S = JSON.parse(document.getElementById('siraj-ai-strings').innerHTML);
+    var backdrop = document.querySelector('.siraj-ai-backdrop');
+    var log = panel.querySelector('[data-ai-log]');
+    var scroller = panel.querySelector('[data-ai-scroll]');
+    var welcome = panel.querySelector('[data-ai-welcome]');
+    var form = panel.querySelector('[data-ai-form]');
+    var input = panel.querySelector('[data-ai-input]');
+    var api = cfg.hub + '/api/public/bot/' + encodeURIComponent(cfg.bot);
+    var busy = false;
+    var lastFocus = null;
+
+    // The conversation lives for this browser tab (sessionStorage), so it follows the learner between lessons.
+    var KEY = 'siraj-ai';
+    var state = {sid: '', msgs: []};
+    try {
+        state = JSON.parse(sessionStorage.getItem(KEY)) || state;
+    } catch (e) {
+        // A fresh conversation.
+    }
+    if (!state.sid) {
+        state.sid = 'siraj-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+    }
+    var save = function() {
+        try {
+            sessionStorage.setItem(KEY, JSON.stringify({sid: state.sid, msgs: state.msgs.slice(-40)}));
+        } catch (e) {
+            // Not kept; the panel still works.
+        }
+    };
+
+    // Small, safe Markdown: text is escaped first; then bold, italics, code, http(s) links, lists and paragraphs.
+    var esc = function(t) {
+        return String(t).replace(/[&<>"']/g, function(c) {
+            return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+        });
+    };
+    var inline = function(t) {
+        return esc(t)
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>')
+            .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g, '$1<i>$2</i>')
+            .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, function(m, label, url) {
+                return '<a href="' + url.replace(/"/g, '%22') + '" target="_blank" rel="noopener">' + label + '</a>';
+            });
+    };
+    var md = function(text) {
+        // Lists keep their own numbers; indented lines under an item (details, sub-points) stay inside that item.
+        var out = [];
+        var list = null;
+        var sub = false;
+        var closeSub = function() {
+            if (sub) {
+                out[out.length - 1] += '</ul>';
+                sub = false;
+            }
+        };
+        var close = function() {
+            closeSub();
+            if (list) {
+                out.push('</li></' + list + '>');
+                list = null;
+            }
+        };
+        var item = function(kind, html, num) {
+            closeSub();
+            if (list !== kind) {
+                close();
+                out.push('<' + kind + '>');
+                list = kind;
+            } else {
+                out.push('</li>');
+            }
+            out.push('<li' + (num ? ' value="' + num + '"' : '') + '>' + html);
+        };
+        String(text || '').split(/\n/).forEach(function(line) {
+            var m;
+            var indented = /^\s{2,}\S/.test(line);
+            if (list && indented && (m = line.match(/^\s*[-*•]\s+(.*)/))) {
+                if (!sub) {
+                    out[out.length - 1] += '<ul>';
+                    sub = true;
+                }
+                out[out.length - 1] += '<li>' + inline(m[1]) + '</li>';
+            } else if (list && indented) {
+                closeSub();
+                out[out.length - 1] += '<br>' + inline(line.trim());
+            } else if ((m = line.match(/^\s*[-*•]\s+(.*)/))) {
+                item('ul', inline(m[1]));
+            } else if ((m = line.match(/^\s*(\d+)[.)]\s+(.*)/))) {
+                item('ol', inline(m[2]), m[1]);
+            } else if ((m = line.match(/^#{1,4}\s+(.*)/))) {
+                close();
+                out.push('<p><b>' + inline(m[1]) + '</b></p>');
+            } else if (line.trim()) {
+                close();
+                out.push('<p>' + inline(line) + '</p>');
+            } else if (!list) {
+                close();
+            }
+        });
+        close();
+        return out.join('');
+    };
+
+    var scrollDown = function() {
+        scroller.scrollTop = scroller.scrollHeight;
+    };
+    var bubble = function(role, html) {
+        var li = document.createElement('li');
+        li.className = 'siraj-aimsg ' + (role === 'user' ? 'mine' : 'theirs');
+        li.setAttribute('dir', 'auto');
+        li.innerHTML = html;
+        log.appendChild(li);
+        welcome.hidden = true;
+        scrollDown();
+        return li;
+    };
+    var thinking = function() {
+        var li = bubble('assistant', '<span class="siraj-aitype" aria-label="' + esc(S.thinking) + '"><i></i><i></i><i></i></span>');
+        li.classList.add('is-thinking');
+        return li;
+    };
+
+    // What the learner sees in this lesson, so "Explain this" is about this step (the hub treats it as data).
+    var lessonText = function() {
+        if (!cfg.page.cmid) {
+            return '';
+        }
+        var parts = [];
+        var body = document.querySelector('[data-region="siraj-player"] .siraj-player-body')
+            || document.querySelector('[data-region="siraj-player"]');
+        if (body) {
+            var copy = body.cloneNode(true);
+            copy.querySelectorAll('script, style, .siraj-player-side, footer, form, button').forEach(function(n) {
+                n.remove();
+            });
+            parts.push(copy.innerText || copy.textContent || '');
+        }
+        // The lesson's own frame (SCORM, page, book...): readable when it comes from this site.
+        document.querySelectorAll('[data-region="siraj-embed"] iframe').forEach(function(f) {
+            try {
+                var read = function(win, depth) {
+                    var t = win.document && win.document.body ? win.document.body.innerText : '';
+                    for (var i = 0; i < win.frames.length && depth < 3; i++) {
+                        t += '\n' + read(win.frames[i], depth + 1);
+                    }
+                    return t;
+                };
+                parts.push(read(f.contentWindow, 0));
+            } catch (e) {
+                // Another site's frame: nothing to read.
+            }
+        });
+        return parts.join('\n').split('\n').map(function(l) {
+            return l.replace(/\s+/g, ' ').trim();
+        }).filter(Boolean).join('\n').slice(0, 6000);
+    };
+    var pageInfo = function() {
+        var p = {};
+        Object.keys(cfg.page).forEach(function(k) {
+            p[k] = cfg.page[k];
+        });
+        var text = lessonText();
+        if (text) {
+            p.text = text;
+        }
+        return p;
+    };
+    var post = function(path, body) {
+        body.lmsToken = cfg.token;
+        body.sessionId = state.sid;
+        body.userRole = cfg.role;
+        body.page = pageInfo();
+        return fetch(api + path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+    };
+    var failed = function(li, res, retry) {
+        li.classList.remove('is-thinking');
+        var msg = res && (res.status === 401 || res.status === 403) ? S.expired : S.error;
+        li.innerHTML = '<p>' + esc(msg) + '</p>';
+        if (retry) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'siraj-aimsg-retry';
+            b.textContent = S.retry;
+            b.addEventListener('click', function() {
+                li.remove();
+                retry();
+            });
+            li.appendChild(b);
+        }
+        busy = false;
+        panel.classList.remove('is-busy');
+    };
+
+    // An action the assistant prepared for staff (e.g. enrol people): nothing happens until Confirm.
+    var actionCard = function(li, action) {
+        var box = document.createElement('div');
+        box.className = 'siraj-aiaction';
+        box.innerHTML = '<p>' + esc(action.summary) + '</p>';
+        [['confirm', S.confirm, 'btn siraj-btn-flame'], ['cancel', S.cancel, 'btn btn-secondary']].forEach(function(d) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = d[2];
+            b.textContent = d[1];
+            b.addEventListener('click', function() {
+                box.querySelectorAll('button').forEach(function(x) {
+                    x.disabled = true;
+                });
+                post('/action/' + encodeURIComponent(action.id), {decision: d[0]}).then(function(r) {
+                    return r.json();
+                }).then(function(j) {
+                    box.innerHTML = '<p>' + inline(j.reply || '') + '</p>';
+                    state.msgs.push({role: 'assistant', content: j.reply || ''});
+                    save();
+                }).catch(function() {
+                    box.innerHTML = '<p>' + esc(S.error) + '</p>';
+                });
+            });
+            box.appendChild(b);
+        });
+        li.appendChild(box);
+    };
+
+    var ask = function(text) {
+        text = String(text || '').trim();
+        if (!text || busy) {
+            return;
+        }
+        busy = true;
+        panel.classList.add('is-busy');
+        var history = state.msgs.filter(function(m) {
+            return m.role === 'user' || m.role === 'assistant';
+        }).slice(-10).map(function(m) {
+            return {role: m.role, content: m.content};
+        });
+        state.msgs.push({role: 'user', content: text});
+        save();
+        bubble('user', md(text));
+        var li = thinking();
+        var reply = '';
+        var finish = function(final, action) {
+            li.classList.remove('is-thinking');
+            li.innerHTML = md(final);
+            if (action && action.id) {
+                actionCard(li, action);
+            }
+            state.msgs.push({role: 'assistant', content: final});
+            save();
+            busy = false;
+            panel.classList.remove('is-busy');
+            scrollDown();
+        };
+        var retry = function() {
+            state.msgs.pop();
+            ask(text);
+        };
+        post('/message', {message: text, history: history, stream: true}).then(function(res) {
+            if (!res.ok) {
+                return failed(li, res, retry);
+            }
+            // Answers that use live lookups come back whole (JSON) even when a stream was asked for.
+            if ((res.headers.get('Content-Type') || '').indexOf('text/event-stream') === -1 || !res.body) {
+                return res.json().then(function(j) {
+                    finish(j.reply || '', j.action);
+                });
+            }
+            var reader = res.body.getReader();
+            var decoder = new TextDecoder();
+            var buf = '';
+            var done = false;
+            var pump = function() {
+                return reader.read().then(function(r) {
+                    buf += decoder.decode(r.value || new Uint8Array(), {stream: !r.done});
+                    var blocks = buf.split('\n\n');
+                    buf = blocks.pop();
+                    blocks.forEach(function(block) {
+                        var ev = (block.match(/^event:\s*(.*)$/m) || [])[1];
+                        var data = (block.match(/^data:\s*(.*)$/m) || [])[1];
+                        var j = {};
+                        try {
+                            j = JSON.parse(data || '{}');
+                        } catch (e) {
+                            return;
+                        }
+                        if (ev === 'delta' && j.text) {
+                            reply += j.text;
+                            li.classList.remove('is-thinking');
+                            li.innerHTML = md(reply);
+                            scrollDown();
+                        } else if (ev === 'done') {
+                            done = true;
+                            // The final, checked reply replaces the streamed text.
+                            finish(j.reply || reply, j.action);
+                        } else if (ev === 'error') {
+                            done = true;
+                            failed(li, null, retry);
+                        }
+                    });
+                    if (r.done) {
+                        if (!done) {
+                            if (reply) {
+                                finish(reply);
+                            } else {
+                                failed(li, null, retry);
+                            }
+                        }
+                        return null;
+                    }
+                    return pump();
+                });
+            };
+            return pump();
+        }).catch(function() {
+            failed(li, null, retry);
+        });
+    };
+
+    // Practice questions from the course's own material (never the real quiz).
+    var quiz = function() {
+        if (busy) {
+            return;
+        }
+        busy = true;
+        panel.classList.add('is-busy');
+        // On a quiz or assignment page the course is the topic (the activity's own name says little).
+        var topic = (cfg.page.activity && !/^(quiz|assign)$/.test(cfg.page.modname || '') ? cfg.page.activity : '') || (cfg.page.courseNames || [])[0] || '';
+        bubble('user', md(S.quizask + (topic ? ': ' + topic : '')));
+        var li = thinking();
+        post('/quiz', {topic: topic}).then(function(res) {
+            if (!res.ok) {
+                return failed(li, res, quiz);
+            }
+            return res.json().then(function(j) {
+                li.classList.remove('is-thinking');
+                busy = false;
+                panel.classList.remove('is-busy');
+                if (!j.questions || !j.questions.length) {
+                    li.innerHTML = md(j.reply || S.error);
+                    return;
+                }
+                var right = 0;
+                var answered = 0;
+                var total = j.questions.length;
+                li.classList.add('siraj-aiquiz');
+                li.innerHTML = '<p class="siraj-aiquiz-head"><b>' + esc(S.quiztitle) + '</b><small>' + esc(S.quiznote) + '</small></p>';
+                j.questions.forEach(function(q, qi) {
+                    var box = document.createElement('div');
+                    box.className = 'siraj-aiq';
+                    box.innerHTML = '<p dir="auto"><span class="siraj-aiq-n">' + (qi + 1) + '</span>' + inline(q.question) + '</p>';
+                    (q.options || []).forEach(function(opt, oi) {
+                        var b = document.createElement('button');
+                        b.type = 'button';
+                        b.setAttribute('dir', 'auto');
+                        b.innerHTML = inline(opt);
+                        b.addEventListener('click', function() {
+                            if (box.classList.contains('is-done')) {
+                                return;
+                            }
+                            box.classList.add('is-done');
+                            answered++;
+                            if (oi === q.answer) {
+                                right++;
+                            }
+                            box.querySelectorAll('button').forEach(function(x, xi) {
+                                x.disabled = true;
+                                x.classList.toggle('is-right', xi === q.answer);
+                                x.classList.toggle('is-wrong', xi === oi && oi !== q.answer);
+                            });
+                            if (q.explanation) {
+                                var ex = document.createElement('p');
+                                ex.className = 'siraj-aiq-why';
+                                ex.setAttribute('dir', 'auto');
+                                ex.innerHTML = inline(q.explanation);
+                                box.appendChild(ex);
+                            }
+                            if (answered === total) {
+                                var sc = document.createElement('p');
+                                sc.className = 'siraj-aiquiz-score';
+                                sc.textContent = S.quizscore.replace('{n}', right).replace('{t}', total);
+                                li.appendChild(sc);
+                                state.msgs.push({role: 'assistant', content: S.quizscore.replace('{n}', right).replace('{t}', total)});
+                                save();
+                            }
+                            scrollDown();
+                        });
+                        box.appendChild(b);
+                    });
+                    li.appendChild(box);
+                });
+                scrollDown();
+                return null;
+            });
+        }).catch(function() {
+            failed(li, null, quiz);
+        });
+    };
+
+    var restore = function() {
+        log.innerHTML = '';
+        welcome.hidden = state.msgs.length > 0;
+        state.msgs.forEach(function(m) {
+            bubble(m.role, md(m.content));
+        });
+    };
+    var open = function(prompt, mode) {
+        if (panel.hidden) {
+            lastFocus = document.activeElement;
+            panel.hidden = false;
+            backdrop.hidden = false;
+            requestAnimationFrame(function() {
+                panel.classList.add('open');
+                backdrop.classList.add('open');
+            });
+            document.documentElement.classList.add('siraj-ai-open');
+        }
+        if (mode === 'quiz') {
+            quiz();
+        } else if (prompt && mode === 'send') {
+            ask(prompt);
+        } else {
+            // A suggested question from the page is put in the box, ready to edit or send, not sent straight away.
+            if (prompt) {
+                input.value = prompt;
+                input.dispatchEvent(new Event('input'));
+            }
+            setTimeout(function() {
+                input.focus();
+                input.setSelectionRange(input.value.length, input.value.length);
+            }, 50);
+        }
+        scrollDown();
+    };
+    var close = function() {
+        panel.classList.remove('open');
+        backdrop.classList.remove('open');
+        document.documentElement.classList.remove('siraj-ai-open');
+        setTimeout(function() {
+            panel.hidden = true;
+            backdrop.hidden = true;
+        }, 280);
+        if (lastFocus && lastFocus.focus) {
+            lastFocus.focus();
+        }
+    };
+    window.sirajAI = {open: open, ask: function(p) {
+        open(p, 'send');
+    }};
+
+    restore();
+    document.addEventListener('click', function(e) {
+        var t = e.target.closest('[data-siraj-ai]');
+        if (t) {
+            e.preventDefault();
+            open(t.getAttribute('data-siraj-ai'), t.getAttribute('data-siraj-ai-mode'));
+        }
+    });
+    panel.addEventListener('click', function(e) {
+        var a = e.target.closest('[data-ai-ask]');
+        if (a) {
+            ask(a.getAttribute('data-ai-ask'));
+        } else if (e.target.closest('[data-ai-quiz]')) {
+            quiz();
+        } else if (e.target.closest('[data-ai-new]')) {
+            if (busy) {
+                return;
+            }
+            state = {sid: 'siraj-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10), msgs: []};
+            save();
+            restore();
+            input.focus();
+        } else if (e.target.closest('[data-ai-close]')) {
+            close();
+        }
+    });
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !panel.hidden) {
+            close();
+        }
+    });
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        var t = input.value;
+        if (!t.trim() || busy) {
+            return;
+        }
+        input.value = '';
+        input.style.height = '';
+        ask(t);
+    });
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            form.requestSubmit();
+        }
+    });
+    input.addEventListener('input', function() {
+        input.style.height = '';
+        input.style.height = Math.min(input.scrollHeight, 140) + 'px';
+    });
+    document.body.classList.add('has-siraj-ai');
+})();
+{{/js}}

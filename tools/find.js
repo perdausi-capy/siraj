@@ -1,0 +1,12 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext({ viewport: { width: 1600, height: 950 } })).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'admin'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.goto(BASE + '/course/modedit.php?update=6', { waitUntil: 'networkidle' });
+  console.log(await p.evaluate(() => [...document.querySelectorAll('button, a.btn')].filter(b => /restriction/i.test(b.textContent)).map(b => b.outerHTML.slice(0, 200)).join('\n') || 'none'));
+  console.log(await p.evaluate(() => [...document.querySelectorAll('fieldset legend, .ftoggler')].map(x => x.textContent.trim().slice(0, 30) + ' | ' + (x.querySelector('a') ? x.querySelector('a').getAttribute('href') : '')).join('\n')));
+  await p.goto(BASE + '/course/view.php?id=4&siraj=classic', { waitUntil: 'networkidle' });
+  console.log(await p.evaluate(() => [...document.querySelectorAll('.course-section')].slice(1, 2).map(s => [...s.querySelectorAll('.divider button, .divider a')].map(x => x.outerHTML.slice(0, 220)).join('\n')).join('')));
+  await b.close(); })();

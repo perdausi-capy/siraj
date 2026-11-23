@@ -1,0 +1,140 @@
+{{!
+    @template local_siraj/reports
+
+    Siraj Reports: scope and department, export, KPIs, weekly pace chart, status ring, by department, by course, people.
+
+    Example context (json):
+    {"subline": "12 people in your team", "scopes": [], "showdepts": false, "departments": [], "csvurl": "#", "excelurl": "#",
+     "hasdata": true, "kpis": [], "weekschart": "{}", "weekstable": [], "ring": {"legend": []}, "departments": [], "courses": [], "people": []}
+}}
+<div class="siraj-dashboard">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}management, local_siraj{{/str}}</div>
+            <h1>{{#str}}reports, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            {{#hasscopes}}
+            <div class="siraj-seg" role="group" aria-label="{{#str}}scope, local_siraj{{/str}}">
+                {{#scopes}}<a href="{{url}}" class="{{#active}}active{{/active}}" {{#active}}aria-current="page"{{/active}}>{{text}}</a>{{/scopes}}
+            </div>
+            {{/hasscopes}}
+            {{#showdepts}}
+            <form method="get" action="{{formurl}}" class="siraj-deptform">
+                <input type="hidden" name="scope" value="all">
+                <label class="visually-hidden" for="siraj-dept">{{#str}}department, local_siraj{{/str}}</label>
+                <select id="siraj-dept" name="dept" class="form-select" onchange="this.form.submit()">
+                    <option value="">{{#str}}alldepartments, local_siraj{{/str}}</option>
+                    {{#deptoptions}}<option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/deptoptions}}
+                </select>
+                <noscript><button type="submit" class="btn btn-outline-secondary">{{#str}}show, local_siraj{{/str}}</button></noscript>
+            </form>
+            {{/showdepts}}
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{{{icon_download}}} {{#str}}export, local_siraj{{/str}}</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{{excelurl}}">{{#str}}export_excel, local_siraj{{/str}}</a></li>
+                    <li><a class="dropdown-item" href="{{csvurl}}">{{#str}}export_csv, local_siraj{{/str}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    {{#toomany}}
+    <div class="siraj-empty">
+        <span class="siraj-empty-icon">{{{icon_users}}}</span>
+        <h3>{{#str}}toomany, local_siraj, {{maxpeople}}{{/str}}</h3>
+        <p>{{#str}}toomany_text, local_siraj{{/str}}</p>
+    </div>
+    {{/toomany}}
+    {{^toomany}}
+    {{^hasdata}}
+    <div class="siraj-empty"><span class="siraj-empty-icon">{{{icon_users}}}</span><h3>{{#str}}nopeople, local_siraj{{/str}}</h3></div>
+    {{/hasdata}}
+    {{#hasdata}}
+    <div class="siraj-kpis">
+        {{#kpis}}
+        <div class="siraj-kpi tone-{{tone}}">
+            <span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span>
+            <div><strong>{{value}}</strong><span>{{label}}</span><small>{{sub}}</small></div>
+        </div>
+        {{/kpis}}
+    </div>
+
+    <div class="siraj-dash-grid">
+        <section class="siraj-panel">
+            <div class="siraj-panel-head"><h3>{{#str}}weeklypace, local_siraj{{/str}}</h3><small class="siraj-faint">{{#str}}weeklypace_sub, local_siraj, {{weekstotal}}{{/str}}</small></div>
+            <div class="siraj-chart"><canvas data-siraj-chart="{{weekschart}}" role="img" aria-label="{{#str}}weeklypace, local_siraj{{/str}}"></canvas></div>
+            <div class="visually-hidden"><table>
+                <caption>{{#str}}weeklypace, local_siraj{{/str}}</caption>
+                <tr><th>{{#str}}week, local_siraj{{/str}}</th><th>{{#str}}chart_activities, local_siraj{{/str}}</th><th>{{#str}}chart_learners, local_siraj{{/str}}</th></tr>
+                {{#weekstable}}<tr><td>{{week}}</td><td>{{n}}</td><td>{{learners}}</td></tr>{{/weekstable}}
+            </table></div>
+        </section>
+        <section class="siraj-panel">
+            <h3>{{#str}}status, local_siraj{{/str}}</h3>
+            <div class="siraj-ringwrap">
+                <div class="siraj-statusring" style="{{ring.style}}" role="img" aria-label="{{#str}}ring_label, local_siraj, {{ring.centre}}{{/str}}">
+                    <div><strong>{{ring.centre}}%</strong><small>{{#str}}ontrackordone, local_siraj{{/str}}</small></div>
+                </div>
+                <ul class="siraj-legend">
+                    {{#ring.legend}}<li><i style="background: {{color}}"></i><span>{{label}}</span><b>{{n}}</b></li>{{/ring.legend}}
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="siraj-dash-split">
+        <section class="siraj-panel">
+            <h3>{{#str}}bydepartment, local_siraj{{/str}}</h3>
+            {{#departments}}
+            <div class="siraj-barrow">
+                <div class="siraj-barrow-top">{{#url}}<a href="{{url}}">{{name}}</a>{{/url}}{{^url}}<span>{{name}}</span>{{/url}}<b>{{pct}}%</b></div>
+                <span class="siraj-progress{{#low}} low{{/low}}"><i style="width: {{pct}}%"></i></span>
+                <small>{{#str}}npeople, local_siraj, {{people}}{{/str}}{{#overdue}} · <span class="siraj-red">{{#str}}noverdue, local_siraj, {{overdue}}{{/str}}</span>{{/overdue}}{{#atrisk}} · <span class="siraj-amber">{{#str}}natrisk, local_siraj, {{atrisk}}{{/str}}</span>{{/atrisk}}</small>
+            </div>
+            {{/departments}}
+        </section>
+        <section class="siraj-panel siraj-tablepanel">
+            <h3>{{#str}}bycourse, local_siraj{{/str}}</h3>
+            <div class="siraj-tablewrap">
+                <table class="siraj-table">
+                    <thead><tr><th>{{#str}}course, local_siraj{{/str}}</th><th class="num">{{#str}}enrolled, local_siraj{{/str}}</th><th class="num">{{#str}}finished, local_siraj{{/str}}</th><th class="num">{{#str}}st_overdue, local_siraj{{/str}}</th><th>{{#str}}completion, local_siraj{{/str}}</th></tr></thead>
+                    <tbody>
+                        {{#courses}}
+                        <tr>
+                            <td><b>{{name}}</b>{{#mandatory}} <span class="siraj-chip sm">{{#str}}mandatory, local_siraj{{/str}}</span>{{/mandatory}}</td>
+                            <td class="num">{{enrolled}}</td><td class="num">{{finished}}</td>
+                            <td class="num">{{#overdue}}<span class="siraj-red">{{overdue}}</span>{{/overdue}}{{^overdue}}0{{/overdue}}</td>
+                            <td class="siraj-cellbar"><span class="siraj-progress{{#low}} low{{/low}}"><i style="width: {{pct}}%"></i></span><b>{{pct}}%</b></td>
+                        </tr>
+                        {{/courses}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <section class="siraj-panel siraj-tablepanel">
+        <h3>{{#str}}people, local_siraj{{/str}}</h3>
+        <div class="siraj-tablewrap">
+            <table class="siraj-table">
+                <thead><tr><th>{{#str}}person, local_siraj{{/str}}</th><th>{{#str}}department, local_siraj{{/str}}</th><th>{{#str}}mandatoryprogress, local_siraj{{/str}}</th><th>{{#str}}status, local_siraj{{/str}}</th><th>{{#str}}lastseen, local_siraj{{/str}}</th></tr></thead>
+                <tbody>
+                    {{#people}}
+                    <tr>
+                        <td><a class="siraj-person-who" href="{{url}}"><span class="siraj-avatar sm" aria-hidden="true">{{initials}}</span><b>{{name}}</b></a></td>
+                        <td>{{department}}</td>
+                        <td class="siraj-cellbar"><span class="siraj-progress"><i style="width: {{pct}}%"></i></span><small>{{finished}}</small></td>
+                        <td><span class="siraj-chip {{chip.class}}"><i></i>{{chip.label}}</span>{{#reason}}<small class="siraj-faint d-block">{{reason}}</small>{{/reason}}</td>
+                        <td>{{lastseen}}</td>
+                    </tr>
+                    {{/people}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {{/hasdata}}
+    {{/toomany}}
+</div>

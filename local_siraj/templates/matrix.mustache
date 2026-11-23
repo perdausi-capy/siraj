@@ -1,0 +1,117 @@
+{{!
+    @template local_siraj/matrix
+
+    Siraj compliance matrix: counts, the grid (people x required courses), enrol the missing, and the rules editor.
+
+    Example context (json):
+    {"subline": "12 people in your team", "counts": [{"state": "missing", "n": 2, "label": "Missing"}],
+     "columns": [{"id": 3, "name": "Fire Safety", "missing": 2, "canenrol": true}],
+     "rows": [{"name": "Layla Hassan", "initials": "LH", "role": "Engineer", "department": "Engineering", "url": "#", "gaps": 1,
+               "cells": [{"state": "missing", "label": "Missing", "detail": "", "course": "Fire Safety", "optional": false}]}],
+     "hasrows": true, "canmanage": true, "ruleset": [], "allcourses": [], "action": "#", "sesskey": "x"}
+}}
+<div class="siraj-dashboard">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}management, local_siraj{{/str}}</div>
+            <h1>{{#str}}compliance, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            {{#hasscopes}}
+            <div class="siraj-seg" role="group" aria-label="{{#str}}scope, local_siraj{{/str}}">
+                {{#scopes}}<a href="{{url}}" class="{{#active}}active{{/active}}" {{#active}}aria-current="page"{{/active}}>{{text}}</a>{{/scopes}}
+            </div>
+            {{/hasscopes}}
+            {{#showdepts}}
+            <form method="get" action="{{formurl}}" class="siraj-deptform">
+                <input type="hidden" name="scope" value="all">
+                <label class="visually-hidden" for="siraj-dept">{{#str}}department, local_siraj{{/str}}</label>
+                <select id="siraj-dept" name="dept" class="form-select" onchange="this.form.submit()">
+                    <option value="">{{#str}}alldepartments, local_siraj{{/str}}</option>
+                    {{#deptoptions}}<option value="{{name}}" {{#selected}}selected{{/selected}}>{{name}}</option>{{/deptoptions}}
+                </select>
+            </form>
+            {{/showdepts}}
+        </div>
+    </header>
+
+    <div class="siraj-mxcounts">
+        {{#counts}}<div class="siraj-mxcount mx-{{state}}"><i aria-hidden="true"></i><strong>{{n}}</strong><span>{{label}}</span></div>{{/counts}}
+    </div>
+
+    {{#hasrows}}
+    <section class="siraj-panel siraj-tablepanel">
+        <div class="siraj-panel-head">
+            <h3>{{#str}}whoneedswhat, local_siraj{{/str}}</h3>
+            <small class="siraj-faint">{{#str}}matrix_hint, local_siraj{{/str}}</small>
+        </div>
+        <div class="siraj-tablewrap siraj-mxwrap" tabindex="0" role="region" aria-label="{{#str}}compliance, local_siraj{{/str}}">
+            <table class="siraj-table siraj-mx">
+                <thead>
+                    <tr>
+                        <th scope="col" class="siraj-mx-who">{{#str}}person, local_siraj{{/str}}</th>
+                        {{#columns}}
+                        <th scope="col" class="siraj-mx-col">
+                            <span>{{name}}</span>
+                            {{#canenrol}}
+                            <form method="post" action="{{action}}">
+                                <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="enrol"><input type="hidden" name="course" value="{{id}}">
+                                <button type="submit" class="siraj-mx-enrol">{{#str}}enrolmissing, local_siraj, {{missing}}{{/str}}</button>
+                            </form>
+                            {{/canenrol}}
+                        </th>
+                        {{/columns}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#rows}}
+                    <tr>
+                        <th scope="row" class="siraj-mx-who">
+                            <a class="siraj-person-who" href="{{url}}"><span class="siraj-avatar sm" aria-hidden="true">{{initials}}</span>
+                                <span><b>{{name}}</b><small>{{#role}}{{role}}{{/role}}{{^role}}{{#str}}norole, local_siraj{{/str}}{{/role}}</small></span></a>
+                        </th>
+                        {{#cells}}
+                        <td class="siraj-mx-cell"><span class="siraj-mxpill mx-{{state}}{{#optional}} is-optional{{/optional}}" title="{{course}}{{#detail}}: {{detail}}{{/detail}}">{{label}}{{#detail}}<small>{{detail}}</small>{{/detail}}</span></td>
+                        {{/cells}}
+                    </tr>
+                    {{/rows}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+    {{/hasrows}}
+    {{^hasrows}}
+    <div class="siraj-empty"><span class="siraj-empty-icon">{{{icon_shield}}}</span><h3>{{#str}}matrix_empty, local_siraj{{/str}}</h3><p>{{#str}}matrix_empty_text, local_siraj{{/str}}</p></div>
+    {{/hasrows}}
+
+    {{#canmanage}}
+    <section class="siraj-panel siraj-tablepanel">
+        <div class="siraj-panel-head">
+            <h3>{{#str}}rules, local_siraj{{/str}}</h3>
+            <small class="siraj-faint">{{#str}}rules_hint, local_siraj{{/str}}</small>
+        </div>
+        <form method="post" action="{{action}}">
+            <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="rules">
+            <div class="siraj-tablewrap siraj-mxwrap" tabindex="0" role="region" aria-label="{{#str}}rules, local_siraj{{/str}}">
+                <table class="siraj-table siraj-rules">
+                    <thead><tr><th scope="col" class="siraj-mx-who">{{#str}}jobrole, local_siraj{{/str}}</th>{{#allcourses}}<th scope="col" class="siraj-mx-col"><span>{{name}}</span></th>{{/allcourses}}</tr></thead>
+                    <tbody>
+                        {{#ruleset}}
+                        <tr>
+                            <th scope="row" class="siraj-mx-who"><b>{{role}}</b><input type="hidden" name="rolename[{{i}}]" value="{{role}}"></th>
+                            {{#courses}}<td class="siraj-mx-cell"><input class="form-check-input" type="checkbox" name="rule[]" value="{{i}}:{{id}}" {{#checked}}checked{{/checked}} aria-label="{{role}}: {{name}}"></td>{{/courses}}
+                        </tr>
+                        {{/ruleset}}
+                        <tr class="siraj-rules-new">
+                            <th scope="row" class="siraj-mx-who"><input type="text" name="newrole" class="form-control" maxlength="100" placeholder="{{#str}}addjobrole, local_siraj{{/str}}" aria-label="{{#str}}addjobrole, local_siraj{{/str}}"></th>
+                            {{#allcourses}}<td class="siraj-mx-cell"><input class="form-check-input" type="checkbox" name="newcourses[]" value="{{id}}" aria-label="{{#str}}newrolecourse, local_siraj, {{name}}{{/str}}"></td>{{/allcourses}}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="siraj-formfoot"><button type="submit" class="btn siraj-btn-flame">{{#str}}saverules, local_siraj{{/str}}</button></div>
+        </form>
+    </section>
+    {{/canmanage}}
+</div>

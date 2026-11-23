@@ -1,0 +1,121 @@
+// ---------- Moodle's own teacher and admin pages, in the Siraj look (20 Nov 2026) ----------
+// Course pages in edit mode, activity settings and reports, participants, grader, quiz/SCORM reports, Site
+// administration. Siraj's own pages (body.siraj-page) and sign-in are left alone.
+body:not(.siraj-page):not(.pagelayout-login) {
+    // Page header: always on the left (Moodle centres it on some pages), breadcrumb as a quiet trail, not a box.
+    #page-header.header-maxwidth { max-width: none; padding-left: 0; padding-right: 0; }
+    #page-header > div, #page-header .w-100 { justify-content: flex-start !important; }
+    #page-header .page-context-header { flex: 1; }
+    .breadcrumb { background: transparent !important; padding: 0 !important; margin: 0 0 4px; border: 0 !important; font-size: 13px;
+        .breadcrumb-item, .breadcrumb-item a { color: var(--si-faint) !important; text-decoration: none; }
+        .breadcrumb-item a:hover { color: var(--si-ink) !important; }
+        .breadcrumb-item.active, .breadcrumb-item:last-child { color: var(--si-ink) !important; font-weight: 600; }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--si-line-strong, var(--si-faint)); } }
+    // The page's own toolbar (report picker, filters): a plain row, not a grey slab.
+    .tertiary-navigation { background: transparent !important; border: 0 !important; padding: 0 !important; margin: 0 0 18px !important;
+        .row, .d-flex { gap: 10px; align-items: center; }
+        .tertiary-navigation-selector .dropdown-toggle, .navitem > h2, .navitem .dropdown-toggle.btn {
+            font: 600 1.15rem var(--si-head) !important; color: var(--si-ink) !important; }
+        .tertiary-navigation-selector .dropdown-toggle { padding: 8px 14px; border-radius: 12px; border: 1px solid var(--si-line); background: var(--si-surface); } }
+    // Messages: a calm card with a coloured edge instead of solid red or blue slabs.
+    .alert { --siraj-alert: var(--si-link); background: var(--si-surface) !important; color: var(--si-ink) !important;
+        border: 1px solid var(--si-line) !important; border-inline-start: 4px solid var(--siraj-alert) !important; border-radius: 14px;
+        box-shadow: none; padding: 14px 18px;
+        a { color: var(--si-link) !important; } .btn-close { opacity: .6; } }
+    .alert-success { --siraj-alert: #12A877; }
+    .alert-warning { --siraj-alert: #E0A030; }
+    .alert-danger, .alert-error { --siraj-alert: #D93F3F; }
+    .alert-secondary { --siraj-alert: var(--si-faint); }
+    // A-Z name filters: small, quiet pills.
+    .initialbar { align-items: center; gap: 6px 10px; margin: 0 0 6px;
+        .initialbarlabel { flex: none; min-width: 84px; font-size: 12.5px; color: var(--si-faint); }
+        .pagination { margin: 0; gap: 2px; flex-wrap: wrap; }
+        .page-link { display: grid; place-items: center; min-width: 26px; height: 26px; padding: 0 6px; border: 0 !important; border-radius: 8px !important;
+            background: transparent !important; color: var(--si-faint) !important; font-size: 12.5px; box-shadow: none !important; }
+        .page-link:hover { background: var(--si-surface-2) !important; color: var(--si-ink) !important; }
+        .page-item.active .page-link { background: var(--si-ink) !important; color: var(--si-surface) !important; font-weight: 600; } }
+    // Tables: a person's name in a row is a name, not a column heading.
+    table tbody th, table tbody th a { text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; }
+    table tbody th a, table tbody td.c0 a, table tbody td.c1 > a { color: var(--si-ink) !important; font-weight: 600; text-decoration: none; }
+    table tbody th a:hover, table tbody td a:hover { color: var(--si-link) !important; }
+    // Highlighted text (quiz report "Highest grade", search hits).
+    .highlight, mark, .gradedattempt td, span.gradedattempt {
+        background: color-mix(in srgb, var(--si-link) 20%, transparent) !important; color: var(--si-ink) !important; border-radius: 4px; }
+    // Completion requirement chips ("View", "Complete the activity").
+    .automatic-completion-conditions .badge, .completion-info .badge {
+        background: var(--si-surface-2) !important; color: var(--si-ink) !important; border: 1px solid var(--si-line); font-weight: 500; padding: 6px 10px;
+        mix-blend-mode: normal !important; }
+    .activity-header { background: transparent !important; padding: 0 !important; margin-bottom: 18px; }
+    // Empty boxes Moodle prints anyway (an activity without a description).
+    #intro:empty, .box.py-3:empty, .activity-description:empty { display: none !important; }
+    // Pinned button rows (forms, grader "Save changes", bulk edit): page-coloured glass, never a light slab.
+    #sticky-footer, .stickyfooter, [data-region="sticky-footer"] {
+        background: color-mix(in srgb, var(--si-bg) 90%, transparent) !important; backdrop-filter: blur(10px); border-top: 1px solid var(--si-line) !important; }
+    // Moodle's block drawer handle on the right edge: same small rounded control as the sidebar's.
+    .drawer-toggles .drawer-toggler .btn, .drawer-right-toggle .btn {
+        width: 40px; height: 40px; border-radius: 12px !important; background: var(--si-surface) !important; border: 1px solid var(--si-line) !important;
+        color: var(--si-ink) !important; box-shadow: var(--si-soft) !important; }
+    // Site administration search in the page header: the Siraj search pill.
+    #page-header .simplesearchform .input-group { border-radius: 999px; overflow: hidden; border: 1px solid var(--si-line); background: var(--si-surface);
+        .form-control { border: 0 !important; background: transparent !important; }
+        .btn { border-radius: 0 !important; background: transparent !important; color: var(--si-faint) !important; border: 0 !important; } }
+}
+
+// Course page: activity descriptions copied from other sites carry their own white boxes and dark text. In dark mode
+// they take the page's colours (the content itself is unchanged).
+[data-bs-theme="dark"] body:not(.siraj-page) {
+    .activity-altcontent, .contentafterlink, .summarytext, .course-description-item, .activity-description, .no-overflow {
+        [style*="background"] { background: transparent !important; background-color: transparent !important; }
+        [style*="color"] { color: inherit !important; }
+        [style*="border"] { border-color: var(--si-line) !important; }
+    }
+}
+
+// SCORM package (teacher view): Preview / Enter as a clear card with the attempt facts.
+#page-mod-scorm-view [role="main"] {
+    .scorm-center { margin: 0 0 14px; text-align: start; }
+    #scormviewform { display: flex; flex-wrap: wrap; gap: 10px; br { display: none; }
+        .btn { min-height: 46px; padding: 0 26px; margin: 0 !important; border-radius: 999px; font-weight: 600; } }
+    .generalbox { max-width: 640px; padding: 18px 22px !important; border-radius: 18px; background: var(--si-surface) !important; border: 1px solid var(--si-line);
+        box-shadow: var(--si-soft); p { margin: 0 0 12px; line-height: 1.9; } .singlebutton .btn { border-radius: 999px; } }
+}
+
+// A course's Reports page: one card per report instead of a bare list of links.
+#region-main [role="main"] > h2 + .container-fluid > div > ul.list-unstyled {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 8px;
+    li a { position: relative; display: flex; align-items: center; min-height: 62px; padding: 16px 44px 16px 18px; border-radius: 16px;
+        background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft); color: var(--si-ink) !important;
+        font: 600 15px var(--si-head); text-decoration: none; transition: border-color .15s, transform .15s;
+        &::after { content: ""; position: absolute; right: 20px; top: 50%; width: 8px; height: 8px; margin-top: -4px;
+            border-top: 2px solid var(--si-faint); border-right: 2px solid var(--si-faint); transform: rotate(45deg); }
+        &:hover { border-color: var(--si-link); transform: translateY(-1px); } }
+}
+
+// Edit mode where a page has nothing to edit: same place, greyed out (see shell::editmode).
+.siraj-editbtn.is-disabled { display: inline-grid; place-items: center; opacity: .38; cursor: not-allowed; }
+
+// Restriction notes ("Available from …") on course pages: readable in both modes.
+body:not(.siraj-page) .availabilityinfo, body:not(.siraj-page) .activity-availability {
+    background: color-mix(in srgb, #E0A030 10%, var(--si-surface)) !important; color: var(--si-ink) !important;
+    border: 1px solid color-mix(in srgb, #E0A030 35%, var(--si-line)) !important; border-radius: 12px; padding: 8px 12px !important; font-size: 13px;
+    .icon { color: #E0A030 !important; } strong { color: var(--si-ink); }
+}
+// Separators inside imported descriptions: the page's own line colour.
+body:not(.siraj-page) :is(.activity-altcontent, .contentafterlink, .summarytext, .no-overflow) hr { border: 0; border-top: 1px solid var(--si-line) !important; opacity: 1; }
+// Moodle multiplies some badges into the page (hidden activity, selected in edit mode); on a dark page that turns them black.
+[data-bs-theme="dark"] .activity-item .badge, [data-bs-theme="dark"] .section .badge { mix-blend-mode: normal !important; }
+
+// Report filter rows (Activity completion: Include / Activity order / Section): one tidy toolbar with quiet labels.
+body:not(.siraj-page) .include-activity-selector {
+    margin: 0 14px 16px 0 !important; margin-inline-start: 0 !important;
+    label { margin: 0; font-size: 12.5px; font-weight: 600; color: var(--si-faint); }
+    .form-select { min-height: 42px; border-radius: 12px; }
+}
+// "Nothing to show yet" messages Moodle prints as bare text: a calm empty card.
+body:not(.siraj-page) [role="main"] > .errorboxcontent:not(.alert) {
+    max-width: 720px; margin: 12px 0 0; padding: 28px 30px 28px 64px; position: relative; border-radius: 18px;
+    background: var(--si-surface); border: 1px dashed var(--si-line-strong, var(--si-line)); color: var(--si-muted); font-size: 14.5px; line-height: 1.7;
+    &::before { content: ""; position: absolute; left: 26px; top: 30px; width: 22px; height: 22px; border-radius: 50%;
+        border: 2px solid var(--si-faint); background: radial-gradient(circle, var(--si-faint) 0 2px, transparent 2.5px) 50% 70% / 100% 100% no-repeat,
+        linear-gradient(var(--si-faint), var(--si-faint)) 50% 30% / 2px 7px no-repeat; }
+}

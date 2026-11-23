@@ -1,0 +1,70 @@
+{{!
+    @template local_siraj/profile
+
+    The learner's own profile.
+
+    Example context (json):
+    {"fullname": "Layla Hassan", "initials": "LH", "sub": "Engineering · Dubai", "details": [{"k": "Email", "v": "a@b.c"}],
+     "actions": [{"url": "#", "text": "Edit profile", "icon": ""}], "stats": [{"value": 6, "label": "Courses"}], "courses": [], "hascourses": false}
+}}
+<div class="siraj-profile-page">
+    <section class="siraj-profile-hero">
+        <div class="siraj-profile-avatar">{{#picture}}<img src="{{picture}}" alt="">{{/picture}}{{^picture}}{{initials}}{{/picture}}</div>
+        <div class="siraj-profile-id">
+            <div class="siraj-eyebrow">{{#str}}yourprofile, local_siraj{{/str}}</div>
+            <h1>{{fullname}}</h1>
+            {{#sub}}<p>{{sub}}</p>{{/sub}}
+        </div>
+        <div class="siraj-profile-stats">
+            {{#stats}}<div><strong>{{value}}</strong><small>{{label}}</small></div>{{/stats}}
+        </div>
+    </section>
+
+    <div class="siraj-grid-two">
+        <div>
+            <div class="siraj-sectionhead"><h2>{{#str}}mylearning, local_siraj{{/str}}</h2><a class="siraj-link" href="{{learningurl}}">{{#str}}alllearning, local_siraj{{/str}} {{{icon_arrow}}}</a></div>
+            {{#hascourses}}
+            <div class="siraj-profile-courses">
+                {{#courses}}
+                <a class="siraj-pcourse" href="{{url}}">
+                    <span class="siraj-cover {{coverclass}}" {{#cover}}style="background-image:url('{{cover}}')"{{/cover}}></span>
+                    <span class="siraj-pcourse-body">
+                        <small>{{category}}</small>
+                        <b>{{name}}</b>
+                        <span class="siraj-progress"><i style="width: {{progress}}%"></i></span>
+                        <small class="siraj-pcourse-state">{{#done}}{{{icon_check}}} {{#str}}completed, local_siraj{{/str}}{{/done}}{{^done}}{{progress}}%{{/done}}</small>
+                    </span>
+                </a>
+                {{/courses}}
+            </div>
+            {{/hascourses}}
+            {{^hascourses}}<div class="siraj-empty"><p>{{#str}}nocourses_text, local_siraj{{/str}}</p></div>{{/hascourses}}
+            {{#description}}
+            <div class="siraj-sectionhead"><h2>{{#str}}about, local_siraj{{/str}}</h2></div>
+            <div class="siraj-panel siraj-prose">{{{description}}}</div>
+            {{/description}}
+        </div>
+        <aside class="siraj-side">
+            <div class="siraj-panel">
+                <h3>{{#str}}details, local_siraj{{/str}}</h3>
+                <dl class="siraj-kv siraj-kv-stack">{{#details}}<dt>{{k}}</dt><dd>{{v}}</dd>{{/details}}</dl>
+            </div>
+            <div class="siraj-panel" id="account">
+                <h3>{{#str}}account, local_siraj{{/str}}</h3>
+                <nav class="siraj-actionlist">
+                    {{#actions}}<a href="{{url}}">{{{icon}}}<span>{{text}}</span>{{{icon_arrow}}}</a>{{/actions}}
+                    <a href="{{achievementsurl}}">{{{icon_check}}}<span>{{#str}}achievements, local_siraj{{/str}}</span>{{{icon_arrow}}}</a>
+                </nav>
+                {{#prefgroups}}
+                <details class="siraj-prefgroup">
+                    <summary>{{title}}</summary>
+                    <nav class="siraj-actionlist">{{#items}}<a href="{{url}}">{{{icon}}}<span>{{text}}</span>{{{icon_arrow}}}</a>{{/items}}</nav>
+                </details>
+                {{/prefgroups}}
+                <div class="siraj-profile-foot">
+                    <a class="btn btn-secondary" href="{{logouturl}}">{{{icon_logout}}} {{#str}}logout{{/str}}</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>

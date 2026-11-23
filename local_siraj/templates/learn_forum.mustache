@@ -1,0 +1,82 @@
+{{!
+    @template local_siraj/learn_forum
+
+    Siraj forum: discussion list, one discussion with replies, and a reply / new topic composer.
+
+    Example context (json):
+    {"intro": "", "action": "#", "sesskey": "x", "cmid": 1, "listurl": "#",
+     "list": {"topics": [{"url": "#", "name": "Welcome", "excerpt": "Hello", "author": "Admin", "initials": "AU",
+     "when": "17/11/26", "replies": 0, "noreplies": true, "replytext": "No replies"}], "canstart": true, "newlabel": "New topic"} }
+}}
+<div class="siraj-av siraj-forum">
+    {{#list}}
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    <div class="siraj-act-bar">
+        <span class="siraj-act-count">{{#isnews}}{{#str}}forum_announcements, local_siraj{{/str}}{{/isnews}}{{^isnews}}{{#str}}forum_discussions, local_siraj{{/str}}{{/isnews}}</span>
+        {{#canstart}}<button type="button" class="btn siraj-btn-flame" data-action="siraj-compose">{{{icon_plus}}} {{newlabel}}</button>{{/canstart}}
+    </div>
+    {{#canstart}}
+    <form class="siraj-composer" method="post" action="{{action}}" hidden data-region="siraj-composer">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="action" value="topic">
+        <label class="visually-hidden" for="siraj-subject">{{#str}}forum_subject, local_siraj{{/str}}</label>
+        <input class="form-control" id="siraj-subject" name="subject" type="text" maxlength="255" required dir="auto" placeholder="{{#str}}forum_subject, local_siraj{{/str}}">
+        <label class="visually-hidden" for="siraj-message">{{#str}}forum_message, local_siraj{{/str}}</label>
+        <textarea class="form-control" id="siraj-message" name="message" rows="5" required dir="auto" placeholder="{{#str}}forum_message, local_siraj{{/str}}"></textarea>
+        <div class="siraj-act-actions">
+            <button type="button" class="btn btn-secondary" data-action="siraj-compose-cancel">{{#str}}cancel{{/str}}</button>
+            <button type="submit" class="btn siraj-btn-flame">{{#str}}forum_post, local_siraj{{/str}} {{{icon_arrow}}}</button>
+        </div>
+    </form>
+    {{/canstart}}
+    {{#empty}}
+    <div class="siraj-act-empty">
+        <span class="siraj-act-emptyicon">{{{icon_message}}}</span>
+        <b>{{#isnews}}{{#str}}forum_none_news, local_siraj{{/str}}{{/isnews}}{{^isnews}}{{#str}}forum_none, local_siraj{{/str}}{{/isnews}}</b>
+    </div>
+    {{/empty}}
+    <ul class="siraj-topics">
+        {{#topics}}
+        <li>
+            <a class="siraj-topic" href="{{url}}">
+                <span class="siraj-avatar-sm">{{initials}}</span>
+                <span class="siraj-topic-main">
+                    <b dir="auto">{{#pinned}}<span class="siraj-chip">{{#str}}forum_pinned, local_siraj{{/str}}</span> {{/pinned}}{{name}}</b>
+                    {{#excerpt}}<span class="siraj-topic-excerpt" dir="auto">{{excerpt}}</span>{{/excerpt}}
+                    <small>{{author}} · {{when}}</small>
+                </span>
+                <span class="siraj-topic-replies {{#noreplies}}is-zero{{/noreplies}}">{{{icon_message}}} {{replytext}}</span>
+            </a>
+        </li>
+        {{/topics}}
+    </ul>
+    {{> local_siraj/learn_pager}}
+    {{/list}}
+
+    {{#thread}}
+    <a class="siraj-link siraj-act-back" href="{{listurl}}">{{{icon_back}}} {{#str}}forum_back, local_siraj{{/str}}</a>
+    <h2 class="siraj-thread-title" dir="auto">{{name}}</h2>
+    <ol class="siraj-posts">
+        {{#posts}}
+        <li class="siraj-post {{#first}}is-first{{/first}}" id="p{{id}}">
+            <div class="siraj-post-head">
+                <span class="siraj-avatar-sm">{{initials}}</span>
+                <span><b>{{author}}</b><small>{{when}}</small></span>
+            </div>
+            <div class="siraj-prose siraj-post-body" dir="auto">{{{message}}}</div>
+            {{#hasfiles}}<ul class="siraj-post-files">{{#files}}<li><a href="{{url}}">{{{icon_download}}} {{name}}</a> <small>{{size}}</small></li>{{/files}}</ul>{{/hasfiles}}
+        </li>
+        {{/posts}}
+    </ol>
+    {{#canreply}}
+    <form class="siraj-composer is-reply" method="post" action="{{action}}">
+        <input type="hidden" name="sesskey" value="{{sesskey}}">
+        <input type="hidden" name="action" value="reply">
+        <input type="hidden" name="d" value="{{id}}">
+        <label class="siraj-composer-label" for="siraj-reply">{{#str}}forum_reply, local_siraj{{/str}}</label>
+        <textarea class="form-control" id="siraj-reply" name="message" rows="4" required dir="auto" placeholder="{{#str}}forum_replyplaceholder, local_siraj{{/str}}"></textarea>
+        <div class="siraj-act-actions"><button type="submit" class="btn siraj-btn-flame">{{#str}}forum_post, local_siraj{{/str}} {{{icon_arrow}}}</button></div>
+    </form>
+    {{/canreply}}
+    {{/thread}}
+</div>

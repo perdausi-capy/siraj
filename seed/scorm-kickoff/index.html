@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project kick-off essentials</title>
+<style>
+  :root { --ink: #102536; --muted: #5A6975; --mint: #00C98C; --line: #E4EAED; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: #F5F7F8; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 28px 20px 96px; }
+  .bar { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; margin-bottom: 26px; }
+  .bar i { display: block; height: 100%; background: linear-gradient(110deg, #00C98C, #33CCFF 65%, #3A70B8); transition: width .4s; }
+  .eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  h1 { font-size: 28px; margin: 8px 0 14px; letter-spacing: -.02em; }
+  p, li { font-size: 17px; line-height: 1.65; color: #24384A; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin: 18px 0; }
+  .slide { display: none; } .slide.on { display: block; }
+  nav { position: fixed; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; gap: 12px;
+        padding: 14px 20px; background: #fff; border-top: 1px solid var(--line); }
+  button { font: 600 15px system-ui, sans-serif; border-radius: 10px; padding: 12px 20px; border: 1px solid var(--line);
+           background: #fff; color: var(--ink); cursor: pointer; min-height: 44px; }
+  button.go { border: 0; background: linear-gradient(110deg, #00C98C, #33CCFF 65%, #3A70B8); color: #062C40; }
+  button:disabled { opacity: .4; cursor: default; }
+  .done { text-align: center; padding: 40px 10px; }
+  .done b { display: block; font-size: 22px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"><i id="bar"></i></div>
+  <section class="slide">
+    <div class="eyebrow">1 of 3 · Why kick-off matters</div>
+    <h1>Start every project on the same page</h1>
+    <p>A kick-off meeting turns a plan on paper into a shared commitment. In 45 minutes the team should leave knowing
+       the goal, their part in it, and how success will be measured.</p>
+    <div class="card"><b>Rule of thumb:</b> if two people describe the goal differently after the kick-off, it is not done yet.</div>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">2 of 3 · The agenda</div>
+    <h1>Five things every kick-off covers</h1>
+    <ol>
+      <li>The goal and why it matters to the business</li>
+      <li>Scope: what is in, and what is out</li>
+      <li>Roles: who decides, who does, who is kept informed</li>
+      <li>Milestones and the first two weeks of work</li>
+      <li>Risks, and how the team will raise problems early</li>
+    </ol>
+  </section>
+  <section class="slide">
+    <div class="eyebrow">3 of 3 · After the meeting</div>
+    <h1>Send a one-page summary the same day</h1>
+    <p>Write down decisions, owners and dates while they are fresh, and ask everyone to reply if anything is wrong.
+       That page becomes the reference for the rest of the project.</p>
+    <div class="done"><b>You have completed this lesson.</b>Your progress has been saved.</div>
+  </section>
+</div>
+<nav><button id="prev">Previous</button><button id="next" class="go">Next</button></nav>
+<script>
+  // Minimal SCORM 1.2 runtime use: resume where the learner left off (no prompt) and report completion on the last slide.
+  function findAPI(w) { for (var i = 0; w && i < 10; i++) { if (w.API) { return w.API; } if (w.parent === w) { break; } w = w.parent; } return null; }
+  var api = findAPI(window) || (window.opener && findAPI(window.opener));
+  var slides = document.querySelectorAll('.slide'), at = 0;
+  if (api) {
+    api.LMSInitialize('');
+    var saved = parseInt(api.LMSGetValue('cmi.core.lesson_location'), 10);
+    if (saved >= 0 && saved < slides.length) { at = saved; }
+    if (api.LMSGetValue('cmi.core.lesson_status') === 'not attempted') { api.LMSSetValue('cmi.core.lesson_status', 'incomplete'); }
+  }
+  function show(n) {
+    at = n;
+    slides.forEach(function(s, i) { s.classList.toggle('on', i === n); });
+    document.getElementById('bar').style.width = ((n + 1) / slides.length * 100) + '%';
+    document.getElementById('prev').disabled = n === 0;
+    document.getElementById('next').hidden = n === slides.length - 1;
+    if (api) {
+      api.LMSSetValue('cmi.core.lesson_location', String(n));
+      if (n === slides.length - 1) { api.LMSSetValue('cmi.core.lesson_status', 'completed'); }
+      api.LMSCommit('');
+    }
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('prev').onclick = function() { if (at > 0) { show(at - 1); } };
+  document.getElementById('next').onclick = function() { if (at < slides.length - 1) { show(at + 1); } };
+  window.addEventListener('pagehide', function() { if (api) { api.LMSFinish(''); api = null; } });
+  show(at);
+</script>
+</body>
+</html>

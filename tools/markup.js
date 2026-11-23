@@ -1,0 +1,23 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+const strip = h => h.replace(/<svg[\s\S]*?<\/svg>/g, '<svg/>').replace(/\s+/g, ' ').slice(0, 1600);
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext({ viewport: { width: 1600, height: 950 } })).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'admin'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.goto(BASE + '/course/modedit.php?update=6', { waitUntil: 'networkidle' });
+  await p.locator('text=Restrict access').first().click().catch(() => {}); await p.waitForTimeout(400);
+  await p.locator('button:has-text("Add restriction")').first().click().catch(() => {}); await p.waitForTimeout(900);
+  console.log('### RESTRICTION\n' + strip(await p.evaluate(() => { const d = [...document.querySelectorAll('.moodle-dialogue-base, .modal')].find(x => x.offsetParent || getComputedStyle(x).display !== 'none'); return d ? d.outerHTML : 'none'; })));
+  await p.goto(BASE + '/course/view.php?id=4&siraj=classic', { waitUntil: 'networkidle' });
+  const sw = p.locator('.editmode-switch-form input[type=checkbox]'); if (!(await sw.isChecked())) { await Promise.all([p.waitForNavigation(), sw.click()]); await p.waitForLoadState('networkidle'); }
+  console.log('### DIVIDER\n' + strip(await p.evaluate(() => (document.querySelector('.activity-add, .divider, [data-action="open-chooser"]') || {}).outerHTML || 'none')));
+  await p.locator('[data-action="open-chooser"]').first().click({ force: true }).catch(() => {}); await p.waitForTimeout(1200);
+  console.log('### CHOOSER\n' + strip(await p.evaluate(() => { const m = document.querySelector('.modal.show'); return m ? m.querySelector('.optionscontainer, [data-region="chooser-container"]')?.outerHTML.slice(0, 1600) || m.outerHTML : 'none'; })));
+  await p.keyboard.press('Escape');
+  await p.goto(BASE + '/message/notificationpreferences.php', { waitUntil: 'networkidle' });
+  console.log('### NOTIFPREFS\n' + strip(await p.evaluate(() => (document.querySelector('table.preference-table, .preferences-container table, table') || {}).outerHTML || 'none')));
+  await p.goto(BASE + '/admin/category.php?category=appearance', { waitUntil: 'networkidle' });
+  console.log('### ADMINCAT\n' + strip(await p.evaluate(() => (document.querySelector('#region-main') || {}).innerHTML || 'none')));
+  await p.goto(BASE + '/course/view.php?id=4&siraj=classic', { waitUntil: 'networkidle' }); if (await sw.isChecked()) await Promise.all([p.waitForNavigation(), sw.click()]);
+  await b.close(); })();

@@ -1,0 +1,285 @@
+// ============================================================================
+// Siraj dashboard blocks: the "Add a block" picker and every block on Home in Siraj design.
+// Icons come from classes/icons.php (block_icon_css) as the --si-bicon mask, one source for all of them.
+// ============================================================================
+
+// Masked icon: the element takes the colour of `color`.
+@mixin si-bicon($size: 18px) {
+    content: ""; display: block; width: $size; height: $size; background: currentColor;
+    -webkit-mask: var(--si-bicon) center / contain no-repeat; mask: var(--si-bicon) center / contain no-repeat;
+}
+
+// ---------- "Add a block" picker: wide dialog, cards in a grid ----------
+.modal-dialog:has(.siraj-addblock) { max-width: min(880px, calc(100vw - 32px)); }
+.modal-content:has(.siraj-addblock) .modal-body { padding: 20px 22px 24px; }
+.siraj-addblock {
+    display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+.siraj-addblock-item {
+    position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; min-height: 112px;
+    padding: 16px; border: 1px solid var(--si-line); border-radius: 14px; background: var(--si-surface);
+    color: var(--si-ink) !important; text-decoration: none !important; transition: border-color .15s, box-shadow .15s, transform .15s;
+    &:hover, &:focus-visible { border-color: var(--si-mint); box-shadow: var(--si-soft); transform: translateY(-1px); }
+    .siraj-bicon {
+        width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
+        background: var(--si-mint-soft); color: var(--si-accent-ink);
+        &::before { @include si-bicon(20px); }
+    }
+    .siraj-addblock-name { font-weight: 700; font-size: 14px; line-height: 1.3; }
+    .siraj-addblock-note {
+        position: absolute; top: 14px; right: 14px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+        color: var(--si-muted); background: var(--si-surface-2); border-radius: 999px; padding: 3px 8px;
+    }
+}
+@media (max-width: 575px) {
+    .siraj-addblock { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .siraj-addblock-item { min-height: 96px; padding: 14px; .siraj-addblock-note { display: none; } }
+}
+
+// ---------- Layout: a dashboard grid, wide blocks span the full row ----------
+.siraj-myblocks .block-region {
+    display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); align-items: stretch;
+    // Moodle's skip links and markers between blocks must not take grid cells.
+    > :not(.block) { position: absolute !important; width: 1px; height: 1px; overflow: hidden; }
+    > .block { margin: 0 !important; min-width: 0; height: 100%; }
+    > .block_myoverview, > .block_timeline, > .block_calendar_month, > .block_recentlyaccessedcourses,
+    > .block_starredcourses, > .block_html { grid-column: 1 / -1; }
+}
+
+// ---------- Block frame: icon chip + title, quiet controls ----------
+.siraj-myblocks .block.card {
+    border-radius: 18px !important; border: 1px solid var(--si-line) !important; background: var(--si-surface) !important;
+    box-shadow: var(--si-soft);
+    > .card-body { padding: 18px 20px 20px !important; }
+    .card-title {
+        display: inline-flex !important; align-items: center; gap: 11px; margin: 0;
+        font: 700 1.02rem/1.25 var(--si-head) !important; color: var(--si-ink) !important;
+        &::before {
+            content: ""; flex: none; width: 34px; height: 34px; border-radius: 10px; background: var(--si-mint-soft);
+        }
+        &::after {
+            @include si-bicon(17px); position: absolute; margin-left: 8.5px; color: var(--si-accent-ink);
+        }
+    }
+    .block-controls, .block_action { float: none; }
+    .block-controls .btn, .block-controls .action-menu-trigger a {
+        color: var(--si-muted) !important; border-radius: 8px; width: 30px; height: 30px; display: inline-grid; place-items: center;
+        &:hover { background: var(--si-surface-2); color: var(--si-ink) !important; }
+    }
+    > .card-body > .card-text { margin-top: 16px !important; }
+    .footer { margin-top: 12px; font-size: 13px; }
+}
+
+// Shared pieces: links as Siraj links, empty states, small buttons.
+.siraj-myblocks .block {
+    font-size: 14px; color: var(--si-ink);
+    a:not(.btn):not(.dropdown-item):not(.page-link) { color: var(--si-accent-ink); text-decoration: none; font-weight: 600; }
+    a:not(.btn):hover { text-decoration: underline; }
+    // Moodle's grey placeholder pictures become a Siraj empty state with the block's own icon.
+    img.empty-placeholder-image-lg, img.empty-placeholder-image-sm, img[src*="theme/image.php"][src$="/activities"],
+    img[src*="theme/image.php"][src$="/courses"] { display: none !important; }
+    div:not(.hidden):not(.d-none):has(> img.empty-placeholder-image-lg),
+    div:not(.hidden):not(.d-none):has(> img[src*="theme/image.php"][src$="/activities"]),
+    div:not(.hidden):not(.d-none):has(> img[src*="theme/image.php"][src$="/courses"]) {
+        display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 22px 12px; color: var(--si-muted);
+        margin-top: 0 !important;
+        &::before { @include si-bicon(30px); color: var(--si-faint); margin-bottom: 4px; }
+        h5, .h5, h4, .h4 { font: 700 1rem var(--si-head); color: var(--si-ink); margin: 4px 0 0; }
+        p { margin: 0; font-size: 13px; }
+        .btn { margin-top: 8px; }
+    }
+    .newlink a, .gotocal a, .footer > a {
+        display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 10px;
+        background: var(--si-surface-2); font-size: 13px; text-decoration: none !important;
+        &:hover { background: var(--si-mint-soft); }
+    }
+}
+
+// ---------- Course cards (All my courses, Continue learning, Starred) ----------
+.siraj-myblocks {
+    .dashboard-card {
+        border: 1px solid var(--si-line) !important; border-radius: 16px !important; overflow: hidden; background: var(--si-surface) !important;
+        box-shadow: none; transition: transform .15s, box-shadow .15s;
+        &:hover { transform: translateY(-2px); box-shadow: var(--si-soft); }
+        .dashboard-card-img, .card-img-top { height: 118px !important; border-radius: 0 !important; background-size: cover; }
+        .card-body { padding: 14px 16px 6px !important; }
+        .coursename, .multiline, a.coursename, a.aalink.coursename { font: 700 .95rem/1.3 var(--si-head) !important; color: var(--si-ink) !important; white-space: normal; }
+        a.coursename:hover { color: var(--si-accent-ink) !important; }
+        .categoryname, .text-muted { font-size: 12px; color: var(--si-muted) !important; text-transform: none; }
+        .card-footer, .dashboard-card-footer { background: transparent !important; border: 0 !important; padding: 6px 16px 14px !important; }
+        .progress { height: 6px !important; border: 0 !important; border-radius: 999px; background: var(--si-surface-2) !important; }
+        .progress-bar { background: var(--si-flame) !important; border-radius: 999px; }
+        .progress-text, small { font-size: 12px; font-weight: 600; color: var(--si-muted); }
+        .coursemenubtn { color: var(--si-muted); }
+    }
+    .course-listitem { border-radius: 14px !important; border-color: var(--si-line) !important; background: var(--si-surface) !important; margin-bottom: 8px; }
+    .card-grid { margin: 0 -6px; > .col { padding: 6px; } }
+    .paging-bar-container .page-link { border-radius: 8px; border-color: var(--si-line); }
+    .block-myoverview [data-region="filter"] .btn, .block-timeline .btn-outline-secondary { border-radius: 10px; }
+}
+
+// ---------- Lists: Courses, Navigation, Administration, Online users, Upcoming events, Announcements ----------
+.siraj-myblocks {
+    // Courses / categories: rows with a Siraj icon instead of the graduation cap.
+    .block_course_list ul.unlist {
+        margin: 0; padding: 0;
+        li { border-bottom: 1px solid var(--si-line); &:last-child { border-bottom: 0; } }
+        .column { display: block; }
+        a { display: flex !important; align-items: center; gap: 12px; padding: 10px 6px; border-radius: 10px; color: var(--si-ink) !important; }
+        a:hover { background: var(--si-surface-2); text-decoration: none !important; }
+        .icon.fa-graduation-cap { display: none; }
+        a::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--si-mint); }
+    }
+    // Navigation and Administration trees.
+    .block_tree {
+        margin: 0; padding: 0;
+        ul { padding-left: 16px; margin: 0; }
+        li { list-style: none; }
+        p.tree_item, .tree_item {
+            display: flex; align-items: center; gap: 8px; padding: 7px 8px !important; margin: 1px 0; border-radius: 9px;
+            color: var(--si-ink); font-weight: 600;
+            &:hover { background: var(--si-surface-2); }
+            a { color: var(--si-ink) !important; }
+        }
+        .tree_item.branch::before, [aria-expanded] > .tree_item::before { color: var(--si-muted); }
+        .navicon, .icon:not(.fa-magnifying-glass) { display: none !important; }
+    }
+    .block_settings .simplesearchform {
+        margin-top: 10px;
+        .form-control { border-radius: 10px 0 0 10px; }
+        .btn-submit { border-radius: 0 10px 10px 0; border: 1px solid var(--si-line); background: var(--si-surface-2); }
+    }
+    // Online users.
+    .block_online_users {
+        .info { color: var(--si-muted); font-size: 13px; text-align: start; margin-bottom: 8px; }
+        ul.list { margin: 0; padding: 0; }
+        .listentry { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px; border-bottom: 1px solid var(--si-line); }
+        .listentry:last-child { border-bottom: 0; }
+        .user a { display: inline-flex; align-items: center; gap: 10px; color: var(--si-ink) !important; }
+        .userinitials { width: 30px; height: 30px; font-size: 11px; background: var(--si-mint-soft); color: var(--si-accent-ink); }
+        .uservisibility .icon { color: var(--si-muted); }
+    }
+    // Upcoming events: each event a row with its activity icon on a light chip (visible in dark mode too).
+    .block_calendar_upcoming {
+        .event {
+            display: flex; align-items: flex-start; gap: 12px; padding: 11px 4px; border-bottom: 1px solid var(--si-line);
+            &:last-of-type { border-bottom: 0; }
+            img.icon, .activityiconcontainer {
+                flex: none; width: 34px !important; height: 34px !important; padding: 7px; margin: 0 !important;
+                border-radius: 10px; background: #EAF3F8;
+            }
+            a { color: var(--si-ink) !important; font-weight: 700; }
+            .date { color: var(--si-muted); font-size: 12px; margin-top: 2px; }
+        }
+    }
+    // Timeline: activity icons on the same light chip, so they show in dark mode.
+    .block_timeline .activityiconcontainer {
+        flex: none; width: 34px !important; height: 34px !important; padding: 7px; border-radius: 10px; background: #EAF3F8 !important;
+        img, .activityicon { width: 20px; height: 20px; filter: none !important; }
+    }
+    // Latest announcements: headline first, then a quiet "date · author" line.
+    .block_news_items {
+        ul.unlist { padding: 0; margin: 0; }
+        .post { display: flex; flex-direction: column; gap: 3px; padding: 11px 0; border-bottom: 1px solid var(--si-line); }
+        .post:last-child { border-bottom: 0; }
+        .post .info { order: -1; a { font: 700 .95rem/1.35 var(--si-head) !important; color: var(--si-ink) !important; } }
+        .post .head { display: flex; flex-wrap: wrap; gap: 0 6px; font-size: 12px; color: var(--si-muted); }
+        .post .head .name::before { content: "·"; margin-inline-end: 6px; }
+    }
+    // Upcoming events: the next five; the calendar link has the rest.
+    .block_calendar_upcoming .event:nth-of-type(n+6) { display: none !important; }
+}
+
+// ---------- Calendar (month) in a block: compact Siraj calendar ----------
+.siraj-myblocks .block_calendar_month {
+    .calendarwrapper .header { gap: 10px; margin-bottom: 10px; }
+    .calendar-controls {
+        align-items: center; margin-bottom: 8px;
+        .current { font: 700 1.05rem var(--si-head); color: var(--si-ink); }
+        .arrow_link { font-size: 13px; font-weight: 600; text-decoration: none; }
+    }
+    table.calendarmonth {
+        border: 0; border-collapse: separate; border-spacing: 4px; table-layout: fixed;
+        th { border: 0 !important; font-size: 11px; font-weight: 700; color: var(--si-muted); text-transform: uppercase; letter-spacing: .06em; padding: 4px; }
+        td > div { height: auto !important; min-height: 58px; }
+        td {
+            border: 0 !important; background: var(--si-surface-2); border-radius: 10px; height: auto !important; padding: 6px !important;
+            vertical-align: top; font-size: 12px;
+            &.dayblank, &:empty { background: transparent; }
+            &.weekend { background: color-mix(in srgb, var(--si-surface-2) 60%, transparent); }
+            &.today .day-number-circle, &.today .day-number { background: var(--si-mint); color: #062C40; border-radius: 50%; }
+        }
+        .day-number-circle { width: 22px; height: 22px; display: inline-grid; place-items: center; font-weight: 700; }
+        ul { margin: 2px 0 0; padding: 0; list-style: none; }
+        li[data-event-id] a, .calendar_event_course a, [data-region="event-item"] a {
+            display: block; font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 2px 6px; border-radius: 6px; background: var(--si-mint-soft); color: var(--si-accent-ink) !important; margin-top: 2px;
+            text-decoration: none !important;
+        }
+        .calendar-circle { display: none; }
+    }
+    .footer { margin-top: 10px; }
+}
+@media (max-width: 767px) {
+    .siraj-myblocks .block_calendar_month table.calendarmonth td { padding: 4px !important; > div { min-height: 36px; } }
+    .siraj-myblocks .block_calendar_month table.calendarmonth li[data-event-id] a { font-size: 0; height: 6px; padding: 0; }
+}
+
+// ---------- Comments, Text, Logged in user, Badges, Private files, Glossary ----------
+.siraj-myblocks {
+    .block_comments {
+        .comment-area textarea, textarea.fullwidth {
+            width: 100% !important; min-height: 76px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--si-line);
+            background: var(--si-surface); color: var(--si-ink); font: inherit;
+            &:focus { outline: none; border-color: var(--si-mint); }
+        }
+        .fd { text-align: end; margin-top: 8px; }
+        .fd a {
+            display: inline-flex; padding: 8px 14px; border-radius: 10px; background: var(--si-ink); color: var(--si-surface) !important;
+            font-weight: 700; font-size: 13px; text-decoration: none !important;
+        }
+        .comment-list { padding: 0; margin: 0 0 10px; list-style: none; }
+        .comment-list li { padding: 10px 0; border-bottom: 1px solid var(--si-line); }
+        .comment-message-meta { font-size: 12px; color: var(--si-muted); }
+    }
+    .block_html .card-text {
+        h1, .h1 { font-size: 1.6rem; } h2, .h2 { font-size: 1.35rem; } h3, .h3 { font-size: 1.15rem; }
+        h1, h2, h3, h4 { font-family: var(--si-head); font-weight: 700; color: var(--si-ink); }
+        p:last-child { margin-bottom: 0; }
+    }
+    .block_myprofile {
+        .myprofileitem.picture { display: inline-flex; vertical-align: middle; margin-right: 10px; }
+        .userinitials { width: 44px; height: 44px; font-size: 14px; background: var(--si-mint-soft); color: var(--si-accent-ink); }
+        .myprofileitem.fullname { display: inline-block; vertical-align: middle; font: 700 1.1rem var(--si-head); color: var(--si-ink); }
+        .myprofileitem:not(.picture):not(.fullname) {
+            display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--si-line);
+            font-size: 13px; color: var(--si-muted); b, strong { font-weight: 600; color: var(--si-muted); }
+        }
+        .myprofileitem:last-child { border-bottom: 0; }
+        .myprofileitem.fullname + .myprofileitem { margin-top: 12px; border-top: 1px solid var(--si-line); }
+    }
+    .block_badges .card-text {
+        ul.badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; padding: 0; margin: 0; }
+        ul.badges li { list-style: none; text-align: center; font-size: 12px; }
+        .badge-image { width: 56px; height: 56px; }
+    }
+    .block_private_files .generalbox { border: 0 !important; padding: 4px 0 !important; color: var(--si-muted); background: transparent !important; }
+    .block_glossary_random .card-text { color: var(--si-muted); }
+}
+
+// Moodle's "no content" text in blocks (badges, files, glossary, upcoming): muted, not body text.
+.siraj-myblocks .block .card-text > .content > p:only-child,
+.siraj-myblocks .block_badges .card-text .content:not(:has(ul)),
+.siraj-myblocks .block_calendar_upcoming .content > div:not(.event):not(.footer):not(.overlay-icon-container) { color: var(--si-muted); }
+
+// Dark mode: chips and surfaces follow the tokens; the event icon chip stays light so the activity icons read.
+[data-bs-theme="dark"] .siraj-myblocks {
+    .block_calendar_upcoming .event img.icon { background: #DCE8F0; }
+    .dashboard-card .categoryname { color: var(--si-muted) !important; }
+}
+
+// Moodle prints a stray "..." after some block links (Add a new topic, Older topics, All courses): links only.
+.siraj-myblocks .block_news_items .newlink, .siraj-myblocks .block_news_items .footer, .siraj-myblocks .block_course_list .footer {
+    font-size: 0 !important; a { font-size: 13px; }
+}
+.siraj-myblocks .block_news_items .newlink { margin-bottom: 6px; }

@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Siraj Design Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ Design tokens ============ */
+:root {
+  --flame: linear-gradient(135deg, #00E69A 0%, #33CCFF 45%, #3A70B8 100%);
+  --flame-soft: linear-gradient(135deg, rgba(0,230,154,.16), rgba(51,204,255,.16) 45%, rgba(58,112,184,.16));
+  --navy: #0F3F66;
+  --navy-2: #0A2C48;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-head: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+:root, :root[data-theme="light"] {
+  --bg: #F4F6FA;
+  --surface: #FFFFFF;
+  --surface-2: #F7F9FC;
+  --sidebar: #FFFFFF;
+  --text: #0B1B2B;
+  --muted: #5D6B7A;
+  --faint: #8A97A6;
+  --border: #E5EAF0;
+  --primary: #0F3F66;
+  --primary-text: #FFFFFF;
+  --accent: #1597D3;
+  --accent-ink: #0E6E9C;      /* accent as text: passes 4.5:1 on white */
+  --success: #0E9F6E;
+  --warn: #D97706;
+  --danger: #DC3545;
+  --chip: #EEF3F8;
+  --shadow: 0 1px 2px rgba(16,24,40,.04), 0 4px 16px rgba(16,24,40,.06);
+  --shadow-lg: 0 12px 40px rgba(15,63,102,.16);
+  --track: #E8EDF3;
+}
+:root[data-theme="dark"] {
+  --bg: #0A1119;
+  --surface: #111B26;
+  --surface-2: #162230;
+  --sidebar: #0D1620;
+  --text: #E8EEF5;
+  --muted: #94A3B4;
+  --faint: #6C7C8E;
+  --border: #1E2B39;
+  --primary: #4CC3FF;
+  --primary-text: #04121F;
+  --accent: #33CCFF;
+  --accent-ink: #66D6FF;
+  --success: #34D399;
+  --warn: #FBBF24;
+  --danger: #F87171;
+  --chip: #1A2836;
+  --shadow: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.45);
+  --track: #1E2B39;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0A1119; --surface: #111B26; --surface-2: #162230; --sidebar: #0D1620; --text: #E8EEF5; --muted: #94A3B4;
+    --faint: #6C7C8E; --border: #1E2B39; --primary: #4CC3FF; --primary-text: #04121F; --accent: #33CCFF; --accent-ink: #66D6FF;
+    --success: #34D399; --warn: #FBBF24; --danger: #F87171; --chip: #1A2836; --track: #1E2B39;
+    --shadow: 0 1px 2px rgba(0,0,0,.3); --shadow-lg: 0 12px 40px rgba(0,0,0,.45);
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--text); font: 14px/1.5 var(--font-body); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4 { font-family: var(--font-head); margin: 0; letter-spacing: -.02em; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; cursor: pointer; }
+svg.i { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ============ Mockup chrome (not part of the design) ============ */
+.mock-bar {
+  position: sticky; top: 0; z-index: 50; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  padding: 10px 16px; background: #0B1B2B; color: #fff; font-size: 13px;
+}
+.mock-bar b { font-family: var(--font-head); margin-right: 8px; }
+.mock-bar button { background: #1C2D3E; color: #CFE3F5; border: 1px solid #2A3D50; border-radius: 8px; padding: 6px 12px; }
+.mock-bar button.on { background: #fff; color: #0B1B2B; border-color: #fff; }
+.mock-bar .sp { flex: 1; }
+.screen { display: none; }
+.screen.on { display: block; }
+.map-tag { display: none; }
+body.show-map .map-tag {
+  display: inline-block; position: absolute; z-index: 5; top: 8px; right: 8px; background: #FDE68A; color: #3B2F00;
+  font: 600 11px/1.3 var(--font-body); padding: 3px 7px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+body.show-map [data-map] { outline: 2px dashed #F59E0B; outline-offset: 2px; position: relative; }
+
+/* ============ Login ============ */
+.login { display: grid; grid-template-columns: 1.25fr 1fr; min-height: calc(100vh - 46px); }
+.login-art { position: relative; overflow: hidden; color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 40px 56px; }
+.login-art::before { content: ""; position: absolute; inset: 0; background: url(img/earth.jpg) center/cover; transform: scale(1.05); }
+.login-art::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(60% 50% at 20% 85%, rgba(0,230,154,.35), transparent 70%),
+              radial-gradient(50% 40% at 80% 20%, rgba(51,204,255,.25), transparent 70%),
+              linear-gradient(180deg, rgba(5,20,35,.35) 0%, rgba(5,20,35,.15) 40%, rgba(5,20,35,.85) 100%); }
+.login-art > * { position: relative; z-index: 1; }
+.login-art img.logo { height: 56px; width: auto; align-self: flex-start; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font: 600 12px/1 var(--font-body); letter-spacing: .18em; text-transform: uppercase; }
+.eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--flame); border-radius: 2px; }
+.login-art h1 { font-size: clamp(40px, 5.2vw, 76px); line-height: 1.02; font-weight: 700; margin: 18px 0 16px; }
+.login-art h1 span { background: var(--flame); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.login-art p.lead { font-size: 17px; max-width: 34rem; color: rgba(255,255,255,.85); margin: 0 0 32px; }
+.proof { display: flex; gap: 12px; flex-wrap: wrap; }
+.proof div { backdrop-filter: blur(14px); background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); border-radius: 14px; padding: 12px 16px; min-width: 140px; }
+.proof b { display: block; font: 700 22px/1.1 var(--font-head); }
+.proof small { color: rgba(255,255,255,.75); }
+.login-form-wrap { background: var(--surface); display: flex; flex-direction: column; padding: 28px 40px; }
+.login-top { display: flex; justify-content: flex-end; gap: 8px; }
+.pill-btn { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+.icon-btn { width: 38px; height: 38px; display: inline-grid; place-items: center; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); position: relative; }
+.login-form { margin: auto; width: 100%; max-width: 400px; }
+.login-form h2 { font-size: 32px; font-weight: 700; }
+.login-form p.sub { color: var(--muted); margin: 6px 0 28px; }
+.field { position: relative; margin-bottom: 14px; }
+.field input { width: 100%; height: 54px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); padding: 18px 44px 4px 14px; font: 500 15px var(--font-body); outline: none; transition: border .15s, box-shadow .15s; }
+.field label { position: absolute; left: 14px; top: 8px; font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+.field input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(51,204,255,.18); }
+.field .eye { position: absolute; right: 12px; top: 17px; color: var(--faint); }
+.row-between { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 20px; font-size: 13px; }
+.check { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); }
+.check i { width: 18px; height: 18px; border-radius: 6px; background: var(--primary); display: inline-grid; place-items: center; }
+.check i svg { stroke: var(--primary-text); width: 12px; height: 12px; stroke-width: 3; }
+.link { color: var(--accent-ink); font-weight: 600; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 12px; border: 1px solid transparent; font-weight: 600; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: var(--primary-text); box-shadow: 0 6px 18px rgba(15,63,102,.25); }
+.btn-flame { background: var(--flame); color: #fff; box-shadow: 0 8px 24px rgba(51,204,255,.35); }
+.btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
+.btn-glass { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.28); color: #fff; backdrop-filter: blur(10px); }
+.btn-block { width: 100%; height: 52px; font-size: 15px; }
+.divider { display: flex; align-items: center; gap: 12px; color: var(--faint); font-size: 12px; margin: 22px 0; }
+.divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.sso { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.login-foot { display: flex; justify-content: space-between; color: var(--faint); font-size: 12px; }
+
+/* ============ App shell ============ */
+.app { display: grid; grid-template-columns: 272px 1fr; min-height: calc(100vh - 46px); }
+.sidebar { background: var(--sidebar); border-right: 1px solid var(--border); padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; position: sticky; top: 46px; height: calc(100vh - 46px); overflow: auto; }
+.sidebar .brand { display: flex; align-items: center; gap: 10px; padding: 4px 8px 6px; }
+.sidebar .brand img { height: 36px; }
+.sidebar .brand .logo-dark { display: none; }
+:root[data-theme="dark"] .sidebar .brand .logo-light { display: none; }
+:root[data-theme="dark"] .sidebar .brand .logo-dark { display: block; }
+.search { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); color: var(--faint); }
+.search span { flex: 1; }
+kbd { font: 600 11px var(--font-body); color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 1px 6px; }
+.nav-label { font: 600 11px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--faint); padding: 0 10px; margin-bottom: 6px; }
+.nav a { display: flex; align-items: center; gap: 12px; height: 38px; padding: 0 10px; border-radius: 10px; color: var(--muted); font-weight: 500; }
+.nav a:hover { background: var(--surface-2); color: var(--text); }
+.nav a.active { background: var(--flame-soft); color: var(--text); font-weight: 600; box-shadow: inset 3px 0 0 #33CCFF; }
+.nav a .count { margin-left: auto; font-size: 11px; font-weight: 600; background: var(--chip); color: var(--muted); padding: 1px 8px; border-radius: 999px; }
+.pinned a { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: center; padding: 6px 8px; border-radius: 10px; }
+.pinned a:hover { background: var(--surface-2); }
+.pinned img { width: 34px; height: 34px; border-radius: 9px; object-fit: cover; }
+.pinned b { display: block; font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mini-track { height: 4px; border-radius: 4px; background: var(--track); margin-top: 5px; overflow: hidden; }
+.mini-track i { display: block; height: 100%; background: var(--flame); border-radius: 4px; }
+.ai-card { margin-top: auto; border-radius: 14px; padding: 14px; background: var(--navy); color: #fff; position: relative; overflow: hidden; }
+.ai-card::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: radial-gradient(circle, rgba(51,204,255,.55), transparent 65%); }
+.ai-card b { font-family: var(--font-head); font-size: 15px; display: flex; gap: 8px; align-items: center; }
+.ai-card p { margin: 6px 0 12px; color: rgba(255,255,255,.75); font-size: 13px; position: relative; z-index: 1; }
+.ai-card .btn { height: 34px; font-size: 13px; position: relative; z-index: 1; }
+.me { display: flex; align-items: center; gap: 10px; padding: 8px; border-top: 1px solid var(--border); padding-top: 14px; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--flame); color: #fff; display: grid; place-items: center; font: 700 13px var(--font-head); flex: none; }
+.me small { display: block; color: var(--faint); font-size: 12px; }
+
+.main { min-width: 0; }
+.topbar { position: sticky; top: 46px; z-index: 10; display: flex; align-items: center; gap: 12px; height: 68px; padding: 0 32px; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.crumbs { color: var(--muted); font-size: 13px; display: flex; gap: 8px; align-items: center; }
+.crumbs b { color: var(--text); font-weight: 600; }
+.topbar .sp { flex: 1; }
+.dot { position: absolute; top: 8px; right: 9px; width: 8px; height: 8px; border-radius: 50%; background: #FF5A5F; border: 2px solid var(--surface); }
+.content { padding: 28px 32px 56px; max-width: 1360px; }
+
+/* ============ Dashboard ============ */
+.hero { position: relative; border-radius: 22px; overflow: hidden; color: #fff; padding: 34px 36px; display: grid; grid-template-columns: 1fr 340px; gap: 28px; background: #08243C; min-height: 260px; }
+.hero::before { content: ""; position: absolute; inset: 0; background: url(img/towers.jpg) center 35%/cover; opacity: .35; }
+.hero::after { content: ""; position: absolute; inset: 0;
+  background: radial-gradient(70% 90% at 0% 100%, rgba(0,230,154,.45), transparent 60%),
+              radial-gradient(60% 80% at 100% 0%, rgba(51,204,255,.35), transparent 60%),
+              linear-gradient(90deg, rgba(8,36,60,.95) 0%, rgba(8,36,60,.6) 60%, rgba(8,36,60,.4) 100%); }
+.hero > * { position: relative; z-index: 1; }
+.hero h1 { font-size: 36px; font-weight: 700; margin: 14px 0 8px; }
+.hero p { color: rgba(255,255,255,.82); font-size: 15px; margin: 0 0 22px; max-width: 34rem; }
+.hero .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.streak { display: inline-flex; gap: 8px; align-items: center; margin-top: 22px; font-size: 13px; color: rgba(255,255,255,.85); }
+.streak .days { display: flex; gap: 4px; }
+.streak .days i { width: 22px; height: 22px; border-radius: 6px; background: rgba(255,255,255,.12); display: grid; place-items: center; font: 600 10px var(--font-body); font-style: normal; }
+.streak .days i.on { background: var(--flame); }
+.next-card { align-self: end; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(16px); border-radius: 18px; padding: 18px; }
+.next-card .k { font: 600 11px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.7); }
+.next-card .t { display: flex; gap: 14px; align-items: center; margin: 12px 0 14px; }
+.ring { --p: 60; width: 64px; height: 64px; border-radius: 50%; flex: none; display: grid; place-items: center;
+  background: conic-gradient(#33CCFF calc(var(--p) * 1%), rgba(255,255,255,.15) 0); }
+.ring::before { content: attr(data-label); width: 50px; height: 50px; border-radius: 50%; background: #0D3150; display: grid; place-items: center; font: 700 14px var(--font-head); }
+.next-card b { display: block; font: 600 15px/1.3 var(--font-head); }
+.next-card small { color: rgba(255,255,255,.7); }
+.tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.tag.due { background: rgba(251,191,36,.2); color: #FDE68A; }
+.tag.ok { background: rgba(16,185,129,.14); color: var(--success); }
+.tag.warn { background: rgba(217,119,6,.12); color: var(--warn); }
+.tag.info { background: var(--chip); color: var(--muted); }
+.tag.mand { background: rgba(220,53,69,.1); color: var(--danger); }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 22px 0 28px; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); display: flex; gap: 14px; align-items: center; }
+.stat .ico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--flame-soft); color: var(--accent-ink); flex: none; }
+.stat b { display: block; font: 700 26px/1 var(--font-head); }
+.stat small { color: var(--muted); }
+.stat .trend { margin-left: auto; font-size: 12px; font-weight: 600; color: var(--success); align-self: flex-start; }
+
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 24px; }
+.sec-head { display: flex; align-items: end; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
+.sec-head h2 { font-size: 20px; font-weight: 700; }
+.sec-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+.seg { display: inline-flex; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+.seg button { border: 0; background: none; color: var(--muted); padding: 5px 12px; border-radius: 8px; font-weight: 500; font-size: 13px; }
+.seg button.on { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+
+.courses { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+.course { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform .18s ease, box-shadow .18s ease; }
+.course:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.course .img { position: relative; aspect-ratio: 16/9; overflow: hidden; }
+.course .img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+.course:hover .img img { transform: scale(1.05); }
+.course .img .tag { position: absolute; top: 10px; left: 10px; background: rgba(8,20,32,.65); color: #fff; backdrop-filter: blur(6px); }
+.course .img .fav { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 9px; background: rgba(8,20,32,.55); color: #fff; display: grid; place-items: center; }
+.course .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.course .cat { font-size: 12px; color: var(--accent-ink); font-weight: 600; }
+.course h3 { font-size: 16px; line-height: 1.3; font-weight: 700; }
+.course .meta { display: flex; gap: 12px; color: var(--faint); font-size: 12px; }
+.course .meta span { display: inline-flex; gap: 5px; align-items: center; }
+.course .meta svg { width: 14px; height: 14px; }
+.course .prog { margin-top: auto; padding-top: 6px; }
+.course .prog .row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+.course .prog .row b { color: var(--text); }
+.bar { height: 6px; background: var(--track); border-radius: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 6px; background: var(--flame); }
+.bar.done i { background: var(--success); }
+.course .foot { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding: 10px 16px; font-size: 12px; color: var(--muted); }
+.course .foot a { color: var(--accent-ink); font-weight: 600; display: inline-flex; gap: 4px; align-items: center; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+.card + .card { margin-top: 18px; }
+.card h3 { font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+.card h3 a { font: 600 12px var(--font-body); color: var(--accent-ink); }
+.deadlines { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.deadlines li { display: grid; grid-template-columns: 48px 1fr auto; gap: 12px; align-items: center; padding: 8px; border-radius: 12px; }
+.deadlines li:hover { background: var(--surface-2); }
+.date { width: 48px; height: 52px; border-radius: 12px; border: 1px solid var(--border); display: grid; place-items: center; text-align: center; line-height: 1.05; }
+.date small { display: block; font: 600 10px var(--font-body); text-transform: uppercase; color: var(--danger); letter-spacing: .06em; }
+.date b { font: 700 18px var(--font-head); }
+.deadlines .t b { display: block; font-size: 13px; font-weight: 600; }
+.deadlines .t small { color: var(--faint); font-size: 12px; }
+.goal { display: flex; align-items: center; gap: 18px; margin-top: 12px; }
+.goal .big-ring { --p: 65; width: 104px; height: 104px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: conic-gradient(from 200deg, #00E69A, #33CCFF calc(var(--p) * .6%), #3A70B8 calc(var(--p) * 1%), var(--track) 0); }
+.goal .big-ring::before { content: ""; position: absolute; }
+.goal .big-ring span { width: 82px; height: 82px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; text-align: center; line-height: 1.1; }
+.goal .big-ring b { font: 700 20px var(--font-head); display: block; }
+.goal .big-ring small { color: var(--faint); font-size: 11px; }
+.week { display: flex; gap: 6px; margin-top: 10px; }
+.week i { flex: 1; height: 44px; border-radius: 8px; background: var(--track); position: relative; overflow: hidden; }
+.week i::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--h); background: var(--flame); border-radius: 8px; }
+.week-l { display: flex; gap: 6px; margin-top: 4px; }
+.week-l span { flex: 1; text-align: center; font-size: 11px; color: var(--faint); }
+.certs { display: flex; gap: 10px; margin-top: 12px; }
+.cert { flex: 1; border-radius: 12px; padding: 12px; background: var(--flame-soft); border: 1px solid var(--border); }
+.cert .seal { width: 32px; height: 32px; border-radius: 50%; background: var(--flame); display: grid; place-items: center; color: #fff; margin-bottom: 8px; }
+.cert b { display: block; font-size: 12px; line-height: 1.3; }
+.cert small { color: var(--faint); font-size: 11px; }
+.ai-suggest { background: linear-gradient(160deg, var(--navy) 0%, #0B2A45 100%); color: #fff; border: 0; position: relative; overflow: hidden; }
+.ai-suggest::after { content: ""; position: absolute; right: -60px; bottom: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(0,230,154,.4), transparent 65%); }
+.ai-suggest > * { position: relative; z-index: 1; }
+.ai-suggest p { color: rgba(255,255,255,.8); font-size: 13px; margin: 8px 0 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { font-size: 12px; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); }
+
+/* ============ Course page ============ */
+.c-hero { position: relative; border-radius: 22px; overflow: hidden; color: #fff; min-height: 300px; display: flex; align-items: flex-end; padding: 32px 36px; }
+.c-hero::before { content: ""; position: absolute; inset: 0; background: url(img/hse.jpg) center/cover; }
+.c-hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(6,24,40,.95) 0%, rgba(6,24,40,.7) 55%, rgba(6,24,40,.25) 100%), radial-gradient(60% 90% at 0% 100%, rgba(0,230,154,.3), transparent 60%); }
+.c-hero > * { position: relative; z-index: 1; }
+.c-hero .inner { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: end; width: 100%; }
+.c-hero h1 { font-size: 40px; font-weight: 700; margin: 12px 0 10px; max-width: 46rem; }
+.c-hero p { margin: 0 0 18px; color: rgba(255,255,255,.82); max-width: 42rem; font-size: 15px; }
+.c-hero .facts { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,.85); }
+.c-hero .facts span { display: inline-flex; gap: 6px; align-items: center; }
+.c-hero .facts svg { width: 16px; height: 16px; }
+.c-hero .prog-box { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); backdrop-filter: blur(16px); border-radius: 18px; padding: 18px; width: 260px; }
+.c-hero .prog-box .ring { width: 76px; height: 76px; --p: 80; }
+.c-hero .prog-box .ring::before { width: 60px; height: 60px; font-size: 16px; }
+.c-hero .prog-box .top { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.c-hero .prog-box b { font-family: var(--font-head); display: block; }
+.c-hero .prog-box small { color: rgba(255,255,255,.75); }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin: 22px 0 24px; overflow-x: auto; }
+.tabs a { padding: 10px 14px; color: var(--muted); font-weight: 500; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+.tabs a.on { color: var(--text); border-bottom: 2px solid #33CCFF; font-weight: 600; }
+.steps { display: flex; flex-direction: column; gap: 16px; }
+.step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.step-head { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+.step-num { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; font: 700 14px var(--font-head); background: var(--chip); color: var(--muted); flex: none; }
+.step.done .step-num { background: rgba(16,185,129,.14); color: var(--success); }
+.step.current .step-num { background: var(--flame); color: #fff; }
+.step-head h3 { font-size: 16px; font-weight: 700; }
+.step-head small { color: var(--faint); }
+.step-head .r { margin-left: auto; display: flex; gap: 10px; align-items: center; color: var(--faint); font-size: 12px; }
+.acts { border-top: 1px solid var(--border); }
+.act { display: grid; grid-template-columns: 40px 1fr auto; gap: 14px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--border); }
+.act:last-child { border-bottom: 0; }
+.act:hover { background: var(--surface-2); }
+.act .ai { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; }
+.ai.page { background: rgba(21,151,211,.12); color: var(--accent-ink); }
+.ai.pdf { background: rgba(220,53,69,.1); color: var(--danger); }
+.ai.assign { background: rgba(217,119,6,.12); color: var(--warn); }
+.ai.quiz { background: rgba(124,58,237,.12); color: #8B5CF6; }
+.ai.video { background: rgba(14,159,110,.12); color: var(--success); }
+.act b { display: block; font-size: 14px; font-weight: 600; }
+.act small { color: var(--faint); font-size: 12px; }
+.status { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; }
+.status.ok { background: rgba(16,185,129,.12); color: var(--success); }
+.status.todo { background: var(--chip); color: var(--muted); }
+.status.lock { background: var(--chip); color: var(--faint); }
+.act .btn { height: 34px; font-size: 13px; padding: 0 14px; }
+.step.locked { opacity: .7; }
+.side-sticky { position: sticky; top: 130px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; margin-top: 12px; font-size: 13px; }
+.kv span { color: var(--faint); }
+.kv b { font-weight: 600; text-align: right; }
+.teacher { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+.cert-preview { margin-top: 12px; border-radius: 12px; border: 1px solid var(--border); padding: 16px; text-align: center; background:
+  radial-gradient(80% 60% at 50% 0%, rgba(51,204,255,.15), transparent 70%), var(--surface-2); }
+.cert-preview img { height: 26px; margin-bottom: 8px; }
+.cert-preview b { display: block; font-family: var(--font-head); }
+.cert-preview small { color: var(--faint); }
+.fab { position: fixed; right: 24px; bottom: 24px; z-index: 30; display: grid; place-items: center; width: 56px; height: 56px; padding: 0; border-radius: 50%; background: var(--navy); color: #fff; box-shadow: var(--shadow-lg); border: 0; }
+.fab img { width: 26px; height: 26px; object-fit: contain; filter: brightness(1.2); }
+.fab::after { content: "Ask Siraj AI"; position: absolute; right: 64px; white-space: nowrap; background: var(--surface); color: var(--text); border: 1px solid var(--border); font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 8px; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.fab:hover::after { opacity: 1; }
+
+/* ============ Responsive ============ */
+.m-logo { display: none; height: 30px; }
+@media (max-width: 1180px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .hero { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .m-logo.logo-light { display: block; }
+  :root[data-theme="dark"] .m-logo.logo-light { display: none; }
+  :root[data-theme="dark"] .m-logo.logo-dark { display: block; }
+  .topbar .pill-btn { display: none; }
+  .login { grid-template-columns: 1fr; }
+  .login-art { min-height: 420px; padding: 28px 20px; }
+  .login-form-wrap { padding: 24px 16px; }
+  .topbar { padding: 0 16px; top: 46px; }
+  .content { padding: 20px 16px 80px; }
+  .c-hero .inner { grid-template-columns: 1fr; }
+  .c-hero h1 { font-size: 28px; }
+  .hero h1 { font-size: 28px; }
+  .c-hero, .hero { padding: 24px 20px; }
+}
+@media (max-width: 560px) {
+  .stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { padding: 14px; }
+  .stat .trend { display: none; }
+  .sso { grid-template-columns: 1fr; }
+  .crumbs { display: none; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/></symbol>
+    <symbol id="i-lib" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM16.5 4.5l3.8 1-4 15-3.8-1z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M6 10l6-6 6 6M4 20h16"/></symbol>
+    <symbol id="i-quiz" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 9a3 3 0 1 1 4 2.8c-.6.3-1 .8-1 1.5V14M12 17.5v.01"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 3c1 4 5 5.5 5 10a5 5 0 0 1-10 0c0-2.5 1.5-3.5 2-5 .8 1.5 2 2 2 2s-.5-4 1-7z"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+  </defs>
+</svg>
+
+<div class="mock-bar">
+  <b>Siraj design reference</b>
+  <button data-screen="login">Login</button>
+  <button data-screen="dash" class="on">Dashboard</button>
+  <button data-screen="course">Course page</button>
+  <span class="sp"></span>
+  <button id="mapBtn" title="Show which Moodle part each area becomes">Show Moodle mapping</button>
+  <button id="themeBtn">Dark mode</button>
+</div>
+
+<!-- ======================= LOGIN ======================= -->
+<section class="screen" id="login">
+  <div class="login">
+    <div class="login-art" data-map>
+      <span class="map-tag">theme_siraj login layout · per-client image + text in theme settings</span>
+      <img class="logo" src="img/siraj-logo-white.png" alt="Siraj Learning">
+      <div>
+        <span class="eyebrow">Siraj Learning</span>
+        <h1>Learning that<br><span>lights the way.</span></h1>
+        <p class="lead">Mandatory training, skills and certificates for your whole organisation, in one place, in English and Arabic.</p>
+        <div class="proof">
+          <div><b>40+</b><small>Courses ready to assign</small></div>
+          <div><b>AI Tutor</b><small>Ask anything, any time</small></div>
+          <div><b>EN · ع</b><small>Fully bilingual</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="login-form-wrap">
+      <div class="login-top">
+        <button class="pill-btn"><svg class="i"><use href="#i-globe"/></svg>English</button>
+        <button class="icon-btn theme-toggle" aria-label="Toggle theme"><svg class="i"><use href="#i-sun"/></svg></button>
+      </div>
+      <form class="login-form" onsubmit="event.preventDefault(); show('dash')" data-map>
+        <span class="map-tag">core login form, restyled (Moodle template override)</span>
+        <h2>Welcome back</h2>
+        <p class="sub">Sign in with the username from your welcome email.</p>
+        <div class="field"><label>Username or email</label><input value="layla.hassan"></div>
+        <div class="field"><label>Password</label><input type="password" value="password123"><svg class="i eye"><use href="#i-eye"/></svg></div>
+        <div class="row-between">
+          <span class="check"><i><svg class="i"><use href="#i-check"/></svg></i>Remember me</span>
+          <a class="link" href="#">Forgot password?</a>
+        </div>
+        <button class="btn btn-primary btn-block">Sign in <svg class="i"><use href="#i-arrow"/></svg></button>
+        <div class="divider">or continue with</div>
+        <div class="sso">
+          <button type="button" class="btn btn-ghost"><svg width="18" height="18" viewBox="0 0 23 23"><path fill="#F25022" d="M1 1h10v10H1z"/><path fill="#7FBA00" d="M12 1h10v10H12z"/><path fill="#00A4EF" d="M1 12h10v10H1z"/><path fill="#FFB900" d="M12 12h10v10H12z"/></svg>Microsoft</button>
+          <button type="button" class="btn btn-ghost"><svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.6 12.3c0-.8-.1-1.5-.2-2.2H12v4.2h6a5 5 0 0 1-2.2 3.3v2.7h3.6c2-1.9 3.2-4.7 3.2-8"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1-3.7 1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3 .6 4.2 1.6l3.1-3.1A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4"/></svg>Google</button>
+        </div>
+      </form>
+      <div class="login-foot"><span>© 2026 Siraj Learning · powered by Moodle</span><a href="#">Privacy</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= APP SHELL (dashboard + course) ======================= -->
+<section class="screen on" id="appwrap">
+<div class="app">
+  <aside class="sidebar" data-map>
+    <span class="map-tag">theme_siraj: new left navigation (replaces Moodle's top menu + drawers)</span>
+    <div class="brand"><img class="logo-light" src="img/siraj-logo.png" alt="Siraj Learning"><img class="logo-dark" src="img/siraj-logo-white.png" alt="Siraj Learning"></div>
+    <div class="search"><svg class="i"><use href="#i-search"/></svg><span>Search courses…</span><kbd>Ctrl K</kbd></div>
+    <div>
+      <div class="nav-label">Learn</div>
+      <nav class="nav">
+        <a href="#" data-go="dash" class="active"><svg class="i"><use href="#i-home"/></svg>Dashboard</a>
+        <a href="#" data-go="course"><svg class="i"><use href="#i-book"/></svg>My learning<span class="count">5</span></a>
+        <a href="#"><svg class="i"><use href="#i-compass"/></svg>Explore catalogue</a>
+        <a href="#"><svg class="i"><use href="#i-cal"/></svg>Calendar</a>
+        <a href="#"><svg class="i"><use href="#i-award"/></svg>Certificates<span class="count">2</span></a>
+        <a href="#"><svg class="i"><use href="#i-lib"/></svg>E-Library</a>
+      </nav>
+    </div>
+    <div class="pinned">
+      <div class="nav-label">Continue</div>
+      <a href="#" data-go="course"><img src="img/hse.jpg" alt=""><div><b>Workplace Health & Safety</b><div class="mini-track"><i style="width:80%"></i></div></div></a>
+      <a href="#"><img src="img/infosec.jpg" alt=""><div><b>Information Security</b><div class="mini-track"><i style="width:40%"></i></div></div></a>
+      <a href="#"><img src="img/pm.jpg" alt=""><div><b>Project Management</b><div class="mini-track"><i style="width:20%"></i></div></div></a>
+    </div>
+    <div class="ai-card" data-map>
+      <span class="map-tag">our AI Tutor plugin</span>
+      <b><svg class="i"><use href="#i-spark"/></svg>Siraj AI Tutor</b>
+      <p>Stuck on a lesson? Ask in English or Arabic.</p>
+      <button class="btn btn-flame">Ask a question</button>
+    </div>
+    <div class="me"><div class="avatar">LH</div><div><b>Layla Hassan</b><small>Engineering · Dubai</small></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="icon-btn" aria-label="Collapse sidebar"><svg class="i"><use href="#i-panel"/></svg></button>
+      <img class="m-logo logo-light" src="img/siraj-logo.png" alt="Siraj Learning"><img class="m-logo logo-dark" src="img/siraj-logo-white.png" alt=""><div class="crumbs" id="crumbs"><b>Dashboard</b></div>
+      <span class="sp"></span>
+      <button class="pill-btn"><svg class="i"><use href="#i-globe"/></svg>EN</button>
+      <button class="icon-btn theme-toggle" aria-label="Toggle theme"><svg class="i"><use href="#i-sun"/></svg></button>
+      <button class="icon-btn" aria-label="Messages"><svg class="i"><use href="#i-msg"/></svg></button>
+      <button class="icon-btn" aria-label="Notifications"><svg class="i"><use href="#i-bell"/></svg><span class="dot"></span></button>
+      <div class="avatar">LH</div>
+    </header>
+
+    <!-- ===== Dashboard ===== -->
+    <div class="content page" id="dash">
+      <section class="hero" data-map>
+        <span class="map-tag">Siraj Dashboard block (new): greeting, next step, streak</span>
+        <div>
+          <span class="eyebrow">Tuesday, 10.11.2026</span>
+          <h1>Good morning, Layla</h1>
+          <p>You're 80% through <b>Workplace Health & Safety</b>. One short quiz left and your certificate is ready.</p>
+          <div class="actions">
+            <a href="#" data-go="course" class="btn btn-flame"><svg class="i"><use href="#i-play"/></svg>Continue learning</a>
+            <a href="#" class="btn btn-glass">View my plan</a>
+          </div>
+          <div class="streak"><svg class="i"><use href="#i-flame"/></svg>4-day streak
+            <span class="days"><i class="on">M</i><i class="on">T</i><i class="on">W</i><i class="on">T</i><i>F</i><i>S</i><i>S</i></span>
+          </div>
+        </div>
+        <div class="next-card">
+          <div class="k">Needs your attention</div>
+          <div class="t">
+            <div class="ring" style="--p:80" data-label="80%"></div>
+            <div><b>Knowledge check</b><small>Workplace Health & Safety · 3 questions · 5 min</small></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <span class="tag due"><svg class="i" style="width:12px;height:12px"><use href="#i-clock"/></svg>Due 14.11.2026</span>
+            <a href="#" data-go="course" class="btn btn-glass" style="height:36px">Start <svg class="i"><use href="#i-arrow"/></svg></a>
+          </div>
+        </div>
+      </section>
+
+      <div class="stats" data-map>
+        <span class="map-tag">Siraj Dashboard block: stats from completion data</span>
+        <div class="stat"><div class="ico"><svg class="i"><use href="#i-book"/></svg></div><div><b>4</b><small>In progress</small></div></div>
+        <div class="stat"><div class="ico"><svg class="i"><use href="#i-check"/></svg></div><div><b>1</b><small>Completed</small></div><span class="trend">+1 this week</span></div>
+        <div class="stat"><div class="ico"><svg class="i"><use href="#i-clock"/></svg></div><div><b>6.5 h</b><small>Learning this month</small></div><span class="trend">+22%</span></div>
+        <div class="stat"><div class="ico"><svg class="i"><use href="#i-award"/></svg></div><div><b>2</b><small>Certificates</small></div></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="sec-head" data-map>
+            <span class="map-tag">core Course overview block, new card template</span>
+            <div><h2>My learning</h2><p>Mandatory courses first, then the rest.</p></div>
+            <div class="seg"><button class="on">In progress</button><button>Not started</button><button>Completed</button></div>
+          </div>
+          <div class="courses">
+            <article class="course">
+              <div class="img"><img src="img/hse.jpg" alt=""><span class="tag">Mandatory</span><span class="fav"><svg class="i" style="width:15px;height:15px"><use href="#i-heart"/></svg></span></div>
+              <div class="body"><span class="cat">Compliance</span><h3>Workplace Health & Safety</h3>
+                <div class="meta"><span><svg class="i"><use href="#i-layers"/></svg>5 activities</span><span><svg class="i"><use href="#i-clock"/></svg>45 min</span></div>
+                <div class="prog"><div class="row"><span>Progress</span><b>80%</b></div><div class="bar"><i style="width:80%"></i></div></div></div>
+              <div class="foot"><span>Next: Knowledge check</span><a href="#" data-go="course">Resume <svg class="i" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+            </article>
+            <article class="course">
+              <div class="img"><img src="img/infosec.jpg" alt=""><span class="tag">Mandatory</span><span class="fav"><svg class="i" style="width:15px;height:15px"><use href="#i-heart"/></svg></span></div>
+              <div class="body"><span class="cat">Compliance</span><h3>Information Security Essentials</h3>
+                <div class="meta"><span><svg class="i"><use href="#i-layers"/></svg>5 activities</span><span><svg class="i"><use href="#i-clock"/></svg>30 min</span></div>
+                <div class="prog"><div class="row"><span>Progress</span><b>40%</b></div><div class="bar"><i style="width:40%"></i></div></div></div>
+              <div class="foot"><span class="tag warn">Due in 4 days</span><a href="#">Resume <svg class="i" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+            </article>
+            <article class="course">
+              <div class="img"><img src="img/pm.jpg" alt=""><span class="tag">Skills</span><span class="fav"><svg class="i" style="width:15px;height:15px"><use href="#i-heart"/></svg></span></div>
+              <div class="body"><span class="cat">Professional Development</span><h3>Project Management Fundamentals</h3>
+                <div class="meta"><span><svg class="i"><use href="#i-layers"/></svg>5 activities</span><span><svg class="i"><use href="#i-clock"/></svg>1 h 20 min</span></div>
+                <div class="prog"><div class="row"><span>Progress</span><b>20%</b></div><div class="bar"><i style="width:20%"></i></div></div></div>
+              <div class="foot"><span>Next: The rules in practice</span><a href="#">Resume <svg class="i" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+            </article>
+            <article class="course">
+              <div class="img"><img src="img/conduct.jpg" alt=""><span class="tag">Mandatory</span><span class="fav"><svg class="i" style="width:15px;height:15px"><use href="#i-heart"/></svg></span></div>
+              <div class="body"><span class="cat">Compliance</span><h3>Code of Conduct & Ethics</h3>
+                <div class="meta"><span><svg class="i"><use href="#i-layers"/></svg>5 activities</span><span><svg class="i"><use href="#i-clock"/></svg>25 min</span></div>
+                <div class="prog"><div class="row"><span>Completed 02.11.2026</span><b>100%</b></div><div class="bar done"><i style="width:100%"></i></div></div></div>
+              <div class="foot"><span class="tag ok"><svg class="i" style="width:12px;height:12px"><use href="#i-award"/></svg>Certificate ready</span><a href="#">View <svg class="i" style="width:14px;height:14px"><use href="#i-arrow"/></svg></a></div>
+            </article>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" data-map>
+            <span class="map-tag">core Timeline block, restyled</span>
+            <h3>Upcoming deadlines <a href="#">Calendar</a></h3>
+            <ul class="deadlines">
+              <li><div class="date"><small>Nov</small><b>12</b></div><div class="t"><b>Reflection: apply it to your role</b><small>Assignment · Workplace Health & Safety</small></div><span class="tag warn">2 days</span></li>
+              <li><div class="date"><small>Nov</small><b>14</b></div><div class="t"><b>Knowledge check</b><small>Quiz · Workplace Health & Safety</small></div><span class="tag info">4 days</span></li>
+              <li><div class="date"><small>Nov</small><b>15</b></div><div class="t"><b>Phishing simulation review</b><small>Assignment · Information Security</small></div><span class="tag info">5 days</span></li>
+              <li><div class="date"><small>Nov</small><b>22</b></div><div class="t"><b>Fire warden briefing</b><small>Live session · Fire Safety</small></div><span class="tag info">12 days</span></li>
+            </ul>
+          </div>
+          <div class="card" data-map>
+            <span class="map-tag">Siraj Dashboard block: weekly goal (from logs)</span>
+            <h3>Weekly goal <a href="#">Edit</a></h3>
+            <div class="goal">
+              <div class="big-ring" style="--p:65"><span><div><b>65%</b><small>2 of 3 h</small></div></span></div>
+              <div style="flex:1">
+                <div class="week">
+                  <i style="--h:70%"></i><i style="--h:40%"></i><i style="--h:90%"></i><i style="--h:55%"></i><i style="--h:0%"></i><i style="--h:0%"></i><i style="--h:0%"></i>
+                </div>
+                <div class="week-l"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card" data-map>
+            <span class="map-tag">customcert certificates</span>
+            <h3>Recent certificates <a href="#">All</a></h3>
+            <div class="certs">
+              <div class="cert"><div class="seal"><svg class="i"><use href="#i-award"/></svg></div><b>Code of Conduct & Ethics</b><small>02.11.2026</small></div>
+              <div class="cert"><div class="seal"><svg class="i"><use href="#i-award"/></svg></div><b>Anti-Bribery Awareness</b><small>18.10.2026</small></div>
+            </div>
+          </div>
+          <div class="card ai-suggest" data-map>
+            <span class="map-tag">AI Tutor plugin, shortcut prompts</span>
+            <h3 style="color:#fff">Ask Siraj AI</h3>
+            <p>Revise before your quiz. Try:</p>
+            <div class="chips"><span>Summarise HSE key rules</span><span>Quiz me on near misses</span><span>اشرح لي إجراءات الإخلاء</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Course page ===== -->
+    <div class="content page" id="course" hidden>
+      <section class="c-hero" data-map>
+        <span class="map-tag">theme_siraj course header (uses the course image)</span>
+        <div class="inner">
+          <div>
+            <span class="eyebrow">Compliance · HSE101</span>
+            <h1>Workplace Health & Safety</h1>
+            <p>Site rules, risk assessment and reporting near misses. Mandatory for all staff every year.</p>
+            <div class="facts">
+              <span><svg class="i"><use href="#i-cal"/></svg>Due 22.11.2026</span>
+              <span><svg class="i"><use href="#i-layers"/></svg>4 sections · 5 activities</span>
+              <span><svg class="i"><use href="#i-clock"/></svg>45 min</span>
+              <span><svg class="i"><use href="#i-award"/></svg>Certificate</span>
+            </div>
+          </div>
+          <div class="prog-box">
+            <div class="top"><div class="ring" style="--p:80" data-label="80%"></div><div><b>4 of 5 done</b><small>Last activity 2 days ago</small></div></div>
+            <a href="#" class="btn btn-flame" style="width:100%">Continue: Knowledge check</a>
+          </div>
+        </div>
+      </section>
+
+      <nav class="tabs" data-map><span class="map-tag">core course tabs, restyled</span>
+        <a href="#" class="on">Course</a><a href="#">Grades</a><a href="#">Discussions</a><a href="#">Resources</a><a href="#">Certificate</a>
+      </nav>
+
+      <div class="grid-2">
+        <div class="steps" data-map>
+          <span class="map-tag">course format template override (sections become steps)</span>
+          <div class="step done">
+            <div class="step-head"><div class="step-num"><svg class="i"><use href="#i-check"/></svg></div><div><h3>Introduction</h3><small>Why this matters and what you'll learn</small></div><div class="r"><span class="status ok">Completed</span></div></div>
+            <div class="acts">
+              <div class="act"><div class="ai page"><svg class="i"><use href="#i-file"/></svg></div><div><b>Welcome and objectives</b><small>Page · 5 min</small></div><span class="status ok"><svg class="i" style="width:14px;height:14px"><use href="#i-check"/></svg>Done</span></div>
+            </div>
+          </div>
+          <div class="step done">
+            <div class="step-head"><div class="step-num"><svg class="i"><use href="#i-check"/></svg></div><div><h3>Key rules</h3><small>The rules in practice, with examples</small></div><div class="r"><span class="status ok">Completed</span></div></div>
+            <div class="acts">
+              <div class="act"><div class="ai video"><svg class="i"><use href="#i-video"/></svg></div><div><b>The rules in practice</b><small>Video · 8 min</small></div><span class="status ok"><svg class="i" style="width:14px;height:14px"><use href="#i-check"/></svg>Done</span></div>
+              <div class="act"><div class="ai pdf"><svg class="i"><use href="#i-file"/></svg></div><div><b>HSE Policy (HSE-POL-001)</b><small>PDF · 12 pages</small></div><span class="status ok"><svg class="i" style="width:14px;height:14px"><use href="#i-check"/></svg>Done</span></div>
+            </div>
+          </div>
+          <div class="step done">
+            <div class="step-head"><div class="step-num"><svg class="i"><use href="#i-check"/></svg></div><div><h3>Practice</h3><small>Apply it to your own role</small></div><div class="r"><span class="status ok">Completed</span></div></div>
+            <div class="acts">
+              <div class="act"><div class="ai assign"><svg class="i"><use href="#i-upload"/></svg></div><div><b>Reflection: apply it to your role</b><small>Assignment · submitted 08.11.2026</small></div><span class="status ok"><svg class="i" style="width:14px;height:14px"><use href="#i-check"/></svg>Submitted</span></div>
+            </div>
+          </div>
+          <div class="step current">
+            <div class="step-head"><div class="step-num">4</div><div><h3>Assessment</h3><small>Pass 80% to unlock your certificate</small></div><div class="r"><span>0 of 1</span></div></div>
+            <div class="acts">
+              <div class="act"><div class="ai quiz"><svg class="i"><use href="#i-quiz"/></svg></div><div><b>Knowledge check</b><small>Quiz · 3 questions · closes 14.11.2026</small></div><a href="#" class="btn btn-primary">Start quiz</a></div>
+            </div>
+          </div>
+          <div class="step locked">
+            <div class="step-head"><div class="step-num"><svg class="i"><use href="#i-lock"/></svg></div><div><h3>Certificate</h3><small>Unlocks when the assessment is passed</small></div><div class="r"><span class="status lock"><svg class="i" style="width:14px;height:14px"><use href="#i-lock"/></svg>Locked</span></div></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="side-sticky">
+            <div class="card">
+              <h3>About this course</h3>
+              <div class="kv">
+                <span>Category</span><b>Compliance</b>
+                <span>Language</span><b>English · العربية</b>
+                <span>Renewal</span><b>Every 12 months</b>
+                <span>Enrolled</span><b>01.11.2026</b>
+              </div>
+              <div class="teacher"><div class="avatar" style="background:var(--navy)">OR</div><div><b>Omar Rahman</b><br><small style="color:var(--faint)">Course owner, HSE</small></div></div>
+            </div>
+            <div class="card">
+              <h3>Your certificate</h3>
+              <div class="cert-preview"><img src="img/siraj-flame.png" alt=""><b>Workplace Health & Safety</b><small>Awarded to Layla Hassan on completion</small></div>
+            </div>
+            <div class="card ai-suggest">
+              <h3 style="color:#fff">Ask about this course</h3>
+              <p>The AI Tutor has read this course's material.</p>
+              <div class="chips"><span>What is a near miss?</span><span>Quiz me</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<button class="fab" aria-label="Ask Siraj AI"><img src="img/siraj-flame.png" alt=""></button>
+
+<script>
+  const root = document.documentElement;
+  const screens = { login: 'login', dash: 'appwrap', course: 'appwrap' };
+  function show(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === screens[name]));
+    document.querySelectorAll('.page').forEach(p => p.hidden = p.id !== name);
+    document.querySelectorAll('[data-screen]').forEach(b => b.classList.toggle('on', b.dataset.screen === name));
+    document.querySelectorAll('.nav a').forEach(a => a.classList.toggle('active', a.dataset.go === name));
+    document.querySelector('.fab').style.display = name === 'login' ? 'none' : '';
+    document.getElementById('crumbs').innerHTML = name === 'course'
+      ? 'My learning <span>/</span> <b>Workplace Health & Safety</b>' : '<b>Dashboard</b>';
+    try { localStorage.setItem('siraj-mock-screen', name); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('[data-screen]').forEach(b => b.onclick = () => show(b.dataset.screen));
+  document.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); show(a.dataset.go); });
+  function setTheme(t) {
+    root.dataset.theme = t;
+    document.getElementById('themeBtn').textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
+    try { localStorage.setItem('siraj-mock-theme', t); } catch (e) {}
+  }
+  const toggle = () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+  document.getElementById('themeBtn').onclick = toggle;
+  document.querySelectorAll('.theme-toggle').forEach(b => b.onclick = toggle);
+  document.getElementById('mapBtn').onclick = e => {
+    const on = document.body.classList.toggle('show-map');
+    e.target.classList.toggle('on', on);
+  };
+  let saved = {};
+  try { saved = { s: localStorage.getItem('siraj-mock-screen'), t: localStorage.getItem('siraj-mock-theme') }; } catch (e) {}
+  const params = new URLSearchParams(location.search);
+  setTheme(params.get('theme') || saved.t || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  show(params.get('screen') || saved.s || 'dash');
+</script>
+</body>
+</html>

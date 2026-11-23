@@ -1,0 +1,40 @@
+// Siraj default brand. Compile-time values for Bootstrap; runtime light/dark tokens are in siraj/tokens.scss.
+$siraj-navy:   #0F3F66;
+$siraj-navy-2: #0A2943;
+$siraj-mint:   #00C98C;
+$siraj-cyan:   #33CCFF;
+$siraj-blue:   #3A70B8;
+$siraj-flame:  linear-gradient(110deg, #00C98C, #33CCFF 65%, #3A70B8);
+
+$primary:   $siraj-navy;
+$secondary: #E9EEF1;
+$success:   #07996E;
+$info:      #2B8BC6;
+$warning:   #B8791B;
+$danger:    #C2412F;
+
+$body-bg:    #F5F7F8;
+$body-color: #102536;
+$border-color: #E4EAED;
+$link-color: #155D96;
+$body-bg-dark:    #0A1119;
+$body-color-dark: #E9F1F5;
+$border-color-dark: #263744;
+$link-color-dark: #8BCAFF;
+
+$font-family-sans-serif: "Inter", "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+$headings-font-family: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif;
+$headings-font-weight: 600;
+$font-size-base: 0.9375rem;
+
+$border-radius:    10px;
+$border-radius-sm: 8px;
+$border-radius-lg: 18px;
+$border-radius-pill: 999px;
+$btn-font-weight: 600;
+$input-btn-padding-y: .55rem;
+$input-btn-padding-x: 1rem;
+
+$navbar-height: 72px;
+$drawer-bg-color: #FFFFFF;
+$card-border-color: #E4EAED;

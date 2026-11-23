@@ -1,0 +1,330 @@
+// ---------- App shell: sidebar + main column + top bar ----------
+// The document scrolls (as in Boost). The sidebar, top bar and Boost's drawers are fixed to the window;
+// the main column and the fixed pieces are offset by the sidebar width (--si-side-w).
+.siraj-app { min-height: 100vh; }
+.siraj-main { margin-left: var(--si-side-w); transition: margin .25s ease; background: var(--si-bg); min-width: 0; }
+#page.drawers {
+    background: var(--si-bg);
+    display: flex; flex-direction: column;
+    min-height: calc(100vh - var(--si-top-h));
+    padding-left: clamp(16px, 2.6vw, 44px); padding-right: clamp(16px, 2.6vw, 44px);
+}
+// Boost's course index drawer opens next to our sidebar, not under it.
+.drawer.drawer-left.show { left: var(--si-side-w); }
+@include media-breakpoint-up(md) {
+    .drawer.drawer-left, .drawer.drawer-right { top: var(--si-top-h); height: calc(100vh - var(--si-top-h)); }
+}
+// Signed-out pages (site home for guests): no sidebar.
+body.siraj-loggedout { --si-side-w: 0px; .siraj-sidebar, .siraj-collapse { display: none; } }
+
+.siraj-sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0; z-index: 1031;
+    width: var(--si-side-w);
+    display: flex; flex-direction: column;
+    padding: 22px 14px 14px;
+    background: var(--si-surface);
+    border-right: 1px solid var(--si-line);
+    transition: width .25s ease;
+    overflow-y: auto; overflow-x: hidden;
+}
+.siraj-brand {
+    display: flex; align-items: center; gap: 11px; padding: 2px 10px 26px; text-decoration: none !important;
+}
+.siraj-brandname {
+    font: 800 16px/1.1 var(--si-head); letter-spacing: 2.1px; color: var(--si-ink);
+    small { display: block; font: 600 8px/1 "Inter", sans-serif; letter-spacing: 4px; margin-top: 5px; color: var(--si-muted); }
+}
+.siraj-collapse {
+    position: fixed; left: calc(var(--si-side-w) - 13px); top: 32px; z-index: 1032;
+    width: 26px; height: 26px; padding: 0; display: grid; place-items: center;
+    border: 1px solid var(--si-line); border-radius: 50%; background: var(--si-surface); color: var(--si-muted);
+    box-shadow: var(--si-soft); transition: left .25s ease, transform .25s ease;
+    .si-icon { width: 14px; height: 14px; }
+}
+.siraj-navlabel {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.6px; color: var(--si-faint);
+    padding: 14px 13px 8px; white-space: nowrap;
+}
+.siraj-nav {
+    display: grid; gap: 3px;
+    a {
+        display: flex; align-items: center; gap: 13px; padding: 10px 13px; border-radius: 10px;
+        color: var(--si-muted); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background .15s, color .15s;
+        &:hover { background: var(--si-surface-2); color: var(--si-ink); }
+        &.active { background: var(--si-mint-soft); color: var(--si-accent-ink); }
+        &.active .si-icon { color: var(--si-mint-ink); }
+    }
+}
+.siraj-profile {
+    display: flex; align-items: center; gap: 10px; text-decoration: none !important; color: var(--si-ink);
+    b { display: block; font-size: 13px; }
+    small { display: block; color: var(--si-muted); font-size: 11px; }
+}
+.siraj-avatar {
+    width: 34px; height: 34px; border-radius: 50%; flex: none; display: grid; place-items: center; overflow: hidden;
+    background: linear-gradient(135deg, #0F3F66, #16808A); color: #fff; font: 700 12px var(--si-head); letter-spacing: .02em;
+    box-shadow: 0 0 0 2px var(--si-surface), 0 0 0 3px color-mix(in srgb, var(--si-mint) 55%, transparent);
+    img { width: 100%; height: 100%; object-fit: cover; }
+    &.lg { width: 44px; height: 44px; font-size: 15px; }
+}
+.siraj-profile {
+    margin: auto 2px 0; padding: 10px; border: 1px solid var(--si-line) !important; border-radius: 14px; background: var(--si-surface);
+    transition: border-color .15s, box-shadow .15s;
+    &:hover { border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)) !important; box-shadow: var(--si-soft); }
+}
+.siraj-profile-go { margin-left: auto; color: var(--si-faint); .si-icon { width: 15px; height: 15px; } }
+// Siraj user menu (replaces Moodle's): avatar + first name, and a short menu.
+.siraj-me-btn {
+    display: grid; place-items: center; width: 42px; height: 42px; padding: 0; border: 0; border-radius: 50%; background: transparent;
+    .siraj-avatar { width: 38px; height: 38px; font-size: 12.5px; box-shadow: 0 0 0 2px var(--si-bg); transition: box-shadow .15s; }
+    &:hover .siraj-avatar, &[aria-expanded="true"] .siraj-avatar, &:focus-visible .siraj-avatar {
+        box-shadow: 0 0 0 2px var(--si-bg), 0 0 0 4px var(--si-mint);
+    }
+}
+.siraj-me-name { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.siraj-me-menu {
+    min-width: 260px; padding: 8px !important;
+    .dropdown-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 9px; font-size: 14px;
+        .si-icon { width: 17px; height: 17px; color: var(--si-muted); } }
+}
+.siraj-me-head {
+    display: flex; align-items: center; gap: 12px; padding: 8px 10px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--si-line);
+    b { display: block; font-size: 14.5px; } small { display: block; color: var(--si-muted); font-size: 12px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; }
+}
+.siraj-profiletext { min-width: 0; overflow: hidden; }
+
+// Collapsed sidebar: icons only.
+body.siraj-collapsed, .siraj-collapsed-early body {
+    .siraj-brandname, .siraj-navlabel, .siraj-nav a span, .siraj-profiletext { display: none; }
+    .siraj-brand { padding-left: 12px; }
+    .siraj-nav a { justify-content: center; padding: 12px; }
+    .siraj-profile { justify-content: center; }
+    .siraj-collapse { transform: rotate(180deg); }
+}
+
+// ---------- Top bar ----------
+.navbar.fixed-top.siraj-topbar {
+    left: var(--si-side-w); right: 0; transition: left .25s ease;
+    height: var(--si-top-h); padding: 0 32px; gap: 16px; flex-wrap: nowrap; display: flex; align-items: center; justify-content: flex-start;
+    background: color-mix(in srgb, var(--si-bg) 86%, transparent) !important;
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--si-line);
+    box-shadow: none;
+}
+.siraj-topbrand { display: none; padding: 8px 4px; }
+.siraj-trail {
+    font-size: 13px; color: var(--si-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+    b { color: var(--si-ink); font-weight: 600; }
+}
+.siraj-trail-sep { color: var(--si-line); margin: 0 6px; }
+.siraj-top-search { margin-left: auto; display: flex; }
+.siraj-top-actions { display: flex; align-items: center; gap: 10px; }
+// Wide screens: trail on the left, search in the middle, actions on the right.
+@include media-breakpoint-up(xl) {
+    .navbar.fixed-top.siraj-topbar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 440px) minmax(max-content, 1fr); }
+    .siraj-top-search { margin: 0; justify-self: stretch; .siraj-search-trigger { width: 100%; } }
+    .siraj-top-actions { justify-self: end; }
+}
+// Edit mode: one icon button at the foot of the sidebar.
+.siraj-sidefoot { margin-top: auto; padding: 12px 6px 4px; border-top: 1px solid var(--si-line); }
+.siraj-editbtn {
+    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--si-line); background: var(--si-surface); color: var(--si-muted);
+    .si-icon { width: 18px; height: 18px; }
+    &:hover { color: var(--si-ink); border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)); }
+    &.is-on { background: var(--si-mint); border-color: var(--si-mint); color: #062C40; box-shadow: 0 6px 18px color-mix(in srgb, var(--si-mint) 40%, transparent); }
+}
+// Edit mode: a Siraj pill with a mint switch instead of Moodle's bare toggle.
+.siraj-topbar .editmode-switch-form {
+    margin: 0 !important; height: 40px; padding: 0 6px 0 12px; display: flex; align-items: center; border-radius: 999px;
+    border: 1px solid var(--si-line); background: var(--si-surface);
+    .input-group { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; width: auto; }
+    .form-check { display: flex; align-items: center; margin: 0; padding: 0; min-height: 0; > .form-check-label { display: none; } }
+    > .input-group > .form-check-label { font-size: 13px; font-weight: 600; color: var(--si-ink) !important; margin: 0 !important; white-space: nowrap; }
+    .form-check-input {
+        float: none; margin: 0; width: 36px; height: 20px; border: 0; cursor: pointer;
+        background-color: var(--si-surface-2); box-shadow: inset 0 0 0 1px var(--si-line);
+        --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        &:checked { background-color: var(--si-mint); box-shadow: none; }
+        &:focus { box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-mint) 35%, transparent); }
+    }
+    &:has(.form-check-input:checked) { border-color: color-mix(in srgb, var(--si-mint) 55%, var(--si-line)); background: var(--si-mint-soft); }
+}
+.siraj-iconbtn {
+    width: 38px; height: 38px; padding: 0; display: grid; place-items: center;
+    border: 1px solid var(--si-line); border-radius: var(--si-radius-sm); background: var(--si-surface); color: var(--si-muted);
+    &:hover { color: var(--si-ink); }
+}
+.siraj-search-trigger {
+    display: flex; align-items: center; gap: 10px; width: 230px; height: 38px; padding: 0 12px;
+    border: 1px solid var(--si-line); border-radius: var(--si-radius-sm); background: var(--si-surface);
+    color: var(--si-muted); font-size: 13px; text-align: left;
+    .si-icon { width: 16px; height: 16px; }
+    kbd { margin-left: auto; }
+}
+kbd {
+    font: 600 10px "Inter", sans-serif; color: var(--si-muted); background: var(--si-surface-2);
+    border: 1px solid var(--si-line); border-radius: 5px; padding: 2px 5px; box-shadow: none;
+}
+// Moodle's own notification / message / user menu pieces, tidied to match.
+.siraj-plugins, .siraj-usermenu, .siraj-lang { display: flex; align-items: center; }
+.siraj-topbar .popover-region-toggle, .siraj-topbar .nav-link {
+    width: 40px; height: 40px !important; min-height: 40px; display: grid !important; place-items: center; border-radius: var(--si-radius-sm);
+    color: var(--si-muted) !important;
+    &:hover { background: var(--si-surface-2); }
+}
+.siraj-topbar .usermenu .userinitials, .siraj-topbar .usermenu .userpicture {
+    width: 36px; height: 36px; background: color-mix(in srgb, var(--si-mint) 18%, var(--si-surface)); color: var(--si-mint-ink);
+}
+.siraj-topbar .usermenu .login { color: var(--si-muted); }
+.siraj-topbar .dropdown-menu { border-radius: 12px; border-color: var(--si-line); box-shadow: var(--si-shadow); }
+
+// Main content width and spacing.
+#page.drawers .main-inner,
+.pagelayout-standard #page.drawers .main-inner, body.limitedwidth #page.drawers .main-inner {
+    max-width: 1480px; width: 100%; margin: 0 auto; padding: 32px 0 56px; background: transparent; box-shadow: none; border: 0;
+    flex: 1 0 auto;
+}
+.secondary-navigation .navigation .nav-tabs { max-width: none; }
+#page.drawers div[role="main"] { padding-left: 0; padding-right: 0; }
+// Long text stays readable on wide screens.
+#region-main .box.generalbox, .course-description, .categoryinfo .info, .activity-description, .no-overflow > .text_to_html { max-width: 82ch; }
+
+// ---------- Footer ----------
+.siraj-footer {
+    margin-top: auto; text-align: center; color: var(--si-faint); font-size: 12px; padding: 20px 16px 28px; background: transparent;
+}
+
+// ---------- Command palette ----------
+.siraj-palette-back {
+    position: fixed; inset: 0; z-index: 2000; background: rgba(6, 18, 29, .6); backdrop-filter: blur(2px);
+    display: flex; justify-content: center; align-items: flex-start; padding-top: 14vh;
+    &[hidden] { display: none; }
+}
+.siraj-palette {
+    width: min(580px, 92vw); background: var(--si-surface); border: 1px solid var(--si-line);
+    border-radius: 16px; box-shadow: var(--si-shadow); overflow: hidden;
+}
+.siraj-palette-form {
+    display: flex; align-items: center; gap: 12px; padding: 0 18px; border-bottom: 1px solid var(--si-line); color: var(--si-muted);
+    input { flex: 1; border: 0; background: transparent; color: var(--si-ink); padding: 18px 0; outline: none; font-size: 15px; }
+}
+.siraj-palette-list {
+    padding: 8px; max-height: 50vh; overflow: auto;
+    a {
+        display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 9px; color: var(--si-ink);
+        text-decoration: none; font-size: 14px;
+        &:hover, &:focus { background: var(--si-surface-2); }
+        .si-icon { color: var(--si-muted); }
+        &[hidden] { display: none; }
+    }
+}
+.siraj-palette-label { font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--si-faint); padding: 8px 12px 4px; }
+
+// ---------- Phone ----------
+.siraj-mobilebar, .siraj-sidenav-close { display: none; }
+@include media-breakpoint-down(md) {
+    :root, body { --si-side-w: 0px !important; }
+    .siraj-sidebar, .siraj-collapse { display: none; }
+    .siraj-main { margin-left: 0 !important; }
+    .navbar.fixed-top.siraj-topbar { padding: 0 16px; height: 60px; }
+    :root { --si-top-h: 60px; }
+    .siraj-topbrand {
+        display: flex; align-items: center; gap: 8px; text-decoration: none !important;
+        font: 800 14px var(--si-head); letter-spacing: 2px; color: var(--si-ink);
+        .si-flame { width: 22px; height: 26px; }
+    }
+    .siraj-trail { display: none; }
+    .siraj-search-trigger { width: 38px; padding: 0; justify-content: center; span, kbd { display: none; } }
+    .siraj-topbar .editmode-switch-form, .siraj-topbar .usermenu-container ~ .divider, .siraj-topbar .divider { display: none !important; }
+    #page.drawers .main-inner { padding: 22px 0 100px; }
+    .siraj-mobilebar {
+        position: fixed; z-index: 1030; left: 0; right: 0; bottom: 0; height: 68px;
+        display: flex; justify-content: space-around; align-items: center;
+        background: var(--si-surface); border-top: 1px solid var(--si-line); padding-bottom: env(safe-area-inset-bottom);
+        a, button {
+            display: grid; justify-items: center; gap: 4px; padding: 6px 8px; font-size: 10px; font-weight: 600;
+            color: var(--si-muted); text-decoration: none; border: 0; background: transparent; font-family: inherit;
+            &.active { color: var(--si-mint-ink); }
+            .si-icon { width: 20px; height: 20px; }
+        }
+    }
+    // Menu tab (teachers, managers, admins): the full sidebar slides in over the page.
+    // It opens from the same side as the Menu tab (right; RTLCSS mirrors it to the left in Arabic).
+    body.siraj-sidenav-open {
+        overflow: hidden;
+        .siraj-sidebar {
+            display: flex; width: min(300px, 86vw); z-index: 2050; box-shadow: var(--si-shadow);
+            left: auto; right: 0; border-right: 0; border-left: 1px solid var(--si-line);
+            padding-bottom: calc(14px + env(safe-area-inset-bottom));
+            animation: siraj-sidenav-in .22s ease-out;
+        }
+        .siraj-sidenav-close { display: grid; }
+    }
+    .siraj-sidenav-close {
+        display: none; position: fixed; z-index: 2060; top: 32px; right: calc(min(300px, 86vw) - 13px);
+        width: 26px; height: 26px; padding: 0; place-items: center;
+        border: 1px solid var(--si-line); border-radius: 50%; background: var(--si-surface); color: var(--si-muted);
+        box-shadow: var(--si-soft);
+        .si-icon { width: 14px; height: 14px; }
+    }
+    .siraj-sidenav-backdrop:not([hidden]) {
+        position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 2040; background: rgba(6, 18, 29, .45);
+    }
+    // Notifications panel: Moodle pins it to the screen edges on phones, but the blurred top bar becomes its
+    // containing block, which squashed it to a sliver. Place it under the bar instead.
+    .navbar.siraj-topbar .popover-region .popover-region-container {
+        position: fixed; top: calc(100% + 6px); bottom: auto; left: 12px; right: 12px; width: auto !important;
+        max-height: calc(100vh - var(--si-top-h) - 90px);
+    }
+    .navbar.siraj-topbar .popover-region-toggle::before, .navbar.siraj-topbar .popover-region-toggle::after { display: none; }
+}
+
+@keyframes siraj-sidenav-in { from { transform: translateX(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { body.siraj-sidenav-open .siraj-sidebar { animation: none; } }
+
+// Phones up to 440px: tighter top bar so the account button always fits.
+@media (max-width: 440px) {
+    .navbar.fixed-top.siraj-topbar { padding: 0 12px; gap: 6px; }
+    .siraj-top-actions { gap: 4px; }
+    .siraj-iconbtn, .siraj-search-trigger { width: 36px; height: 36px; }
+    .siraj-langbtn { width: auto; padding: 0 8px; }
+    .siraj-topbar .popover-region-toggle, .siraj-topbar .nav-link { width: 36px; height: 36px !important; min-height: 36px; }
+}
+
+// Right-to-left: Moodle mirrors the whole compiled stylesheet with RTLCSS, so nothing here is written twice.
+// Only direction-neutral RTL rules belong in polish.scss.
+
+// No sliding while the page loads (Boost opens remembered drawers with JS; animating that shifts the whole page).
+// Animations come back once the page has settled (siraj-ready is added after load).
+body:not(.siraj-ready) {
+    #page.drawers, .drawer, .drawer-left, .drawer-right, .siraj-main, .navbar.fixed-top.siraj-topbar { transition: none !important; }
+}
+
+// Very small phones: tighten the top bar so it never overflows.
+@media (max-width: 380px) {
+    .navbar.fixed-top.siraj-topbar { padding: 0 10px; gap: 6px; }
+    .siraj-top-actions { gap: 4px; }
+    .siraj-topbrand span { display: none; }
+    .siraj-iconbtn, .siraj-search-trigger { width: 36px; height: 36px; }
+    .siraj-topbar .popover-region-toggle, .siraj-topbar .nav-link { width: 36px; height: 36px !important; min-height: 36px; }
+    .siraj-topbar .usermenu .userinitials, .siraj-topbar .usermenu .userpicture { width: 32px; height: 32px; }
+    .siraj-topbar .usermenu .dropdown-toggle::after { display: none; }
+}
+
+// Closed off-screen drawers (and their hidden headings) must never make the page scroll sideways.
+html, body { overflow-x: clip; }
+
+// ---------- Inside Siraj's Learning mode stage ----------
+// Lesson, wiki, workshop, database and content packages run their Moodle pages in a frame inside the player: no
+// app shell, breadcrumbs or footer there, just the activity.
+html.siraj-inframe body { --si-side-w: 0px; --si-top-h: 0px; padding-top: 0 !important; }
+html.siraj-inframe {
+    .siraj-sidebar, .siraj-collapse, .siraj-topbar, .siraj-mobilebar, .siraj-sidenav-backdrop, .siraj-footer,
+    #page-header, .siraj-back, .activity-header, #page-footer, .drawer, .drawer-toggles, .btn-footer-popover,
+    .footer-popover, .skip-links, #goto-top-link { display: none !important; }
+    .siraj-main { margin-left: 0 !important; }
+    #page.drawers { margin-top: 0 !important; min-height: 100vh; padding-left: clamp(16px, 2.6vw, 40px); padding-right: clamp(16px, 2.6vw, 40px); }
+    #page.drawers .main-inner { padding: 24px 0 40px; max-width: 1100px; }
+}
+

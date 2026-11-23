@@ -1,0 +1,21 @@
+{{!
+    @template local_siraj/learn_live
+
+    Siraj live session (BigBlueButton): when it runs and a join button.
+
+    Example context (json):
+    {"intro": "", "state": "Open now", "chip": "green", "canjoin": true, "waiting": false, "url": "#", "manageurl": "#", "icon": ""}
+}}
+<div class="siraj-av siraj-live">
+    {{#intro}}<div class="siraj-prose" dir="auto">{{{intro}}}</div>{{/intro}}
+    <div class="siraj-launch">
+        <span class="siraj-launch-icon">{{{icon}}}</span>
+        <div class="siraj-launch-text">
+            <b>{{#str}}live_title, local_siraj{{/str}} <span class="siraj-chip {{chip}}">{{state}}</span></b>
+            {{#waiting}}<p class="siraj-sub">{{#str}}live_waithint, local_siraj{{/str}}</p>{{/waiting}}
+            <p class="siraj-sub">{{#opens}}{{#str}}live_opens, local_siraj, {{opens}}{{/str}}{{/opens}}{{#closes}} · {{#str}}live_closes, local_siraj, {{closes}}{{/str}}{{/closes}}{{^opens}}{{^closes}}{{#str}}live_anytime, local_siraj{{/str}}{{/closes}}{{/opens}}</p>
+        </div>
+        {{#canjoin}}<a class="btn siraj-btn-flame" href="{{url}}" target="_blank" rel="noopener" title="{{#str}}live_newtab, local_siraj{{/str}}">{{#str}}live_join, local_siraj{{/str}} {{{icon_external}}}</a>{{/canjoin}}
+    </div>
+    {{#manageurl}}<p class="siraj-live-manage"><a href="{{manageurl}}">{{#str}}live_manage, local_siraj{{/str}} {{{icon_arrow}}}</a></p>{{/manageurl}}
+</div>

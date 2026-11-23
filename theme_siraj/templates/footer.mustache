@@ -1,0 +1,13 @@
+{{!
+    @template theme_siraj/footer
+
+    Slim footer. Keeps Moodle's standard footer HTML (needed by some plugins) but hides the clutter.
+
+    Example context (json):
+    {"output": {"standard_footer_html": "", "standard_end_of_body_html": ""} }
+}}
+<footer id="page-footer" class="siraj-footer d-print-none">
+    <span>© {{#str}}footer_line, theme_siraj{{/str}}</span>
+    <div class="siraj-footer-std" hidden>{{{ output.standard_footer_html }}}</div>
+    {{{ output.standard_end_of_body_html }}}
+</footer>

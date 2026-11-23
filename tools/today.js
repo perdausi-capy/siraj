@@ -1,0 +1,10 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext()).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'admin'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.evaluate(() => localStorage.setItem('siraj-theme', 'dark'));
+  await p.goto(BASE + '/calendar/view.php?view=month', { waitUntil: 'networkidle' });
+  console.log(await p.evaluate(() => { const e = document.querySelector('td.today .day-number'); let out = []; let x = e; for (let i = 0; i < 4; i++) { out.push(x.tagName + '.' + x.className + ' color=' + getComputedStyle(x).color + ' bg=' + getComputedStyle(x).backgroundColor); x = x.parentElement; } return out.join('\n'); }));
+  await p.evaluate(() => localStorage.setItem('siraj-theme', 'light')); await b.close(); })();

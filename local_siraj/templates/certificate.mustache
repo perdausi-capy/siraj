@@ -1,0 +1,35 @@
+{{!
+    @template local_siraj/certificate
+
+    Printable certificate of completion.
+
+    Example context (json):
+    {"learner": "Layla Hassan", "course": "Code of Conduct & Ethics", "date": "02.11.2026", "site": "Siraj Learning", "code": "ABCD-EFGH-1234", "backurl": "#"}
+}}
+<div class="siraj-cert-toolbar">
+    <a class="btn btn-secondary" href="{{backurl}}">{{{icon_back}}} {{#str}}achievements, local_siraj{{/str}}</a>
+    <button type="button" class="btn siraj-btn-flame" onclick="window.print()">{{#str}}printsave, local_siraj{{/str}}</button>
+</div>
+<main class="siraj-certificate siraj-cert-a">
+    <aside class="siraj-cert-band" aria-hidden="true">
+        <div class="siraj-cert-bandlogo">{{#panellogo}}<img src="{{panellogo}}" alt="">{{/panellogo}}{{^panellogo}}{{{flame}}}<span class="siraj-brandname">SIRAJ<small>LEARNING</small></span>{{/panellogo}}</div>
+        <div class="siraj-cert-seal"><svg viewBox="0 0 120 120"><defs><path id="sealc" d="M60 60 m-44 0 a44 44 0 1 1 88 0 a44 44 0 1 1 -88 0"/></defs>
+            <circle cx="60" cy="60" r="56" class="r1"/><circle cx="60" cy="60" r="36" class="r2"/>
+            <text><textPath href="#sealc" startOffset="0">· {{#str}}certificateofcompletion, local_siraj{{/str}} · {{#str}}certificateofcompletion, local_siraj{{/str}} </textPath></text></svg>
+            <span>{{{flame}}}</span></div>
+        <small>{{site}}</small>
+    </aside>
+    <section class="siraj-cert-body">
+        <p class="siraj-certificate-kicker">{{#str}}certificateofcompletion, local_siraj{{/str}}</p>
+        <p class="siraj-certificate-pre">{{#str}}certifythat, local_siraj{{/str}}</p>
+        <h1>{{learner}}</h1>
+        <p class="siraj-certificate-pre">{{#str}}hascompleted, local_siraj{{/str}}</p>
+        <h2>{{course}}</h2>
+        <div class="siraj-certificate-meta">
+            <div><small>{{#str}}date, local_siraj{{/str}}</small><b>{{date}}</b></div>
+            {{#duration}}<div><small>{{#str}}duration, local_siraj{{/str}}</small><b>{{duration}}</b></div>{{/duration}}
+            <div><small>{{#str}}certificateid, local_siraj{{/str}}</small><b>{{code}}</b></div>
+        </div>
+        {{#verifyurl}}<p class="siraj-certificate-verify">{{#str}}verifyat, local_siraj, {{verifyurl}}{{/str}}</p>{{/verifyurl}}
+    </section>
+</main>

@@ -1,0 +1,33 @@
+{{!
+    @template local_siraj/verify
+
+    Siraj certificate check (public).
+
+    Example context (json):
+    {"code": "3F9A-0C21-77BD", "site": "Siraj Learning", "action": "#",
+     "result": {"valid": true, "learner": "Layla Hassan", "course": "Code of Conduct & Ethics", "date": "02.11.2026", "code": "3F9A-0C21-77BD"}}
+}}
+<div class="siraj-verify">
+    <h1>{{#str}}verifytitle, local_siraj{{/str}}</h1>
+    <p class="siraj-sub">{{#str}}verifyintro, local_siraj{{/str}}</p>
+    <form method="get" action="{{action}}" class="siraj-verify-form">
+        <label class="visually-hidden" for="siraj-code">{{#str}}certificateid, local_siraj{{/str}}</label>
+        <input id="siraj-code" name="code" class="form-control" value="{{code}}" placeholder="XXXX-XXXX-XXXX" autocomplete="off" spellcheck="false" maxlength="20" required>
+        <button type="submit" class="btn siraj-btn-flame">{{#str}}check, local_siraj{{/str}}</button>
+    </form>
+    {{#result}}
+    {{#valid}}
+    <div class="siraj-verify-result ok" role="status">
+        {{{icon_check}}}
+        <div>
+            <b>{{#str}}verify_ok, local_siraj{{/str}}</b>
+            <dl><dt>{{#str}}learner, local_siraj{{/str}}</dt><dd>{{learner}}</dd><dt>{{#str}}course, local_siraj{{/str}}</dt><dd>{{course}}</dd>
+                <dt>{{#str}}date, local_siraj{{/str}}</dt><dd>{{date}}</dd><dt>{{#str}}certificateid, local_siraj{{/str}}</dt><dd><code>{{code}}</code></dd></dl>
+        </div>
+    </div>
+    {{/valid}}
+    {{^valid}}
+    <div class="siraj-verify-result bad" role="status">{{{icon_x}}}<div><b>{{#str}}verify_bad, local_siraj{{/str}}</b><p>{{#str}}verify_bad_text, local_siraj{{/str}}</p></div></div>
+    {{/valid}}
+    {{/result}}
+</div>

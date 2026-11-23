@@ -1,0 +1,20 @@
+# Upstream clones (pinned in README, not ours)
+/moodle/
+/moodle-docker/
+
+# Client course data imported from siraj5 (never committed)
+/import/
+
+# Build output, backups, screenshots
+/rtl.css
+/theme_siraj.v0-backup/
+/screenshots/
+node_modules/
+
+# Local-only
+*.log
+.env
+
+# Server details and other-project test scripts
+/STAGING.local.md
+/tools/wm.js

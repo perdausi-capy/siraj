@@ -1,0 +1,201 @@
+// ---------- Dark mode for Moodle's own components ----------
+// Boost compiles many colours as fixed values ($white, $gray-100...), so data-bs-theme alone doesn't reach them.
+// Everything here only applies when the user picked dark mode.
+[data-bs-theme="dark"] {
+    --bs-body-bg: #0A1119;
+    --bs-body-color: #E9F1F5;
+    --bs-emphasis-color: #FFFFFF;
+    --bs-secondary-color: #A3B3BE;
+    --bs-secondary-bg: #172633;
+    --bs-tertiary-bg: #111D28;
+    --bs-border-color: #263744;
+    --bs-link-color: #8BCAFF;
+    --bs-link-color-rgb: 139, 202, 255;
+    --bs-link-hover-color: #B4DCFF;
+    --bs-link-hover-color-rgb: 180, 220, 255;
+    --bs-light: #172633;
+    --bs-light-rgb: 23, 38, 51;
+    --bs-dark: #E9F1F5;
+    --bs-white-rgb: 17, 29, 40;
+    --bs-gray-100: #172633; --bs-gray-200: #1D2E3D; --bs-gray-300: #263744;
+    --bs-modal-bg: #111D28; --bs-modal-color: #E9F1F5; --bs-modal-border-color: #263744;
+    --bs-popover-bg: #111D28; --bs-popover-body-color: #E9F1F5; --bs-popover-header-bg: #172633; --bs-popover-border-color: #263744;
+    --bs-dropdown-bg: #111D28; --bs-dropdown-color: #E9F1F5; --bs-dropdown-link-color: #E9F1F5; --bs-dropdown-border-color: #263744;
+    --bs-dropdown-link-hover-bg: #172633; --bs-dropdown-link-hover-color: #FFFFFF; --bs-dropdown-header-color: #A3B3BE;
+    --bs-card-bg: #111D28; --bs-card-cap-bg: #172633; --bs-card-border-color: #263744;
+    --bs-list-group-bg: #111D28; --bs-list-group-color: #E9F1F5; --bs-list-group-border-color: #263744;
+    --bs-table-bg: #111D28; --bs-table-color: #E9F1F5; --bs-table-striped-bg: #142230; --bs-table-hover-bg: #172633;
+    --bs-table-border-color: #263744;
+    --bs-form-control-bg: #111D28;
+
+    // Surfaces Moodle paints white or light grey.
+    .bg-white, .bg-light, .bg-gray, .bg-gray-100, .bg-gray-200, .bg-body, .bg-body-tertiary, .bg-body-secondary,
+    .table-light, .activity-header, .modal-content, .modal-header, .modal-footer, .popover, .popover-body,
+    .dropdown-menu, .list-group-item, .card, .card-header, .card-footer, .toast, .moremenu .dropdown-menu,
+    .popover-region-container, .popover-region-header-container, .popover-region-footer-container,
+    .popover-region-content-container, .popover-region .popover-region-container,
+    .message-app, .message-app .header-container, .message-app .footer-container, .message-app .body-container,
+    .message-app .panel-header-container, .message-app .panel-body-container, .drawer .message-app,
+    .moodle-dialogue-base .moodle-dialogue-wrap, .moodle-dialogue-hd, .moodle-dialogue-bd, .moodle-dialogue-ft,
+    .moodle-dialogue-content, .yui3-widget-bd, .filepicker, .fp-navbar, .fp-content, .fp-repo-area, .file-picker,
+    .filemanager, .filemanager-container, .fm-content-wrapper, .fp-iconview .fp-file, .fp-tableview, .fp-treeview,
+    .form-autocomplete-suggestions, .form-autocomplete-suggestions li, .sticky-footer, #sticky-footer, .stickyfooter,
+    .bulkedit-toolbar, [data-region="bulk-edit-toolbar"], .gradereport-grader-table, .gradeparent table,
+    .user-grade, .reportbuilder-table thead th, .reportbuilder-wrapper .card, .path-mod-quiz .mod-quiz-edit-content,
+    .path-mod-quiz #mod_quiz_navblock .card, .box.py-3, .alert-secondary, .editor_atto_toolbar,
+    .core_contentbank_viewcontent, .tertiary-navigation, .breadcrumb {
+        background-color: var(--si-surface) !important;
+        color: var(--si-ink);
+        border-color: var(--si-line) !important;
+    }
+    .popover-region-container { border: 1px solid var(--si-line) !important; box-shadow: var(--si-shadow) !important; }
+    .popover-region-header-text, .popover-region-content, .popover-region-footer-container a, .empty-message,
+    .content-item-container .content-message, .notification-message { color: var(--si-ink) !important; }
+    .popover-region-footer-container { border-top: 1px solid var(--si-line) !important; }
+    .popover-region-footer-container a { background: transparent !important; }
+    .popover-region-toggle::before { border-bottom-color: var(--si-line) !important; }
+    .popover-region-toggle::after { border-bottom-color: var(--si-surface) !important; }
+    .content-item-container:hover, .content-item-container.unread { background-color: var(--si-surface-2) !important; }
+
+    // Text Moodle colours dark.
+    .text-dark, .text-body, .text-black, .modal-title, .moodle-dialogue-hd h1, .moodle-dialogue-hd .yui3-widget-hd,
+    .fp-filename, .dropdown-item, .list-group-item, .page-header-headings h1, .activity-header, .activity-information,
+    .description-inner, .gradeitemheader, .header .userfullname, .breadcrumb-item a, .breadcrumb-item.active,
+    label, legend, .col-form-label, .form-label, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+        color: var(--si-ink);
+    }
+    .text-muted, .dimmed_text, .dimmed, .form-text, .text-secondary, .small.text-muted, .activity-dates, .alert-link { color: var(--si-muted) !important; }
+    a:not(.btn):not(.dropdown-item):not(.nav-link):not(.siraj-act):not(.siraj-tile):not(.siraj-item-title):not(.siraj-course-row):not(.siraj-pcourse):not(.siraj-next-row) {
+        color: var(--si-accent-ink);
+    }
+    .alert a, .alert .alert-link { color: inherit !important; text-decoration: underline; }
+    .alert-info { background: color-mix(in srgb, #2B8BC6 16%, var(--si-surface)); color: #CFE6F7; }
+    .alert-warning { background: color-mix(in srgb, #E9A23B 16%, var(--si-surface)); color: #F6D9A8; }
+    .alert-danger { background: color-mix(in srgb, #C2412F 18%, var(--si-surface)); color: #F6C1B8; }
+    .alert-success { background: color-mix(in srgb, #00C98C 16%, var(--si-surface)); color: #B9F0DD; }
+
+    // Buttons Moodle draws light.
+    .btn-secondary, .btn-light, .btn-outline-secondary, .btn-subtle-body, .btn-icon, .btn.icon-no-margin, .fp-vb-icons .btn,
+    .drawer-toggler .btn, .drawer-toggles .btn, .icons-collapse-expand, .btn-footer-popover, .fp-btn-add a, .fp-btn-mkdir a,
+    .fp-btn-download a, .fp-vb-icons a, .form-autocomplete-downarrow, .input-group-text {
+        background-color: var(--si-surface-2) !important;
+        border-color: var(--si-line) !important;
+        color: var(--si-ink) !important;
+    }
+    .btn-secondary:hover, .btn-light:hover, .btn-subtle-body:hover, .btn-icon:hover { background-color: #1D2E3D !important; }
+    .fp-vb-icons .checked, .fp-vb-icons a.checked { background-color: var(--si-mint-soft) !important; }
+    .btn-link { color: var(--si-accent-ink); }
+    .btn-close { filter: invert(1) grayscale(1) brightness(1.6); }
+    .editmode-switch-form label, .editmode-switch-form .form-check-label { color: var(--si-muted) !important; }
+
+    // Avatars and chips.
+    .userinitials, .userpicture.defaultuserpic { background-color: #1D2E3D !important; color: var(--si-ink) !important; }
+    .badge.bg-secondary, .badge.text-bg-secondary, .form-autocomplete-selection .badge {
+        background-color: var(--si-surface-2) !important; color: var(--si-ink) !important; border: 1px solid var(--si-line);
+    }
+    .badge.bg-light, .badge.text-bg-light { background: var(--si-surface-2) !important; color: var(--si-ink) !important; }
+
+    // Forms.
+    .form-control, .form-select, .custom-select, select, textarea, input[type="text"], input[type="search"], input[type="email"],
+    input[type="password"], input[type="number"], input[type="url"], input[type="date"] {
+        background-color: var(--si-surface) !important; color: var(--si-ink) !important; border-color: var(--si-line) !important;
+    }
+    .form-control::placeholder { color: var(--si-faint); }
+    .form-control:disabled, .form-control[readonly] { background-color: var(--si-surface-2) !important; }
+    .form-select, select.custom-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23A3B3BE' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    }
+    .form-check-input { background-color: var(--si-surface-2); border-color: #3A4D5D; }
+    .form-check-input:checked { background-color: #00A879; border-color: #00A879; }
+    fieldset.collapsible .ftoggler .btn-icon, .collapsible-actions a { color: var(--si-ink) !important; }
+    .fitem .felement, .fdescription { color: var(--si-ink); }
+
+    // File manager / picker.
+    .filemanager-container, .fp-content, .fp-iconview .fp-file .fp-thumbnail, .fp-file .fp-thumbnail, .fp-thumbnail img {
+        background-color: var(--si-surface) !important; border-color: var(--si-line) !important;
+    }
+    .fp-filename, .fp-iconview .fp-filename-field .fp-filename { background: transparent !important; color: var(--si-ink) !important; }
+    .filemanager .fp-iconview .fp-file:hover, .fp-iconview .fp-file:hover { background-color: var(--si-surface-2) !important; }
+    .dndupload-message, .filemanager .dndupload-message { color: var(--si-muted) !important; }
+    .moodle-dialogue-base .moodle-dialogue-wrap { border: 1px solid var(--si-line) !important; box-shadow: var(--si-shadow); }
+    .moodle-dialogue-base .closebutton, .yui3-button.closebutton { filter: invert(1); }
+    .fp-select-loading, .fp-tableview tr { background: var(--si-surface) !important; color: var(--si-ink) !important; }
+    .fp-setlicense select, .fp-path-folder select { background-color: var(--si-surface-2) !important; }
+    .modal-backdrop.show { opacity: .7; }
+
+    // Rich text editor (TinyMCE chrome; the writing area itself stays white like a page of paper).
+    .tox .tox-editor-header, .tox .tox-menubar, .tox .tox-toolbar, .tox .tox-toolbar__primary, .tox .tox-toolbar-overlord,
+    .tox .tox-statusbar, .tox .tox-toolbar__overflow, .tox .tox-menu, .tox .tox-collection--list, .tox .tox-dialog,
+    .tox .tox-dialog__header, .tox .tox-dialog__footer {
+        background: var(--si-surface-2) !important; color: var(--si-ink) !important; border-color: var(--si-line) !important;
+    }
+    .tox .tox-mbtn, .tox .tox-tbtn, .tox .tox-statusbar a, .tox .tox-statusbar__path-item, .tox .tox-collection__item,
+    .tox .tox-dialog__title, .tox .tox-label { color: var(--si-ink) !important; }
+    .tox .tox-tbtn svg { fill: var(--si-ink) !important; }
+    .tox .tox-tbtn:hover, .tox .tox-mbtn:hover, .tox .tox-collection__item--active { background: #1D2E3D !important; }
+    .tox.tox-tinymce { border-color: var(--si-line) !important; }
+
+    // Grader report and other tables.
+    .gradereport-grader-table th, .gradereport-grader-table td, .gradereport-grader-table .heading, .gradereport-grader-table .avg,
+    .gradereport-grader-table .lastrow th, .gradereport-grader-table .lastrow td, .gradereport-grader-table .userrow th,
+    .gradereport-grader-table .cell, .path-grade-report-grader .gradeparent .heading .cell, .path-grade-report-grader .gradeparent th.header,
+    .path-grade-report-grader .gradeparent .avg .cell, .path-grade-report-grader .gradeparent tr .cell,
+    .path-grade-report-grader .gradeparent .floater .cell, table.generaltable th, table.generaltable td, .table th, .table td {
+        background-color: var(--si-surface) !important; color: var(--si-ink) !important; border-color: var(--si-line) !important;
+    }
+    .path-grade-report-grader .gradeparent tr:hover .cell, .path-grade-report-grader .gradeparent .catlevel1 { background-color: var(--si-surface-2) !important; }
+    .gradereport-grader-table .gradeitemheader, .path-grade-report-grader .gradeitemheader { color: var(--si-accent-ink) !important; }
+    .table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-bg-type: #142230; }
+    .generaltable thead th, .reportbuilder-table thead th { background-color: var(--si-surface-2) !important; color: var(--si-muted) !important; }
+
+    // Course editing: bulk edit bar, section and activity controls.
+    .sticky-footer, [data-region="sticky-footer"], .bulkedit-toolbar { border-top: 1px solid var(--si-line) !important; box-shadow: 0 -8px 24px rgba(0,0,0,.35); }
+    .sticky-footer *, [data-region="sticky-footer"] * { color: var(--si-ink); }
+    .course-section .section-item.editing, .editing .activity-item:hover, .activity-item.focus, .course-section-header.editing { background-color: var(--si-surface) !important; }
+    .editing .activity-item .activity-actions .btn, .section_action_menu .btn, .action-menu .dropdown-toggle { color: var(--si-ink) !important; }
+    .bulkenabled .bulkselect input, .bulk-checkbox { accent-color: #00A879; }
+    [data-action="bulkedit"], .bulkedit { color: var(--si-accent-ink) !important; }
+    .divider hr, hr { border-color: var(--si-line); opacity: 1; }
+
+    // Quiz editing and activity headers.
+    .path-mod-quiz .mod-quiz-edit-content, .path-mod-quiz #page-mod-quiz-edit .slots, .slots .page, .slots .section,
+    .slots li.activity, .mod-quiz-edit-content .content, .mod-quiz-edit-top-controls, .path-mod-quiz-edit .page-heading,
+    .slots .activity .activityinstance, .slots .section .content, .slots .section li.page { background-color: var(--si-surface) !important; color: var(--si-ink) !important; }
+    .slots .page h4, .slots .instancemaxmark, .slots .slotnumber, .mod-quiz-edit-top-controls p { color: var(--si-ink) !important; }
+    .activity-header .activity-information, .activity-header .description { color: var(--si-ink); }
+
+    // Report builder, course index, misc.
+    .reportbuilder-filters-sidebar, .reportbuilder-sidebar-menu, .reportbuilder-conditions-list, .reportbuilder-editor-settings,
+    [data-region="filters-form"], .dropdown-menu.reportbuilder-filters-dropdown { background-color: var(--si-surface) !important; color: var(--si-ink); }
+    .courseindex .courseindex-item:hover, .courseindex .courseindex-item.dimmed { background-color: var(--si-surface-2) !important; }
+    .block .block-controls .btn, .block .card-title { color: var(--si-ink) !important; }
+    .calendar_event_course .calendar-circle, .calendarwrapper .day-number { color: var(--si-ink); }
+    .maincalendar td.today .day-number, .maincalendar td.today .day-number-circle { color: #062C40 !important; }
+    .que .info, .que .formulation, .que .outcome, .que .comment { color: var(--si-ink) !important; }
+    .que .formulation { background-color: var(--si-surface) !important; }
+    .que .outcome, .que .comment { background-color: var(--si-surface-2) !important; }
+    .que .info { background-color: var(--si-surface-2) !important; }
+    pre, code { background: var(--si-surface-2); color: #CFE6F7; }
+    .nav-tabs .nav-link.active { background: transparent; color: var(--si-accent-ink); }
+
+    // Plain .btn (no variant) such as "Bulk actions" and "Add section" use the navy brand colour: lift it.
+    .btn:not([class*="btn-"]):not(.siraj-btn-flame):not(.siraj-btn-glass), .bulkEnable, .add-section, [data-action="addSection"] {
+        color: var(--si-accent-ink) !important;
+    }
+    // Quiz editor details.
+    .slots .activity .actions, .slots .instancemaxmarkcontainer, .slots .activity .mod-indent-outer, .slots .page-heading {
+        background-color: transparent !important; color: var(--si-ink) !important;
+    }
+    .slots .questionname, .slots .questiontext, .slots .instancemaxmark { color: var(--si-ink) !important; }
+    // TinyMCE menu and toolbar buttons (its skin sets them after us; these selectors are more specific).
+    .tox.tox-tinymce .tox-mbtn, .tox.tox-tinymce .tox-tbtn, .tox.tox-tinymce .tox-split-button, .tox.tox-tinymce .tox-statusbar__wordcount {
+        background: transparent !important; color: var(--si-ink) !important;
+    }
+    .tox.tox-tinymce .tox-mbtn__select-label, .tox.tox-tinymce .tox-tbtn__select-label { color: var(--si-ink) !important; }
+    .tox.tox-tinymce .tox-tbtn--disabled svg { fill: var(--si-faint) !important; }
+    .tox .tox-edit-area__iframe, .tox .tox-edit-area { background-color: var(--si-surface) !important; }
+}
+// Calendar "today": a solid colour under the gradient so the number always has a known background.
+.maincalendar td.today .day-number-circle { background-color: #33CCFF !important; }
+// Loading placeholders (timeline, course lists): Moodle draws them light grey; in dark they glare.
+[data-bs-theme="dark"] .bg-pulse-grey { background-color: color-mix(in srgb, var(--si-ink) 10%, var(--si-surface)) !important; }

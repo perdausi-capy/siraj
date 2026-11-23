@@ -1,0 +1,22 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+const OUT = '/tmp/claude-1000/-home-perdausi/662c294c-a995-49e4-a10d-29b6cebe747d/scratchpad/';
+(async () => {
+  const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'sara'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.goto(BASE + '/local/siraj/index.php', { waitUntil: 'networkidle' });
+  await p.click('.popover-region-notifications .popover-region-toggle'); await p.waitForTimeout(1500);
+  await p.screenshot({ path: OUT + 'notif.png', clip: { x: 900, y: 0, width: 540, height: 520 } });
+  await p.keyboard.press('Escape'); await p.mouse.click(700, 500); await p.waitForTimeout(300);
+  await p.click('.siraj-langbtn'); await p.waitForTimeout(400);
+  await p.screenshot({ path: OUT + 'lang.png', clip: { x: 900, y: 0, width: 540, height: 260 } });
+  await Promise.all([p.waitForNavigation(), p.click('.siraj-langmenu a[lang="ar"]')]);
+  console.log('after switch dir:', await p.evaluate(() => document.documentElement.dir), p.url());
+  await p.goto(BASE + '/local/siraj/learning.php', { waitUntil: 'networkidle' });
+  console.log('next page dir:', await p.evaluate(() => document.documentElement.dir));
+  await p.click('.siraj-langbtn'); await Promise.all([p.waitForNavigation(), p.click('.siraj-langmenu a[lang="en"]')]);
+  console.log('back to:', await p.evaluate(() => document.documentElement.dir || 'ltr'));
+  await b.close();
+})();

@@ -1,0 +1,66 @@
+{{!
+    @template local_siraj/grades
+
+    Siraj Grades: courses with totals, and one course's graded items with feedback.
+
+    Example context (json):
+    {"courses": [{"name": "Workplace Health & Safety", "grade": "6.67", "pct": 67, "haspct": true, "band": "mid", "url": "#"}],
+     "hascourses": true, "average": 67, "gradedcount": 1, "coursecount": 1}
+}}
+<div class="siraj-gradesp">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}grades_eyebrow, local_siraj{{/str}}</div>
+            <h1>{{#detail}}{{name}}{{/detail}}{{^detail}}{{#str}}grades_title, local_siraj{{/str}}{{/detail}}</h1>
+            <p class="siraj-sub">{{#detail}}{{#str}}grades_detail_sub, local_siraj{{/str}}{{/detail}}{{^detail}}{{#str}}grades_sub, local_siraj{{/str}}{{/detail}}</p>
+        </div>
+        {{#detail}}<a class="btn btn-secondary siraj-gr-back" href="{{backurl}}">{{{icon_back}}} {{#str}}grades_all, local_siraj{{/str}}</a>{{/detail}}
+    </header>
+
+    {{^detail}}
+    {{#hascourses}}
+    <section class="siraj-gr-summary">
+        <div class="siraj-gr-ring" style="--p: {{average}}{{^average}}0{{/average}}"><b>{{#average}}{{average}}%{{/average}}{{^average}}-{{/average}}</b><small>{{#str}}grades_average, local_siraj{{/str}}</small></div>
+        <div><b>{{summary}}</b><p>{{#str}}grades_summary_text, local_siraj{{/str}}</p></div>
+    </section>
+    <div class="siraj-gr-list">
+        {{#courses}}
+        <a class="siraj-gr-course" href="{{url}}">
+            <span class="siraj-cover {{coverclass}}">{{#cover}}<img src="{{cover}}" alt="" loading="lazy">{{/cover}}</span>
+            <span class="siraj-gr-name"><b>{{name}}</b>{{#haspct}}<span class="siraj-gr-bar {{band}}"><i style="width: {{pct}}%"></i></span>{{/haspct}}{{^haspct}}<small>{{#str}}grades_none_yet, local_siraj{{/str}}</small>{{/haspct}}</span>
+            <span class="siraj-gr-score {{band}}">{{#haspct}}<b>{{pct}}%</b><small>{{grade}}</small>{{/haspct}}{{^haspct}}<b>-</b>{{/haspct}}</span>
+            <span class="siraj-gr-go">{{{icon_arrow}}}</span>
+        </a>
+        {{/courses}}
+    </div>
+    {{/hascourses}}
+    {{^hascourses}}<div class="siraj-act-empty"><span class="siraj-act-emptyicon">{{{icon_chart}}}</span><b>{{#str}}grades_nocourses, local_siraj{{/str}}</b></div>{{/hascourses}}
+    {{/detail}}
+
+    {{#detail}}
+    <section class="siraj-gr-hero">
+        <div class="siraj-gr-ring lg {{band}}" style="--p: {{pct}}{{^pct}}0{{/pct}}"><b>{{#haspct}}{{pct}}%{{/haspct}}{{^haspct}}-{{/haspct}}</b><small>{{#str}}grades_coursetotal, local_siraj{{/str}}</small></div>
+        <div class="siraj-gr-herotext">
+            <b>{{grade}}</b>
+            <span><a class="siraj-link" href="{{courseurl}}">{{#str}}viewcourselink, local_siraj{{/str}} {{{icon_arrow}}}</a></span>
+        </div>
+    </section>
+    {{#hasitems}}
+    <div class="siraj-gr-items">
+        {{#items}}
+        <article class="siraj-gr-item">
+            <div class="siraj-gr-itemhead">
+                <span class="siraj-act-icon">{{{icon}}}</span>
+                <span class="siraj-gr-itemname"><small>{{type}}</small>{{#url}}<a href="{{url}}">{{name}}</a>{{/url}}{{^url}}<b>{{name}}</b>{{/url}}</span>
+                <span class="siraj-gr-score {{band}}">{{#haspct}}<b>{{grade}}<small> / {{max}}</small></b><small>{{pct}}%{{#when}} · {{when}}{{/when}}</small>{{/haspct}}{{^haspct}}<b class="muted">{{#str}}grades_notgraded, local_siraj{{/str}}</b>{{/haspct}}</span>
+            </div>
+            {{#haspct}}<span class="siraj-gr-bar {{band}}"><i style="width: {{pct}}%"></i></span>{{/haspct}}
+            {{#feedback}}<div class="siraj-gr-feedback">{{{icon_message}}}<div><small>{{#str}}feedback, local_siraj{{/str}}</small><div class="siraj-prose" dir="auto">{{{feedback}}}</div></div></div>{{/feedback}}
+        </article>
+        {{/items}}
+    </div>
+    {{/hasitems}}
+    {{^hasitems}}<div class="siraj-act-empty"><span class="siraj-act-emptyicon">{{{icon_chart}}}</span><b>{{#str}}grades_noitems, local_siraj{{/str}}</b></div>{{/hasitems}}
+    <p class="siraj-gr-full"><a class="siraj-link" href="{{fullurl}}">{{#str}}grades_fullreport, local_siraj{{/str}} {{{icon_external}}}</a></p>
+    {{/detail}}
+</div>

@@ -1,0 +1,129 @@
+{{!
+    @template local_siraj/learning
+
+    Siraj My learning: list and agenda views with instant filters.
+
+    Example context (json):
+    {"hasitems": true, "counts": {"all": 1, "mandatory": 1, "optional": 0, "progress": 1, "duesoon": 0, "notstarted": 0, "done": 0},
+     "items": [{"id": 1, "name": "Workplace Health & Safety", "url": "#", "actionurl": "#", "action": "Continue", "progress": 80,
+                "status": "progress", "mandatory": true, "chip": {"text": "Mandatory", "class": ""}, "sub": "Next: Quiz", "coverclass": "cv1"}],
+     "agenda": []}
+}}
+<div class="siraj-learning" data-region="siraj-learning">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}yourlearning, local_siraj{{/str}}</div>
+            <h1>{{#str}}mylearning, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{#str}}mylearning_sub, local_siraj{{/str}}</p>
+        </div>
+        <div class="siraj-seg" role="group" aria-label="{{#str}}view, local_siraj{{/str}}">
+            <button type="button" class="active" data-view="list" aria-pressed="true">{{{icon_list}}} {{#str}}view_list, local_siraj{{/str}}</button>
+            <button type="button" data-view="agenda" aria-pressed="false">{{{icon_calendar}}} {{#str}}view_agenda, local_siraj{{/str}}</button>
+        </div>
+    </header>
+
+    {{#hasitems}}
+    <div class="siraj-tabs" role="tablist">
+        <button type="button" role="tab" class="active" data-type="all" aria-selected="true">{{#str}}all, local_siraj{{/str}} <span>{{counts.all}}</span></button>
+        <button type="button" role="tab" data-type="mandatory" aria-selected="false">{{#str}}mandatory, local_siraj{{/str}} <span>{{counts.mandatory}}</span></button>
+        <button type="button" role="tab" data-type="optional" aria-selected="false">{{#str}}optional, local_siraj{{/str}} <span>{{counts.optional}}</span></button>
+    </div>
+    <div class="siraj-filterbar">
+        <button type="button" class="siraj-filter active" data-status="all">{{#str}}allcourses, local_siraj{{/str}}</button>
+        <button type="button" class="siraj-filter" data-status="progress">{{#str}}inprogress, local_siraj{{/str}} · {{counts.progress}}</button>
+        <button type="button" class="siraj-filter" data-status="duesoon">{{#str}}duesoon, local_siraj{{/str}} · {{counts.duesoon}}</button>
+        <button type="button" class="siraj-filter" data-status="notstarted">{{#str}}notstarted, local_siraj{{/str}} · {{counts.notstarted}}</button>
+        <button type="button" class="siraj-filter" data-status="done">{{#str}}completed, local_siraj{{/str}} · {{counts.done}}</button>
+        <label class="siraj-search-inline">{{{icon_search}}}<input type="search" placeholder="{{#str}}filtercourses, local_siraj{{/str}}" aria-label="{{#str}}filtercourses, local_siraj{{/str}}" data-region="q"></label>
+    </div>
+
+    <div class="siraj-view" data-view-panel="list">
+        <div class="siraj-panel siraj-list">
+            {{#items}}{{> local_siraj/learning_item }}{{/items}}
+        </div>
+    </div>
+    <div class="siraj-view" data-view-panel="agenda" hidden>
+        {{#agenda}}
+        <section class="siraj-agenda-group siraj-agenda-{{key}}">
+            <h2>{{title}} <span>{{count}}</span></h2>
+            <div class="siraj-panel siraj-list">{{#items}}{{> local_siraj/learning_item }}{{/items}}</div>
+        </section>
+        {{/agenda}}
+    </div>
+    <div class="siraj-empty" data-region="nomatch" hidden>
+        <h3>{{#str}}nomatch, local_siraj{{/str}}</h3>
+        <p>{{#str}}nomatch_text, local_siraj{{/str}}</p>
+    </div>
+    {{/hasitems}}
+    {{^hasitems}}
+    <div class="siraj-empty">
+        <h3>{{#str}}nocourses, local_siraj{{/str}}</h3>
+        <p>{{#str}}nocourses_text, local_siraj{{/str}}</p>
+        <a class="btn siraj-btn-flame" href="{{exploreurl}}">{{{icon_compass}}} {{#str}}explorelibrary, local_siraj{{/str}}</a>
+    </div>
+    {{/hasitems}}
+</div>
+{{#js}}
+(function() {
+    var root = document.querySelector('[data-region="siraj-learning"]');
+    if (!root) {
+        return;
+    }
+    var state = {type: 'all', status: 'all', q: ''};
+    function apply() {
+        var shown = 0;
+        root.querySelectorAll('.siraj-item').forEach(function(el) {
+            var ok = (state.type === 'all' || el.dataset.type === state.type)
+                && (state.status === 'all' || el.dataset.status === state.status || (state.status === 'duesoon' && el.dataset.duesoon === '1'))
+                && (state.q === '' || el.dataset.name.indexOf(state.q) !== -1);
+            el.hidden = !ok;
+            shown += ok ? 1 : 0;
+        });
+        root.querySelectorAll('.siraj-agenda-group').forEach(function(g) {
+            g.hidden = !g.querySelector('.siraj-item:not([hidden])');
+        });
+        root.querySelector('[data-region="nomatch"]').hidden = shown > 0;
+    }
+    function choose(selector, attr, el) {
+        root.querySelectorAll(selector).forEach(function(b) {
+            var on = b === el;
+            b.classList.toggle('active', on);
+            b.setAttribute(attr, on ? 'true' : 'false');
+        });
+    }
+    root.addEventListener('click', function(e) {
+        var t = e.target.closest('button');
+        if (!t) {
+            return;
+        }
+        if (t.dataset.type) {
+            state.type = t.dataset.type;
+            choose('[data-type]', 'aria-selected', t);
+        } else if (t.dataset.status) {
+            state.status = t.dataset.status;
+            choose('.siraj-filter', 'aria-pressed', t);
+        } else if (t.dataset.view) {
+            choose('[data-view]', 'aria-pressed', t);
+            root.querySelectorAll('[data-view-panel]').forEach(function(p) {
+                p.hidden = p.dataset.viewPanel !== t.dataset.view;
+            });
+            if (window.sirajStore) { window.sirajStore.set('siraj-learning-view', t.dataset.view); }
+        } else {
+            return;
+        }
+        apply();
+    });
+    var q = root.querySelector('[data-region="q"]');
+    if (q) {
+        q.addEventListener('input', function() {
+            state.q = q.value.trim().toLowerCase();
+            apply();
+        });
+    }
+    try {
+        if (window.sirajStore && window.sirajStore.get('siraj-learning-view') === 'agenda') {
+            root.querySelector('[data-view="agenda"]').click();
+        }
+    } catch (err) { /* Ignore. */ }
+})();
+{{/js}}

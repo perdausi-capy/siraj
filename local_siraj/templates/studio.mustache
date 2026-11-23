@@ -1,0 +1,87 @@
+{{!
+    @template local_siraj/studio
+
+    Siraj Admin studio: site KPIs, 12-week trend, courses needing attention, shortcuts, course health table.
+
+    Example context (json):
+    {"subline": "Everything happening on Siraj Learning", "kpis": [], "trendchart": "{}", "trendtable": [], "attention": [],
+     "courses": [], "shortcuts": [], "reportsurl": "#", "matrixurl": "#"}
+}}
+<div class="siraj-dashboard">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}management, local_siraj{{/str}}</div>
+            <h1>{{#str}}studio, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            <a class="btn btn-outline-secondary" href="{{reportsurl}}">{{{icon_chart}}} {{#str}}reports, local_siraj{{/str}}</a>
+            <a class="btn btn-outline-secondary" href="{{matrixurl}}">{{{icon_shield}}} {{#str}}compliance, local_siraj{{/str}}</a>
+            {{#adminurl}}<a class="btn btn-outline-secondary" href="{{adminurl}}">{{{icon_settings}}} {{#str}}siteadmin, local_siraj{{/str}}</a>{{/adminurl}}
+        </div>
+    </header>
+
+    <div class="siraj-kpis">
+        {{#kpis}}
+        <div class="siraj-kpi tone-{{tone}}">
+            <span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span>
+            <div><strong>{{value}}</strong><span>{{label}}</span><small>{{sub}}</small></div>
+        </div>
+        {{/kpis}}
+    </div>
+
+    <div class="siraj-dash-grid">
+        <section class="siraj-panel">
+            <div class="siraj-panel-head"><h3>{{#str}}trend, local_siraj{{/str}}</h3><small class="siraj-faint">{{#str}}last12weeks, local_siraj{{/str}}</small></div>
+            <div class="siraj-chart tall"><canvas data-siraj-chart="{{trendchart}}" role="img" aria-label="{{#str}}trend, local_siraj{{/str}}"></canvas></div>
+            <div class="visually-hidden"><table>
+                <caption>{{#str}}trend, local_siraj{{/str}}</caption>
+                <tr><th>{{#str}}week, local_siraj{{/str}}</th><th>{{#str}}chart_activities, local_siraj{{/str}}</th><th>{{#str}}chart_learners, local_siraj{{/str}}</th><th>{{#str}}chart_enrolments, local_siraj{{/str}}</th></tr>
+                {{#trendtable}}<tr><td>{{week}}</td><td>{{n}}</td><td>{{learners}}</td><td>{{enrolments}}</td></tr>{{/trendtable}}
+            </table></div>
+        </section>
+        <section class="siraj-panel">
+            <h3>{{#str}}needsattention, local_siraj{{/str}}</h3>
+            {{#hasattention}}
+            <ul class="siraj-attn">
+                {{#attention}}
+                <li><a href="{{url}}"><b>{{name}}</b></a>
+                    <span>{{#flags}}<span class="siraj-chip sm {{class}}">{{text}}</span>{{/flags}}</span>
+                    <small>{{summary}}</small></li>
+                {{/attention}}
+            </ul>
+            {{/hasattention}}
+            {{^hasattention}}<p class="siraj-allgood">{{{icon_check}}} {{#str}}allcoursesok, local_siraj{{/str}}</p>{{/hasattention}}
+        </section>
+    </div>
+
+    {{#hasshortcuts}}
+    <div class="siraj-shortcuts">
+        {{#shortcuts}}<a class="siraj-shortcut" href="{{url}}"><span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span><span><b>{{text}}</b><small>{{sub}}</small></span></a>{{/shortcuts}}
+    </div>
+    {{/hasshortcuts}}
+
+    <section class="siraj-panel siraj-tablepanel">
+        <div class="siraj-panel-head"><h3>{{#str}}coursehealth, local_siraj{{/str}}</h3><small class="siraj-faint">{{#str}}coursehealth_sub, local_siraj{{/str}}</small></div>
+        <div class="siraj-tablewrap">
+            <table class="siraj-table">
+                <thead><tr>
+                    <th>{{#str}}course, local_siraj{{/str}}</th><th class="num">{{#str}}enrolled, local_siraj{{/str}}</th><th class="num">{{#str}}started, local_siraj{{/str}}</th>
+                    <th class="num">{{#str}}finished, local_siraj{{/str}}</th><th>{{#str}}completion, local_siraj{{/str}}</th><th>{{#str}}dropoff, local_siraj{{/str}}</th><th>{{#str}}lastactivity, local_siraj{{/str}}</th>
+                </tr></thead>
+                <tbody>
+                    {{#courses}}
+                    <tr>
+                        <td><a href="{{url}}"><b>{{name}}</b></a>{{#mandatory}} <span class="siraj-chip sm">{{#str}}mandatory, local_siraj{{/str}}</span>{{/mandatory}}
+                            {{#hasflags}}<span class="siraj-flags">{{#flags}}<span class="siraj-chip sm {{class}}">{{text}}</span>{{/flags}}</span>{{/hasflags}}</td>
+                        <td class="num">{{enrolled}}</td><td class="num">{{started}}</td><td class="num">{{finished}}</td>
+                        <td class="siraj-cellbar"><span class="siraj-progress"><i style="width: {{pct}}%"></i></span><b>{{pct}}%</b></td>
+                        <td>{{#dropoff}}{{dropoff}}{{/dropoff}}{{^dropoff}}<span class="siraj-faint">–</span>{{/dropoff}}</td>
+                        <td>{{last}}</td>
+                    </tr>
+                    {{/courses}}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

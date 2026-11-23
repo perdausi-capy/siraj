@@ -1,0 +1,547 @@
+// ---------- Polish: Moodle building blocks in the Siraj style (light and dark) ----------
+
+// Light mode: cards need a visible edge on the pale background.
+:root:not([data-bs-theme="dark"]) {
+    --si-line: #DCE3E9;
+    --si-line-strong: #CBD5DE;
+    --si-soft: 0 1px 2px rgba(15, 45, 65, .06), 0 4px 14px rgba(15, 45, 65, .06);
+    --si-shadow: 0 2px 6px rgba(15, 45, 65, .06), 0 16px 40px rgba(15, 45, 65, .10);
+}
+[data-bs-theme="dark"] { --si-line-strong: #33475A; }
+:root:not([data-bs-theme="dark"]) {
+    .siraj-panel, .siraj-tile, .siraj-cert, .siraj-stat, .siraj-pcourse, .siraj-path-step details, .card, .block.card,
+    .course-section .section-item, .siraj-player-main, .siraj-duestrip, .siraj-list, .dashboard-card {
+        border-color: var(--si-line-strong) !important;
+        box-shadow: var(--si-soft);
+    }
+}
+
+// ---------- Links: no browser "selected" block on click; a clean focus ring for keyboards only ----------
+a:focus:not(:focus-visible) { outline: none !important; box-shadow: none !important; background: transparent; }
+a:focus-visible { outline: 2px solid var(--si-cyan) !important; outline-offset: 2px; border-radius: 4px; background: transparent !important; }
+::selection { background: color-mix(in srgb, var(--si-cyan) 35%, transparent); color: inherit; }
+
+// ---------- Modals (Bootstrap) ----------
+.modal-dialog { display: flex; align-items: center; min-height: calc(100% - 2rem); margin-top: 1rem; margin-bottom: 1rem; }
+.modal-content {
+    border-radius: 18px !important; border: 1px solid var(--si-line) !important; box-shadow: 0 24px 70px rgba(5, 20, 35, .35) !important;
+    max-height: calc(100vh - 2rem); overflow: hidden; background-color: var(--si-surface);
+}
+.modal-header { padding: 18px 22px !important; border-bottom: 1px solid var(--si-line) !important; align-items: center;
+    .modal-title { font: 700 1.2rem var(--si-head); letter-spacing: -.02em; } }
+.modal-body { padding: 20px 22px !important; overflow-y: auto; }
+.modal-footer { padding: 14px 22px !important; border-top: 1px solid var(--si-line) !important; gap: 8px; }
+.modal-backdrop.show { opacity: .55; backdrop-filter: blur(2px); }
+
+// ---------- YUI dialogues (file picker, Add restriction, older Moodle dialogs): centred, scroll inside ----------
+.moodle-dialogue-base .moodle-dialogue {
+    position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%);
+    max-width: calc(100vw - 32px); max-height: calc(100vh - 32px); z-index: 1060;
+}
+.moodle-dialogue-base .moodle-dialogue-wrap {
+    border-radius: 18px !important; overflow: hidden; border: 1px solid var(--si-line) !important;
+    box-shadow: 0 24px 70px rgba(5, 20, 35, .35) !important; background-color: var(--si-surface) !important;
+    display: flex; flex-direction: column; max-height: calc(100vh - 32px);
+}
+.moodle-dialogue-base .moodle-dialogue-hd {
+    padding: 18px 56px 16px 22px !important; border-bottom: 1px solid var(--si-line) !important; margin: 0 !important;
+    font: 700 1.2rem var(--si-head) !important; letter-spacing: -.02em; flex: none;
+    h1, h5 { font: inherit !important; margin: 0 !important; }
+}
+.moodle-dialogue-base .moodle-dialogue-bd { padding: 18px 22px !important; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+.moodle-dialogue-base .moodle-dialogue-ft:not(:empty) { padding: 12px 22px; border-top: 1px solid var(--si-line); }
+.moodle-dialogue-base .closebutton {
+    position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border-radius: 10px; opacity: .8;
+    &:hover { opacity: 1; background-color: var(--si-surface-2); }
+}
+.moodle-dialogue-lightbox, .moodle-dialogue-base .moodle-dialogue-lightbox { background: rgba(6, 18, 29, .55) !important; opacity: 1 !important; }
+
+// "Add restriction": one card per option.
+.availability-dialogue {
+    .moodle-dialogue { width: min(560px, calc(100vw - 32px)) !important; }
+    ul.list-unstyled { display: grid; gap: 10px; margin: 0 0 16px; padding: 0 !important; }
+    li.row {
+        display: grid; grid-template-columns: 170px 1fr; align-items: center; gap: 14px; margin: 0; padding: 12px;
+        border: 1px solid var(--si-line); border-radius: 14px; background: var(--si-surface-2);
+        > div { width: auto; padding: 0; max-width: none; flex: none; }
+        &:hover { border-color: color-mix(in srgb, var(--si-mint) 45%, var(--si-line)); }
+        .btn { min-height: 42px; font-weight: 700; background: var(--si-surface) !important; }
+        label { margin: 0; color: var(--si-muted) !important; font-size: 13.5px; line-height: 1.45; cursor: pointer; }
+    }
+    .availability-buttons { display: flex; justify-content: flex-end; .btn { min-width: 110px; } }
+}
+
+// File picker.
+.filepicker, .moodle-dialogue-base .file-picker {
+    .fp-repo-area { border-right: 1px solid var(--si-line) !important; padding: 10px !important; }
+    .fp-repo a { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--si-ink) !important; }
+    .fp-repo.active a, .fp-repo a:hover { background: var(--si-mint-soft) !important; color: var(--si-accent-ink) !important; }
+    .fp-navbar { border-bottom: 1px solid var(--si-line) !important; padding: 8px 10px !important; }
+    .fp-content { padding: 14px 18px !important; }
+    .fp-upload-form .fp-formset > * { margin-bottom: 12px; }
+    label { font-weight: 600; font-size: 13.5px; color: var(--si-muted); }
+}
+input[type="file"] { color: var(--si-muted); font-size: 14px; }
+input[type="file"]::file-selector-button {
+    margin-right: 12px; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--si-line); cursor: pointer;
+    background: var(--si-surface-2); color: var(--si-ink); font: 600 14px "Inter", sans-serif;
+}
+input[type="file"]::file-selector-button:hover { border-color: var(--si-mint); }
+
+// ---------- Activity chooser ----------
+.modchooser .modal-dialog { max-width: min(980px, calc(100vw - 32px)); }
+.modchooser .modal-body { padding: 16px 20px !important; }
+.modchooser .optionscontainer, .modchooser [role="menubar"] {
+    display: grid !important; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; padding: 4px;
+}
+.modchooser .option {
+    margin: 0 !important; width: auto !important; border: 1px solid var(--si-line) !important; border-radius: 14px !important;
+    background: var(--si-surface) !important; transition: transform .15s ease, border-color .15s, box-shadow .15s;
+    &:hover, &:focus-within { transform: translateY(-2px); border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)) !important; box-shadow: var(--si-soft); }
+    .optioninfo { padding: 16px 10px 10px !important; gap: 8px; }
+    .optionicon, .activityiconcontainer { margin: 0 auto 2px; }
+    .optionname { font-size: 14px; font-weight: 600; color: var(--si-ink); line-height: 1.3; min-height: 2.6em; }
+    .optionactions { gap: 6px; padding-bottom: 10px; }
+    .optionaction { width: 30px; height: 30px; border-radius: 8px !important; background: var(--si-surface-2) !important; border: 1px solid var(--si-line) !important; }
+}
+.modchooser .nav-tabs { border-bottom: 1px solid var(--si-line); margin-bottom: 14px; .nav-link { border: 0; border-bottom: 2px solid transparent; font-weight: 700; color: var(--si-muted); background: transparent; }
+    .nav-link.active { color: var(--si-accent-ink); border-bottom-color: var(--si-mint); } }
+.modchooser .searchbar input { min-height: 46px; }
+.modchooser .tab-content, .modchooser .chooser-container { border: 0 !important; background: transparent !important; }
+// Native title tooltips can't be styled; hide Moodle's duplicate title on option links so they don't cover the cards.
+.modchooser .option a[title] { pointer-events: auto; }
+
+// ---------- Tooltips ----------
+.tooltip { --bs-tooltip-bg: #0B1B2B; --bs-tooltip-color: #fff; --bs-tooltip-padding-x: 10px; --bs-tooltip-padding-y: 6px; font-size: 12.5px; }
+.tooltip-inner { border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+[data-bs-theme="dark"] .tooltip { --bs-tooltip-bg: #E9F1F5; --bs-tooltip-color: #0B1B2B; }
+
+// ---------- Course editing: add activity divider, add section, add block ----------
+.course-content .divider {
+    hr { border-top: 2px dashed var(--si-line) !important; }
+    .divider-content { background: linear-gradient(transparent 40%, var(--si-surface) 40%, var(--si-surface) 60%, transparent 60%) !important; }
+    &:has(.btn.add-content:hover) hr { border-color: var(--si-mint) !important; }
+}
+.btn.add-content {
+    width: 30px; height: 30px; padding: 0; border-radius: 50% !important; display: grid; place-items: center;
+    background: var(--si-surface) !important; border: 1px solid var(--si-line) !important; color: var(--si-accent-ink) !important;
+    &:hover { background: var(--si-mint-soft) !important; border-color: var(--si-mint) !important; }
+}
+.btn.add-section, .block-add, .block-add.btn, [data-key="addblock"] {
+    background: transparent !important; color: var(--si-accent-ink) !important;
+    border: 2px dashed var(--si-line-strong) !important; border-radius: 14px !important; font-weight: 700;
+    &:hover, &:focus { background: var(--si-mint-soft) !important; border-color: var(--si-mint) !important; border-style: solid !important; }
+}
+
+// ---------- Siraj pages have their own navigation: hide Moodle's drawer toggles there ----------
+body.siraj-page .drawer-toggles, body.siraj-page .drawer.drawer-right { display: none !important; }
+body.siraj-page #page.drawers.show-drawer-right { margin-right: 0 !important; }
+
+// ---------- Notification popover ----------
+.popover-region-container {
+    width: 380px !important; border-radius: 16px !important; overflow: hidden; box-shadow: var(--si-shadow) !important;
+}
+.popover-region-header-container {
+    height: auto !important; min-height: 54px; padding: 12px 14px 12px 18px !important; display: flex; align-items: center;
+    border-bottom: 1px solid var(--si-line) !important;
+    .popover-region-header-text { font: 700 1rem var(--si-head) !important; margin: 0 !important; }
+    .popover-region-header-actions { display: flex; gap: 4px; margin-left: auto;
+        a, button, .btn { width: 32px; height: 32px; display: inline-grid; place-items: center; border-radius: 8px; border: 0 !important;
+            background: transparent !important; box-shadow: none !important; color: var(--si-muted) !important;
+            &:hover { background: var(--si-surface-2) !important; color: var(--si-ink) !important; } } }
+}
+.popover-region-content-container { height: auto !important; max-height: 420px; }
+.popover-region-content-container .empty-message { padding: 48px 20px !important; color: var(--si-muted) !important; text-align: center; }
+.popover-region-footer-container {
+    height: auto !important; padding: 0 !important;
+    a, .see-all-link { display: block; padding: 13px; text-align: center; font-weight: 700; color: var(--si-accent-ink) !important; text-decoration: none; }
+    a:hover { background: var(--si-surface-2) !important; }
+}
+.content-item-container { padding: 12px 18px !important; border-bottom: 1px solid var(--si-line) !important; }
+
+// ---------- Tables (Moodle's generic ones) ----------
+.table, table.generaltable, table.flexible, .preference-table {
+    border: 1px solid var(--si-line) !important; border-radius: 14px; overflow: hidden; border-collapse: separate !important;
+    border-spacing: 0; background: var(--si-surface);
+    th, td { padding: 13px 16px !important; vertical-align: middle; border-color: var(--si-line) !important; }
+    thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--si-muted); background: var(--si-surface-2); border-bottom: 1px solid var(--si-line) !important; }
+    tbody tr:hover > * { background-color: color-mix(in srgb, var(--si-mint) 5%, var(--si-surface)) !important; }
+}
+
+// Notification preferences: readable rows and real section headers.
+.preferences-page-container, .preferences-container { max-width: 980px; }
+.preference-table {
+    width: 100%;
+    th, td { text-transform: none !important; letter-spacing: 0 !important; }
+    tbody th[colspan] {
+        padding: 18px 16px 8px !important; font: 700 .78rem "Inter", sans-serif !important; letter-spacing: .12em !important;
+        text-transform: uppercase !important; color: var(--si-muted) !important; background: var(--si-surface-2) !important;
+    }
+    .preference-name { font-size: 14.5px; font-weight: 500 !important; color: var(--si-ink); }
+    td { text-align: center; width: 120px; }
+    thead th[data-processor-name] { text-align: center; width: 120px; }
+}
+.form-check-input[type="checkbox"].notification_enabled, .form-switch .form-check-input { width: 2.4em; height: 1.3em; cursor: pointer; }
+
+// ---------- Admin category / settings lists ----------
+#page-admin-category #region-main .row, .admin_settingspage, #adminsettings { max-width: 1100px; }
+#page-admin-category #region-main ul, #page-admin-search .adminpagelist ul {
+    list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px;
+    li a { display: block; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--si-line); background: var(--si-surface);
+        color: var(--si-ink) !important; font-weight: 600; text-decoration: none;
+        &:hover { border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)); background: var(--si-mint-soft); } }
+}
+
+// ---------- Forms: section headers and rows ----------
+.mform fieldset.collapsible { border-bottom: 1px solid var(--si-line); padding: 6px 0 14px; margin-bottom: 4px; }
+.mform .ftoggler h3, .mform legend.ftoggler { font-size: 1.15rem !important; }
+.mform .fitem { margin-bottom: 18px !important; }
+.mform .col-form-label { font-weight: 600; color: var(--si-ink); }
+.mform .fdescription.required { color: var(--si-muted); }
+
+@media (max-width: 575px) {
+    .availability-dialogue li.row { grid-template-columns: 1fr; }
+    .popover-region-container { width: calc(100vw - 24px) !important; }
+}
+
+// Moodle's page-settings menu placeholder (admins on activity pages): never a light box.
+.region_main_settings_menu_proxy { background: transparent !important; border: 0 !important; }
+#region-main-settings-menu .btn, .region_main_settings_menu_proxy .btn { background: var(--si-surface-2) !important; border: 1px solid var(--si-line) !important; border-radius: 10px; }
+body.siraj-page #region-main-settings-menu, body.siraj-page .region_main_settings_menu_proxy { display: none !important; }
+
+// Notifications popup sizes to its content.
+.popover-region .popover-region-container { height: auto !important; max-height: min(560px, calc(100vh - 100px)); display: flex; flex-direction: column; }
+.popover-region-content-container { flex: 1 1 auto; overflow-y: auto; }
+.popover-region-header-container, .popover-region-footer-container { flex-shrink: 0; }
+.popover-region-container > .see-all-link {
+    display: block; flex-shrink: 0; padding: 13px; text-align: center; font-weight: 700; text-decoration: none;
+    color: var(--si-accent-ink) !important; border-top: 0 !important; margin: 0 !important;
+    &:hover { background: var(--si-surface-2); }
+}
+
+// Dialogs receive focus when they open; that shouldn't draw a ring around the whole dialog.
+.modal:focus, .modal:focus-visible, .modal-dialog:focus-visible, .modal-content:focus-visible,
+.moodle-dialogue:focus-visible, .moodle-dialogue-wrap:focus-visible, [role="dialog"]:focus-visible { outline: none !important; }
+
+// ---------- Right-to-left (Arabic). Moodle mirrors this stylesheet with RTLCSS; these are the bits it can't know. ----------
+[dir="rtl"] .si-dir { scale: -1 1; }
+[dir="rtl"] body, [dir="rtl"] .btn, [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] textarea {
+    font-family: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif;
+}
+[dir="rtl"] { --si-head: "IBM Plex Sans Arabic", "Inter", system-ui, sans-serif; }
+// Arabic has no letter case and needs no letter spacing (it breaks the joined letters).
+[dir="rtl"] .siraj-eyebrow, [dir="rtl"] .siraj-table th, [dir="rtl"] .siraj-people-head, [dir="rtl"] .siraj-back,
+[dir="rtl"] .siraj-chip-glass, [dir="rtl"] .siraj-sidebar .siraj-navlabel, [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3 { letter-spacing: 0; }
+// Codes, emails and numbers stay left-to-right inside Arabic text.
+[dir="rtl"] code, [dir="rtl"] .siraj-verify-form input, [dir="rtl"] kbd { direction: ltr; unicode-bidi: isolate; }
+[dir="rtl"] .siraj-verify-form input { text-align: start; }
+[dir="rtl"] .siraj-back::before { content: "→"; }
+// RTLCSS mirrors borders but not rotations: the course-path caret needs its angle mirrored by hand.
+[dir="rtl"] .siraj-step-caret { transform: rotate(-45deg); }
+[dir="rtl"] details[open] .siraj-step-caret { transform: rotate(135deg); }
+// Course and activity names are often English inside Arabic pages: let each line take its own direction, so a long
+// English name is shortened at its end ("Reflection: apply it…"), not its start. "left" here becomes "right" once
+// Moodle mirrors this stylesheet for RTL, so lines stay aligned to the right edge.
+[dir="rtl"] .siraj-person-next b, [dir="rtl"] .siraj-person-next small, [dir="rtl"] .siraj-person-who b,
+[dir="rtl"] .siraj-person-who small, [dir="rtl"] .siraj-deadlines small, [dir="rtl"] .siraj-course-info b,
+[dir="rtl"] .siraj-course-info small, [dir="rtl"] .siraj-barrow-top > span, [dir="rtl"] .siraj-barrow-top > a,
+[dir="rtl"] .siraj-item-title, [dir="rtl"] .siraj-tile-body h3, [dir="rtl"] .siraj-act-text b, [dir="rtl"] .siraj-step-text b {
+    unicode-bidi: plaintext; text-align: left;
+}
+[dir="rtl"] .siraj-arrow { display: inline-block; scale: -1 1; }
+// Lesson text and course descriptions: each paragraph takes the direction of its own language,
+// so an English paragraph inside the Arabic interface keeps its full stop at the end.
+// (Lesson and chapter text itself is marked dir="auto" in the Learning mode template, which also places list bullets.)
+[dir="rtl"] .siraj-prose p, [dir="rtl"] .siraj-course-cover p, [dir="rtl"] .siraj-tile-body p,
+[dir="rtl"] .siraj-item-info small, [dir="rtl"] .siraj-note-body b, [dir="rtl"] .siraj-note-body p, [dir="rtl"] .siraj-hero p { unicode-bidi: plaintext; }
+
+// ---------- Top bar: focus ring only for keyboard users, language switcher, notification popover ----------
+.siraj-topbar {
+    .siraj-iconbtn, .popover-region-toggle, .nav-link, .siraj-search-trigger, #user-menu-toggle, .btn {
+        &:focus { box-shadow: none !important; outline: none; }
+        &:focus-visible { outline: 2px solid var(--si-mint) !important; outline-offset: 2px; }
+    }
+    .popover-region-toggle { border: 0 !important; }
+    .popover-region.collapsed .popover-region-toggle, .popover-region .popover-region-toggle { box-shadow: none !important; }
+}
+.siraj-langswitch { display: flex; align-items: center; }
+.siraj-langbtn {
+    display: inline-flex !important; flex-direction: row !important; align-items: center; justify-content: center;
+    width: auto !important; padding: 0 10px !important; gap: 6px; font-size: 12px; font-weight: 700; color: var(--si-muted);
+    span { letter-spacing: .04em; }
+}
+.siraj-langmenu {
+    min-width: 190px; padding: 6px; border-radius: 14px; border: 1px solid var(--si-line); box-shadow: var(--si-shadow);
+    background: var(--si-surface);
+    .dropdown-item {
+        display: flex; align-items: center; justify-content: space-between; gap: 12px; border-radius: 9px; padding: 10px 12px;
+        color: var(--si-ink); font-size: 14px; min-height: 44px;
+        &:hover, &:focus { background: var(--si-surface-2); color: var(--si-ink); }
+        &[aria-current] { font-weight: 700; color: var(--si-mint-ink); }
+        &::before { display: none !important; }
+        .si-icon { width: 16px; height: 16px; }
+    }
+}
+.popover-region-container {
+    width: 380px !important; border-radius: 18px !important; border: 1px solid var(--si-line) !important;
+    box-shadow: var(--si-shadow) !important; overflow: hidden; background: var(--si-surface) !important;
+}
+.popover-region-header-container {
+    display: flex; align-items: center; padding: 16px 16px 12px 20px !important; height: auto !important;
+    border-bottom: 1px solid var(--si-line) !important;
+    .popover-region-header-actions {
+        gap: 2px;
+        a, button, .btn {
+            width: 36px; height: 36px; display: inline-grid; place-items: center; border-radius: 10px !important;
+            border: 0 !important; background: transparent !important; color: var(--si-muted) !important; box-shadow: none !important;
+            &:hover { background: var(--si-surface-2) !important; color: var(--si-ink) !important; }
+            &:focus { outline: none; box-shadow: none !important; }
+            &:focus-visible { outline: 2px solid var(--si-mint) !important; }
+        }
+    }
+}
+.popover-region-content-container { padding: 6px !important; }
+.siraj-notif {
+    border: 0 !important; padding: 0 !important; background: transparent !important;
+    &.unread { background: transparent !important; }
+}
+.siraj-notif-link {
+    display: flex !important; align-items: flex-start; gap: 12px; padding: 12px 14px !important; border-radius: 12px;
+    text-decoration: none !important; color: var(--si-ink) !important;
+    &:hover, &:focus-visible { background: var(--si-surface-2); }
+    &:focus { outline: none; }
+}
+.siraj-notif-icon {
+    width: 36px; height: 36px; border-radius: 11px; flex: none; display: grid; place-items: center;
+    background: var(--si-surface-2); color: var(--si-muted); .si-icon { width: 17px; height: 17px; }
+    .unread & { background: var(--si-mint-soft); color: var(--si-mint-ink); }
+}
+.siraj-notif-text {
+    flex: 1; min-width: 0;
+    .notification-message {
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        font-size: 14px; line-height: 1.4; color: var(--si-ink); font-weight: 500; unicode-bidi: plaintext;
+        .unread & { font-weight: 700; }
+    }
+    .timestamp { display: block; margin-top: 4px; font-size: 12px; color: var(--si-faint) !important; }
+}
+.siraj-notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--si-mint); margin-top: 6px; flex: none; box-shadow: 0 0 0 4px var(--si-mint-soft); }
+.popover-region-footer-container {
+    border-top: 1px solid var(--si-line) !important; padding: 0 !important; height: auto !important; background: var(--si-surface) !important;
+    a, .see-all-link { display: flex !important; justify-content: center; align-items: center; min-height: 48px; font-weight: 700; font-size: 14px;
+        color: var(--si-accent-ink) !important; text-decoration: none !important; &:hover { background: var(--si-surface-2); } }
+}
+@media (max-width: 575.98px) { .popover-region-container { width: calc(100vw - 24px) !important; } }
+
+// SCORM player shown inside Learning mode (embedded layout): fill the frame exactly. Moodle's own resize script
+// otherwise makes it a little taller than the frame, which cuts off the package's bottom buttons.
+body.path-mod-scorm.pagelayout-embedded {
+    margin: 0; overflow: hidden; background: #fff;
+    #page { padding: 0 !important; margin: 0 !important; height: 100vh !important; }
+    #scormpage, #tocbox, #toctree, #scorm_layout, #scorm_content { height: 100vh !important; max-height: 100vh; }
+    #scorm_object { height: 100% !important; width: 100% !important; border: 0; display: block; }
+}
+
+// ---------- Moodle pages a learner still uses (assignment submission, quiz attempt, grades, account settings) ----------
+body.siraj-moodlepage {
+    #page.drawers .main-inner { max-width: 1080px; }
+    .siraj-moodleback { margin-bottom: 4px; }
+    #page-header {
+        margin: 0 0 18px !important; padding: 0 !important;
+        .page-header-headings h1, .page-header-headings .h2, h1.h2 { font-size: 1.9rem; letter-spacing: -.03em; margin: 0; }
+        #page-navbar, .breadcrumb { display: none; }
+        .page-context-header { display: flex; align-items: center; gap: 14px; margin: 0; }
+        .page-header-image .icon, .activityiconcontainer { display: none; }
+    }
+    .activity-header {
+        background: var(--si-surface) !important; border: 1px solid var(--si-line) !important; border-radius: var(--si-radius) !important;
+        padding: 16px 20px !important; margin-bottom: 22px !important; box-shadow: var(--si-soft);
+        .activity-information { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 0 0 10px; margin: 0 0 10px; border-bottom: 1px solid var(--si-line); }
+        .activity-dates { font-size: 14px; color: var(--si-muted); border: 0 !important; margin: 0 !important; padding: 0 !important; div { display: inline; margin-right: 14px; } strong { color: var(--si-ink); } }
+        .activity-description { color: var(--si-ink); font-size: 15px; border: 0 !important; padding: 0 !important; margin: 0 !important; }
+        .completion-info .btn, .completion-info .badge { border-radius: 99px !important; }
+    }
+    .activity-header:not(:has(.activity-description)) .activity-information { border: 0; padding: 0; margin: 0; }
+    .activity-navigation, #page-footer .btn-footer-popover { display: none !important; }
+}
+// Own account pages: just the page title, not "avatar + name + Message" (you can't message yourself).
+body.siraj-ownuser #page-header {
+    .page-context-header .page-header-image, .page-context-header .header-button-group, .header-button-group { display: none !important; }
+    .page-context-header .page-header-headings h1 { font-size: 1rem; color: var(--si-muted); font-weight: 600; }
+}
+body.siraj-ownuser #region-main > div > h2:first-child, body.siraj-ownuser #region-main h2.mb-4 { font-size: 1.9rem; letter-spacing: -.03em; }
+
+// Assignment: submission status as calm rows with a coloured status, not green table rows.
+.path-mod-assign {
+    .submissionstatustable, .feedback { background: transparent; }
+    .submissionstatustable h3, .feedback h3 { font-size: 1.15rem; margin: 6px 0 12px; }
+    .generaltable.submissionsummarytable, .submissionsummarytable {
+        border: 1px solid var(--si-line) !important; border-radius: var(--si-radius) !important; overflow: hidden; background: var(--si-surface);
+        th { width: 220px; background: var(--si-surface-2) !important; color: var(--si-muted) !important; font-size: 12.5px !important;
+             text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; }
+        td, th { padding: 14px 18px !important; border-color: var(--si-line) !important; vertical-align: top; }
+        td.submissionstatussubmitted, td.submissionstatusdraft, td.submissionstatusnew, td.earlysubmission, td.latesubmission,
+        td.submissiongraded, td.submissionnotgraded, td.overdue, td.timeremaining {
+            background: transparent !important; font-weight: 600;
+        }
+        td.submissionstatussubmitted, td.submissiongraded, td.earlysubmission { color: var(--si-mint-ink) !important; }
+        td.latesubmission, td.overdue { color: var(--si-red) !important; }
+        td.submissionstatusdraft { color: var(--si-amber) !important; }
+    }
+    .submissionaction, .submissionlinks { display: inline-flex; gap: 10px; margin: 0 10px 0 0; }
+    .submissionaction .btn, .submissionlinks .btn { min-height: 42px; border-radius: 11px; }
+    form.mform { background: var(--si-surface); border: 1px solid var(--si-line); border-radius: var(--si-radius); padding: 22px 24px 8px; box-shadow: var(--si-soft); }
+    .mform .fitem .col-md-3 { flex: 0 0 100%; max-width: 100%; padding-bottom: 6px; }
+    .mform .fitem .col-md-9 { flex: 0 0 100%; max-width: 100%; }
+    .mform fieldset.collapsible legend .fheader, .mform legend { font: 700 1.05rem var(--si-head); }
+    .filemanager, .fp-restrictions, .filemanager-container { border-radius: 12px; }
+    .filemanager .filemanager-container { border: 2px dashed color-mix(in srgb, var(--si-mint) 45%, var(--si-line)) !important; background: var(--si-mint-soft) !important; min-height: 140px; }
+}
+
+// Calendar: event cards with a coloured edge, not coloured headers.
+.path-calendar .event .card, .path-calendar .eventlist .event {
+    border: 1px solid var(--si-line) !important; border-left: 4px solid var(--si-blue) !important; border-radius: 14px !important;
+    overflow: hidden; box-shadow: var(--si-soft);
+    .card-header { background: var(--si-surface) !important; border-bottom: 1px solid var(--si-line) !important; padding: 14px 18px !important;
+        h3, .name { font: 700 1.05rem var(--si-head) !important; color: var(--si-ink) !important; } }
+    .card-body { padding: 14px 18px !important; font-size: 14px; }
+    .card-footer { background: transparent !important; border-top: 1px solid var(--si-line) !important; }
+}
+.path-calendar .eventlist .event.calendar_event_course, .path-calendar .event[data-event-eventtype="due"] .card { border-left-color: var(--si-red) !important; }
+.path-calendar .eventlist .event[data-event-eventtype="close"] .card { border-left-color: #E9A23B !important; }
+body.siraj-ownuser #page-header .page-context-header { display: none !important; }
+body.siraj-moodlepage:not(.siraj-ownuser) .secondary-navigation { display: none; }
+
+// Assignment grading (teachers): status as coloured text, not filled cells; grader app in Siraj colours.
+.path-mod-assign .gradingtable {
+    td.submissionstatussubmitted, td.submissionstatusdraft, td.submissionstatusnew, td.submissiongraded,
+    td.submissionnotgraded, td.latesubmission, td.earlysubmission, td.overdue, td.timeremaining,
+    td .submissionstatussubmitted, td .submissiongraded, td .submissionnotgraded, td .latesubmission {
+        background: transparent !important; font-weight: 600;
+    }
+    td.submissionstatussubmitted, td .submissionstatussubmitted, td.submissiongraded, td .submissiongraded { color: var(--si-mint-ink) !important; }
+    td.latesubmission, td .latesubmission, td.overdue { color: var(--si-red) !important; }
+    td.submissionnotgraded, td .submissionnotgraded { color: var(--si-amber) !important; }
+}
+.path-mod-assign [data-region="grade-panel"] .gradeform, .path-mod-assign [data-region="grade-panel"] .card {
+    border-radius: var(--si-radius) !important; border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
+}
+.path-mod-assign [data-region="grade-actions-panel"] {
+    background: var(--si-surface) !important; border-top: 1px solid var(--si-line) !important;
+    .btn { border-radius: 11px; min-height: 42px; }
+    .btn-primary { background: var(--si-flame) !important; border: 0 !important; color: #062C40 !important; }
+}
+.path-mod-assign [data-region="user-info"] { font-family: var(--si-head); }
+
+// Moodle's sticky action bar (gradebook, assignment submissions, bulk edit): beside the sidebar, Siraj surface.
+#sticky-footer.stickyfooter, .stickyfooter {
+    left: var(--si-side-w) !important; right: 0 !important; width: auto !important; z-index: 1020;
+    background: color-mix(in srgb, var(--si-surface) 94%, transparent) !important; backdrop-filter: blur(8px);
+    border-top: 1px solid var(--si-line) !important; box-shadow: 0 -8px 24px rgba(15, 45, 65, .06) !important;
+    color: var(--si-ink);
+    .sticky-footer-content { visibility: visible !important; opacity: 1 !important; gap: 12px; }
+    label { margin: 0; display: inline-flex; align-items: center; gap: 8px; color: var(--si-muted); font-size: 14px; }
+    .form-select { min-height: 40px; border-radius: 10px; width: auto; }
+    .btn { border-radius: 11px; min-height: 40px; }
+}
+@include media-breakpoint-down(md) { #sticky-footer.stickyfooter, .stickyfooter { left: 0 !important; bottom: 68px !important; } }
+// Keep room for that bar at every screen size, so it never covers the last row or the footer.
+@include media-breakpoint-down(lg) { body:has(#sticky-footer.stickyfooter) #page.drawers { padding-bottom: 80px !important; } }
+@include media-breakpoint-down(md) { body:has(#sticky-footer.stickyfooter) #page.drawers .main-inner { padding-bottom: 170px !important; } }
+
+// Wide Moodle tables (assignment submissions, quiz results, completion report): the page itself never scrolls
+// sideways in Siraj, so the table's own box does.
+#region-main div:has(> table.flexible), #region-main div:has(> table.generaltable), #region-main .table-dynamic,
+#region-main div:has(> table.quizattemptsummary), #region-main form:has(> table.generaltable), #region-main form:has(> table.flexible) {
+    max-width: 100%; overflow-x: auto; overflow-y: visible; scrollbar-width: thin;
+}
+// Small phones: the language button shows only the globe, so the top bar fits.
+@media (max-width: 399.98px) {
+    .siraj-langbtn { padding: 0 !important; width: 36px !important; span { display: none; } }
+    .siraj-topbar .siraj-top-actions { gap: 4px; }
+}
+
+// Gradebook (grader report): its table scrolls inside its own box (the page itself never scrolls sideways).
+.path-grade-report-grader .gradeparent, .path-grade-report .gradeparent { max-width: 100%; overflow-x: auto; }
+// Filter bars above Moodle tables (initials, status, search): wrap on narrow screens instead of running off.
+.tertiary-navigation, .tertiary-navigation .row, .tertiary-navigation .navitem, .initials-selector, .path-mod-assign .tertiary-navigation .d-flex {
+    flex-wrap: wrap !important; max-width: 100%;
+}
+.tertiary-navigation .navitem { min-width: 0; }
+.initialswidget .dropdown-menu, .initials-selector .dropdown-menu { max-width: calc(100vw - 32px); overflow-x: auto; }
+// Tablets: just the Edit mode switch, without its label.
+@media (max-width: 1199.98px) {
+    .siraj-topbar .editmode-switch-form label { display: none !important; }
+    .siraj-topbar .editmode-switch-form { margin-left: 0; }
+}
+
+// Admin pages: Moodle puts the site name ("Siraj Learning") as the page heading above the real title.
+// Hide that line and let the page's own title lead.
+body.pagelayout-admin:is(.path-admin, .path-cohort, .path-cache, .path-reportbuilder, .path-badges)
+    #page-header:has(~ #page-content #region-main h2) .page-header-headings {
+    display: none;
+}
+body.pagelayout-admin:is(.path-admin, .path-cohort, .path-cache, .path-reportbuilder, .path-badges) #region-main h2:first-of-type {
+    font-size: 1.9rem; letter-spacing: -.03em; margin-top: 0;
+}
+body.pagelayout-admin #page-header { align-items: center; }
+// Any wide admin table (roles, capabilities, scheduled tasks) scrolls in its own box.
+#region-main div:has(> table) { max-width: 100%; overflow-x: auto; scrollbar-width: thin; }
+@media (max-width: 575.98px) {
+    .siraj-usermenu .dropdown-toggle { padding: 0 !important; &::after { display: none !important; } }
+    .siraj-usermenu .usermenu .userbutton { margin: 0 !important; }
+}
+.defaultsnext, .form-defaultinfo { max-width: 100%; flex-wrap: wrap; min-width: 0; }
+
+// ---------- Round 12: forms and chrome ----------
+// Open dropdowns, pressed buttons and autocomplete chips: no thick Bootstrap ring, a quiet mint edge instead.
+.btn.show, .btn:first-child:active, .btn:active, .dropdown-toggle.show { box-shadow: none !important; border-color: var(--si-mint) !important; }
+.siraj-topbar .dropdown-toggle.show, .siraj-topbar #user-menu-toggle { border-color: transparent !important; }
+.form-autocomplete-selection, .form-autocomplete-selection:focus, .form-autocomplete-selection .badge { box-shadow: none !important; outline: none !important; }
+.form-autocomplete-selection { border: 0 !important; padding: 0 !important; min-height: 0 !important; margin-bottom: 6px; }
+.form-autocomplete-selection [data-active-selection="true"] { border-color: var(--si-mint) !important; }
+.form-autocomplete-selection .badge {
+    background: var(--si-mint-soft) !important; color: var(--si-accent-ink) !important; border: 1px solid transparent !important;
+    font-weight: 600; padding: 6px 12px; border-radius: 999px;
+}
+
+// Moodle's choice lists (course format, etc.): the selected option in Siraj colours, readable in light and dark.
+.choicelist .selected, .choicelist .bg-primary-light {
+    background: var(--si-mint-soft) !important; border-color: var(--si-mint) !important;
+    .text-dark, a, .stretched-link { color: var(--si-ink) !important; }
+    .text-muted, small, .small { color: var(--si-muted) !important; }
+}
+.choicelist .dropdown-item-outline:not(.selected):hover { background: var(--si-surface-2) !important; }
+
+// One line under course/admin tabs, not two.
+.secondary-navigation { border-bottom: 0 !important; }
+
+// File manager (course image, attachments): one card with a toolbar, not boxes inside boxes.
+.filemanager {
+    .fp-restrictions { text-align: start; font-size: 12.5px; color: var(--si-muted); margin: 0 0 8px !important; }
+    .fp-navbar {
+        border: 1px solid var(--si-line) !important; border-bottom: 0 !important; border-radius: 12px 12px 0 0 !important;
+        padding: 8px 10px !important; background: var(--si-surface-2) !important; min-height: 0 !important;
+    }
+    .fp-pathbar { margin: 6px 2px 0 !important; font-size: 13px; }
+    .filemanager-container {
+        border: 1px solid var(--si-line) !important; border-radius: 0 0 12px 12px !important; padding: 14px !important; min-height: 130px;
+    }
+    .fp-iconview .fp-file { margin: 0 10px 10px 0; padding: 8px; border-radius: 10px; }
+    .fp-iconview .fp-thumbnail, .fp-thumbnail { border: 0 !important; border-radius: 8px; }
+}
+.form-filetypes-descriptions { margin-top: 10px; font-size: 13px; color: var(--si-muted); }
+
+// Siraj's own pages are not block dashboards: Edit mode only where it does something (courses, Moodle pages).
+body.siraj-page:not(.siraj-home) .siraj-topbar .editmode-switch-form { display: none !important; }
+
+// Home: the person's own dashboard blocks (Edit mode), under the Siraj sections.
+.siraj-myblocks {
+    margin-top: 34px;
+    .siraj-myblocks-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; form { margin: 0; } }
+    .siraj-myblocks-hint { color: var(--si-muted); font-size: 14px; margin: -6px 0 14px; }
+    .block-region { min-height: 0; }
+    &.is-editing .block-region { min-height: 90px; border: 1px dashed var(--si-line); border-radius: 16px; padding: 12px; }
+    .block.card { border-radius: 16px; border: 1px solid var(--si-line); background: var(--si-surface); margin-bottom: 16px; }
+    .add_block_button { margin-bottom: 12px; }
+}

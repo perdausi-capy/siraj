@@ -1,0 +1,62 @@
+{{!
+    @template theme_siraj/topbar
+
+    Top bar: trail, search, theme switch, language, notifications, user menu.
+    Uses class navbar fixed-top so Boost's drawer offsets keep working.
+
+    Example context (json):
+    {"trailroot": "Your learning space", "pagetitle": "Home", "icon_search": "", "icon_sun": "", "icon_moon": ""}
+}}
+<header class="navbar fixed-top siraj-topbar" aria-label="{{#str}}sitemenubar, admin{{/str}}">
+    <a class="siraj-topbrand" href="{{homeurl}}">{{{topflame}}}<span>SIRAJ</span></a>
+    <div class="siraj-trail">{{#loggedin}}<span class="siraj-trail-root">{{trailroot}}</span><span class="siraj-trail-sep">/</span>{{/loggedin}}<b>{{pagetitle}}</b></div>
+    <div class="siraj-top-search">
+        {{#loggedin}}
+        <button type="button" class="siraj-search-trigger" data-siraj-action="palette">
+            {{{icon_search}}}<span>{{#str}}searchanything, theme_siraj{{/str}}</span><kbd>Ctrl K</kbd>
+        </button>
+        {{/loggedin}}
+    </div>
+    <div class="siraj-top-actions">
+        <button type="button" class="siraj-iconbtn" data-siraj-action="theme" aria-label="{{#str}}toggletheme, theme_siraj{{/str}}" title="{{#str}}toggletheme, theme_siraj{{/str}}">{{{icon_sun}}}{{{icon_moon}}}</button>
+        {{#haslanguages}}
+        <div class="dropdown siraj-langswitch">
+            <button type="button" class="siraj-iconbtn siraj-langbtn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{#str}}language{{/str}}" title="{{#str}}language{{/str}}">{{{icon_globe}}}<span>{{currentlang}}</span></button>
+            <div class="dropdown-menu dropdown-menu-end siraj-langmenu">
+                {{#languages}}<a class="dropdown-item" href="{{url}}" lang="{{code}}" {{#current}}aria-current="true"{{/current}}><span>{{name}}</span>{{#current}}{{{icon_check}}}{{/current}}</a>{{/languages}}
+            </div>
+        </div>
+        {{/haslanguages}}
+        {{^haslanguages}}{{#langmenu}}<div class="siraj-lang">{{> theme_boost/language_menu }}</div>{{/langmenu}}{{/haslanguages}}
+        <div class="siraj-plugins{{#chat}} has-siraj-chat{{/chat}}">{{{ output.navbar_plugin_output }}}</div>
+        {{#ai}}<button type="button" class="siraj-iconbtn siraj-aibtn" data-siraj-ai="" aria-controls="siraj-ai" aria-label="{{#str}}ai_name, theme_siraj{{/str}}" title="{{#str}}ai_name, theme_siraj{{/str}}">{{{icon_sparkles}}}</button>{{/ai}}{{#chat}}<button type="button" class="siraj-iconbtn siraj-chatbtn" data-siraj-action="chat" aria-controls="siraj-chat" aria-label="{{#str}}chat_title, theme_siraj{{/str}}" title="{{#str}}chat_title, theme_siraj{{/str}}">{{{icon_message}}}<span class="siraj-chatbadge" data-chat-badge {{^hasunread}}hidden{{/hasunread}}>{{unread}}</span></button>{{/chat}}
+        {{#user}}
+        <div class="dropdown siraj-me">
+            <button type="button" class="siraj-me-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{fullname}}">
+                <span class="siraj-avatar">{{#picture}}<img src="{{picture}}" alt="">{{/picture}}{{^picture}}{{initials}}{{/picture}}</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end siraj-me-menu">
+                <div class="siraj-me-head">
+                    <span class="siraj-avatar lg">{{#picture}}<img src="{{picture}}" alt="">{{/picture}}{{^picture}}{{initials}}{{/picture}}</span>
+                    <span><b>{{fullname}}</b><small>{{email}}</small></span>
+                </div>
+                {{#menu}}<a class="dropdown-item" href="{{url}}">{{{icon}}}<span>{{text}}</span></a>{{/menu}}
+                {{#adminmenu}}<div class="dropdown-divider"></div><a class="dropdown-item" href="{{url}}">{{{icon}}}<span>{{text}}</span></a>{{/adminmenu}}
+                <div class="siraj-me-phone">
+                    <div class="dropdown-divider"></div>
+                    <button type="button" class="dropdown-item siraj-me-theme" data-siraj-action="theme">{{{icon_moonplain}}}<span>{{#str}}darkmode, theme_siraj{{/str}}</span><i class="siraj-me-switch" aria-hidden="true"></i></button>
+                    {{#haslanguages}}
+                    <div class="siraj-me-langs" role="group" aria-label="{{#str}}language{{/str}}">
+                        {{{icon_globe}}}
+                        {{#languages}}<a href="{{url}}" lang="{{code}}" {{#current}}aria-current="true"{{/current}}>{{name}}</a>{{/languages}}
+                    </div>
+                    {{/haslanguages}}
+                </div>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="{{logouturl}}">{{{icon_logout}}}<span>{{#loggedinas}}{{#str}}returntooriginaluser, moodle, {{fullname}}{{/str}}{{/loggedinas}}{{^loggedinas}}{{#str}}logout{{/str}}{{/loggedinas}}</span></a>
+            </div>
+        </div>
+        {{/user}}
+        {{^user}}{{#usermenu}}<div class="siraj-usermenu">{{> core/user_menu }}</div>{{/usermenu}}{{/user}}
+    </div>
+</header>

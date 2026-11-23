@@ -1,0 +1,25 @@
+{{!
+    @template message_popup/notification_content_item
+
+    Siraj version of a notification in the top bar popover: the whole row opens the notification, an unread dot,
+    the subject on up to two lines, and the time. Keeps Moodle's data attributes so its JavaScript (mark as read,
+    open) works unchanged.
+
+    Example context (json):
+    {"contexturl": "#", "read": false, "subject": "Your certificate is ready", "id": 1, "iconurl": "#",
+     "shortenedsubject": "Your certificate is ready", "timecreatedpretty": "5 minutes ago", "viewmoreurl": "#"}
+}}
+<div class="content-item-container notification siraj-notif {{^read}}unread{{/read}}"
+    data-region="notification-content-item-container"
+    data-id="{{id}}"
+    role="listitem">
+    <a class="context-link siraj-notif-link" href="{{#contexturl}}{{{.}}}{{/contexturl}}{{^contexturl}}{{{viewmoreurl}}}{{/contexturl}}" data-action="content-item-link"
+        {{#read}}aria-label="{{subject}}"{{/read}}{{^read}}aria-label="{{#str}} unreadnotification, message, {{subject}} {{/str}}"{{/read}}>
+        <span class="siraj-notif-icon" aria-hidden="true"><svg viewBox="0 0 24 24" class="si-icon"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
+        <span class="siraj-notif-text">
+            <span class="notification-message" dir="auto">{{shortenedsubject}}</span>
+            <span class="timestamp">{{timecreatedpretty}}</span>
+        </span>
+        {{^read}}<span class="siraj-notif-dot" aria-hidden="true"></span>{{/read}}
+    </a>
+</div>

@@ -1,0 +1,73 @@
+{{!
+    @template local_siraj/teaching
+
+    Siraj Teaching: KPIs, grading queue, course cards with learner status and quick tools, due soon.
+
+    Example context (json):
+    {"greeting": "Good to see you, Hana", "subline": "3 submissions are waiting for you.", "kpis": [], "courses": [], "tograde": [], "due": []}
+}}
+<div class="siraj-dashboard siraj-teaching">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}teaching, local_siraj{{/str}}</div>
+            <h1>{{greeting}}</h1>
+            <p class="siraj-sub">{{subline}}</p>
+        </div>
+        {{#createurl}}<div class="siraj-head-actions"><a class="btn siraj-btn-flame" href="{{createurl}}">{{#str}}newcourse, local_siraj{{/str}}</a></div>{{/createurl}}
+    </header>
+
+    <div class="siraj-kpis">
+        {{#kpis}}<div class="siraj-kpi tone-{{tone}}"><span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span><div><strong>{{value}}</strong><span>{{label}}</span></div></div>{{/kpis}}
+    </div>
+
+    <div class="siraj-dash-grid">
+        <div class="siraj-dash-main">
+            {{#courses}}
+            <section class="siraj-panel siraj-tcourse">
+                <div class="siraj-tcourse-head">
+                    <span class="siraj-cover {{coverclass}}" {{#cover}}style="background-image: url('{{cover}}')"{{/cover}} aria-hidden="true"></span>
+                    <div class="siraj-course-info">
+                        <small>{{category}}{{#mandatory}} · {{#str}}mandatory, local_siraj{{/str}}{{/mandatory}}</small>
+                        <b>{{name}}</b>
+                        <small>{{learners}} · {{finished}} {{#str}}finished, local_siraj{{/str}} · {{#str}}avgprogress, local_siraj, {{avg}}{{/str}}</small>
+                    </div>
+                    {{#tograde}}<span class="siraj-chip amber">{{#str}}ntograde, local_siraj, {{tograde}}{{/str}}</span>{{/tograde}}
+                </div>
+                <span class="siraj-progress"><i style="width: {{pct}}%"></i></span>
+                <ul class="siraj-tstatus">
+                    {{#status}}<li><span class="siraj-chip sm {{class}}"><i></i>{{label}}</span><b>{{n}}</b></li>{{/status}}
+                </ul>
+                <div class="siraj-tlinks">
+                    {{#links}}<a href="{{url}}">{{{icon}}}<span>{{text}}</span></a>{{/links}}
+                </div>
+            </section>
+            {{/courses}}
+        </div>
+        <aside class="siraj-side">
+            <section class="siraj-panel">
+                <h3>{{#str}}waitingtograde, local_siraj{{/str}}</h3>
+                {{#hastograde}}
+                <ul class="siraj-gradequeue">
+                    {{#tograde}}
+                    <li>
+                        <span class="siraj-act-icon" aria-hidden="true">{{{icon}}}</span>
+                        <span><b>{{name}}</b><small>{{course}}</small></span>
+                        <a class="btn btn-sm siraj-btn-flame" href="{{url}}">{{label}}</a>
+                    </li>
+                    {{/tograde}}
+                </ul>
+                {{/hastograde}}
+                {{^hastograde}}<p class="siraj-allgood">{{{icon_check}}} {{#str}}nothingtograde, local_siraj{{/str}}</p>{{/hastograde}}
+            </section>
+            <section class="siraj-panel">
+                <h3>{{#str}}duesoon14, local_siraj{{/str}}</h3>
+                {{#hasdue}}
+                <ul class="siraj-deadlines">
+                    {{#due}}<li><span class="siraj-act-icon" aria-hidden="true">{{{icon_calendar}}}</span><span><b>{{name}}</b><small>{{course}}</small></span><em>{{when}}</em></li>{{/due}}
+                </ul>
+                {{/hasdue}}
+                {{^hasdue}}<p class="siraj-empty-line">{{#str}}nothingdue, local_siraj{{/str}}</p>{{/hasdue}}
+            </section>
+        </aside>
+    </div>
+</div>

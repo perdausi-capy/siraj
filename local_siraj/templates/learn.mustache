@@ -1,0 +1,389 @@
+{{!
+    @template local_siraj/learn
+
+    Siraj Learning mode.
+
+    Example context (json):
+    {
+        "name": "The rules in practice", "coursename": "Workplace Health & Safety", "sectionname": "Key rules", "type": "Page",
+        "position": "Lesson 2 of 5", "steppct": 40, "progress": 80, "progresstext": "4 of 5 done",
+        "body": {"reading": "<p>Text</p>"}, "manual": true, "isdone": false, "formurl": "#", "sesskey": "x",
+        "prevurl": "#", "prevname": "Welcome", "nexturl": "#", "nextname": "Policy", "courseurl": "#"
+    }
+}}
+<div class="siraj-player{{#body.embed}} is-stage{{/body.embed}}{{#body.h5p}} is-stage{{/body.h5p}}{{#body.file.pdf}} is-stage{{/body.file.pdf}}" data-region="siraj-player" data-cmid="{{cmid}}" data-done="{{#isdone}}1{{/isdone}}">
+    <article class="siraj-player-main">
+        <header class="siraj-player-top">
+            <a class="siraj-exit" href="{{courseurl}}" title="{{#str}}exitlearning, local_siraj{{/str}}">{{{icon_back}}}<span>{{#str}}exitlearning, local_siraj{{/str}}</span></a>
+            <div class="siraj-player-where">
+                <b class="siraj-where-course">{{coursename}}</b>
+                <b class="siraj-where-lesson">{{name}}</b>
+                <small><span class="siraj-where-lesson">{{coursename}} · </span>{{position}} · <span data-region="siraj-progresstext">{{progresstext}}</span><span data-region="siraj-lessonpct"></span></small>
+            </div>
+            <div class="siraj-player-tools">
+                {{#isdone}}<span class="siraj-chip green" data-region="siraj-state">{{{icon_check}}} {{#str}}done, local_siraj{{/str}}</span>{{/isdone}}
+                {{^isdone}}<span class="siraj-chip" data-region="siraj-state" data-donehtml="{{#str}}done, local_siraj{{/str}}">{{type}}</span>{{/isdone}}
+                {{#body.embed}}<button type="button" class="siraj-player-iconbtn" data-action="siraj-fullscreen" title="{{#str}}fullscreen, local_siraj{{/str}}" aria-label="{{#str}}fullscreen, local_siraj{{/str}}">{{{icon_expand}}}</button>{{/body.embed}}
+                <span class="siraj-player-ring" title="{{#str}}courseprogress, local_siraj{{/str}}: {{progress}}%" style="--p: {{progress}}"><b>{{progress}}%</b></span>
+                <button type="button" class="siraj-player-aibtn" {{#aiready}}data-siraj-ai="" aria-controls="siraj-ai"{{/aiready}}{{^aiready}}data-action="siraj-side" aria-expanded="false" aria-controls="siraj-player-side"{{/aiready}}>{{{icon_sparkles}}}<span>Siraj AI</span></button>
+            </div>
+        </header>
+        <div class="siraj-player-rail" role="progressbar" aria-valuenow="{{steppct}}" aria-valuemin="0" aria-valuemax="100" aria-label="{{position}}"><i style="width: {{steppct}}%"></i></div>
+
+        <div class="siraj-player-body">
+            <div class="siraj-player-title">
+                <div>
+                    <div class="siraj-eyebrow">{{sectionname}} · {{type}}</div>
+                    <h1>{{name}}</h1>
+                </div>
+            </div>
+
+            {{#body.reading}}
+            <div class="siraj-reading siraj-prose" dir="auto">{{{body.reading}}}</div>
+            {{/body.reading}}
+
+            {{#body.link}}
+            <div class="siraj-launch">
+                <span class="siraj-launch-icon">{{{icon_external}}}</span>
+                <div class="siraj-launch-text">
+                    <b>{{body.link.host}}</b>
+                    {{#body.link.intro}}<div class="siraj-prose">{{{body.link.intro}}}</div>{{/body.link.intro}}
+                    <p class="siraj-sub">{{#str}}link_hint, local_siraj{{/str}}</p>
+                </div>
+                <a class="btn siraj-btn-flame" href="{{body.link.url}}" target="_blank" rel="noopener">{{#str}}openlink, local_siraj{{/str}} {{{icon_external}}}</a>
+            </div>
+            {{/body.link}}
+
+            {{#body.file}}
+            {{#body.file.intro}}<div class="siraj-prose">{{{body.file.intro}}}</div>{{/body.file.intro}}
+            {{#body.file.pdf}}<iframe class="siraj-pdf" src="{{body.file.url}}#toolbar=1&view=FitH" title="{{body.file.name}}" loading="lazy"></iframe>{{/body.file.pdf}}
+            {{#body.file.image}}<img class="siraj-image" src="{{body.file.url}}" alt="{{name}}" loading="lazy">{{/body.file.image}}
+            {{#body.file.video}}<video class="siraj-video" src="{{body.file.url}}" controls preload="metadata"></video>{{/body.file.video}}
+            <div class="siraj-filebar">
+                <span>{{body.file.name}} · {{body.file.size}}</span>
+                <a class="btn btn-secondary" href="{{body.file.url}}?forcedownload=1">{{{icon_download}}} {{#str}}download{{/str}}</a>
+            </div>
+            {{/body.file}}
+
+            {{#body.book}}
+            {{#body.book.many}}
+            <details class="siraj-chapters">
+                <summary><span>{{body.book.position}}</span> {{#str}}chapters, local_siraj{{/str}}</summary>
+                <ol>
+                    {{#body.book.toc}}<li class="{{#sub}}is-sub{{/sub}}"><a href="{{url}}" {{#current}}aria-current="page"{{/current}}>{{title}}</a></li>{{/body.book.toc}}
+                </ol>
+            </details>
+            {{/body.book.many}}
+            <h2 class="siraj-chapter-title" dir="auto">{{body.book.title}}</h2>
+            <div class="siraj-reading siraj-prose" dir="auto">{{{body.book.content}}}</div>
+            {{#body.book.many}}
+            <nav class="siraj-chapter-nav" aria-label="{{#str}}chapters, local_siraj{{/str}}">
+                {{#body.book.prevurl}}<a class="btn btn-secondary" href="{{body.book.prevurl}}">{{{icon_back}}} {{#str}}prevchapter, local_siraj{{/str}}</a>{{/body.book.prevurl}}
+                {{^body.book.prevurl}}<span></span>{{/body.book.prevurl}}
+                {{#body.book.nexturl}}<a class="btn siraj-btn-flame" href="{{body.book.nexturl}}"><span>{{body.book.nexttitle}}</span> {{{icon_arrow}}}</a>{{/body.book.nexturl}}
+            </nav>
+            {{/body.book.many}}
+            {{/body.book}}
+
+            {{#body.embed}}
+            {{#body.embed.intro}}<div class="siraj-prose siraj-embed-intro" dir="auto">{{{body.embed.intro}}}</div>{{/body.embed.intro}}
+            <div class="siraj-embed" data-region="siraj-embed" data-kind="{{body.embed.kind}}" data-allow="{{body.embed.allow}}">
+                <iframe src="{{body.embed.src}}" title="{{body.embed.title}}" allow="fullscreen; autoplay" allowfullscreen></iframe>
+            </div>
+            {{#body.embed.hint}}<p class="siraj-stage-hint">{{body.embed.hint}}</p>{{/body.embed.hint}}
+            {{/body.embed}}
+
+            {{#body.h5p}}
+            {{#body.h5p.intro}}<div class="siraj-prose siraj-embed-intro" dir="auto">{{{body.h5p.intro}}}</div>{{/body.h5p.intro}}
+            {{#body.h5p.preview}}<p class="siraj-sub">{{#str}}previewmode, mod_h5pactivity{{/str}}</p>{{/body.h5p.preview}}
+            <div class="siraj-h5p">{{{body.h5p.html}}}</div>
+            {{/body.h5p}}
+
+            {{#body.assign}}
+            <div class="siraj-task">
+                <div class="siraj-task-head">
+                    <span class="siraj-chip {{body.assign.chip}}"><i></i>{{body.assign.state}}</span>
+                    {{#body.assign.due}}<span class="siraj-task-due {{#body.assign.late}}late{{/body.assign.late}}">{{{icon_calendar}}} {{#str}}duewhen, local_siraj, {{body.assign.due}}{{/str}} · {{body.assign.duerel}}</span>{{/body.assign.due}}
+                </div>
+                {{#body.assign.intro}}<div class="siraj-prose" dir="auto">{{{body.assign.intro}}}</div>{{/body.assign.intro}}
+                {{#body.assign.activity}}<div class="siraj-prose siraj-task-activity" dir="auto">{{{body.assign.activity}}}</div>{{/body.assign.activity}}
+                {{#body.assign.hastypes}}
+                <h3>{{#str}}whattosubmit, local_siraj{{/str}}</h3>
+                <ul class="siraj-task-types">
+                    {{#body.assign.types}}<li><span class="siraj-act-icon">{{{icon}}}</span><span><b>{{name}}</b>{{#detail}}<small>{{detail}}</small>{{/detail}}</span></li>{{/body.assign.types}}
+                </ul>
+                {{/body.assign.hastypes}}
+                {{#body.assign.submittedon}}<p class="siraj-sub siraj-task-when">{{#str}}submittedon, local_siraj, {{body.assign.submittedon}}{{/str}}</p>{{/body.assign.submittedon}}
+                {{#body.assign.grade}}
+                <div class="siraj-task-grade">
+                    {{#value}}<div><small>{{#str}}grade, local_siraj{{/str}}</small><b>{{value}}</b></div>{{/value}}
+                    {{#feedback}}<div class="siraj-prose" dir="auto"><small>{{#str}}feedback, local_siraj{{/str}}</small>{{{feedback}}}</div>{{/feedback}}
+                </div>
+                {{/body.assign.grade}}
+                <div class="siraj-task-actions">
+                    {{#body.assign.action}}<a class="btn {{#primary}}siraj-btn-flame{{/primary}}{{^primary}}btn-secondary{{/primary}}" href="{{url}}">{{text}} {{{icon_arrow}}}</a>{{/body.assign.action}}
+                    {{#body.assign.editurl}}<a class="btn btn-link siraj-link" href="{{body.assign.editurl}}">{{#str}}editsubmission, local_siraj{{/str}}</a>{{/body.assign.editurl}}
+                </div>
+            </div>
+            {{/body.assign}}
+
+            {{#body.quiz}}
+            <div class="siraj-task">
+                <div class="siraj-task-head"><span class="siraj-chip {{body.quiz.chip}}"><i></i>{{body.quiz.state}}</span></div>
+                {{#body.quiz.intro}}<div class="siraj-prose" dir="auto">{{{body.quiz.intro}}}</div>{{/body.quiz.intro}}
+                <dl class="siraj-task-rules">{{#body.quiz.rules}}<div><dt>{{label}}</dt><dd>{{value}}</dd></div>{{/body.quiz.rules}}</dl>
+                {{#body.quiz.nomore}}<p class="siraj-sub">{{#str}}nomoreattempts, local_siraj{{/str}}</p>{{/body.quiz.nomore}}
+                {{#body.quiz.closed}}<p class="siraj-sub">{{#str}}quizclosed, local_siraj{{/str}}</p>{{/body.quiz.closed}}
+                <div class="siraj-task-actions">
+                    {{#body.quiz.action}}
+                    {{#post}}<form method="post" action="{{url}}"><button type="submit" class="btn siraj-btn-flame">{{text}} {{{icon_arrow}}}</button></form>{{/post}}
+                    {{^post}}<a class="btn siraj-btn-flame" href="{{url}}">{{text}} {{{icon_arrow}}}</a>{{/post}}
+                    {{/body.quiz.action}}
+                    {{#body.quiz.reviewurl}}<a class="btn btn-secondary" href="{{body.quiz.reviewurl}}">{{#str}}reviewlast, local_siraj{{/str}}</a>{{/body.quiz.reviewurl}}
+                </div>
+            </div>
+            {{/body.quiz}}
+
+            {{#body.feedback}}{{> local_siraj/learn_feedback}}{{/body.feedback}}
+            {{#body.forum}}{{> local_siraj/learn_forum}}{{/body.forum}}
+            {{#body.glossary}}{{> local_siraj/learn_glossary}}{{/body.glossary}}
+            {{#body.choice}}{{> local_siraj/learn_choice}}{{/body.choice}}
+            {{#body.folder}}{{> local_siraj/learn_folder}}{{/body.folder}}
+            {{#body.bigbluebuttonbn}}{{> local_siraj/learn_live}}{{/body.bigbluebuttonbn}}
+
+            {{#body.launch}}
+            <div class="siraj-launchwrap">
+                {{#body.launch.intro}}<div class="siraj-prose" dir="auto">{{{body.launch.intro}}}</div>{{/body.launch.intro}}
+                <div class="siraj-launch">
+                    <span class="siraj-launch-icon">{{{body.launch.icon}}}</span>
+                    <div class="siraj-launch-text">
+                        <b>{{body.launch.type}}</b>
+                        <p class="siraj-sub">{{body.launch.desc}}</p>
+                    </div>
+                    <a class="btn siraj-btn-flame" href="{{body.launch.url}}"{{#body.launch.newtab}} target="_blank" rel="noopener"{{/body.launch.newtab}}>{{body.launch.button}} {{{icon_arrow}}}</a>
+                </div>
+            </div>
+            {{/body.launch}}
+        </div>
+
+        <footer class="siraj-player-footer">
+            {{#prevurl}}<a class="btn btn-secondary siraj-prev" href="{{prevurl}}" title="{{prevname}}">{{{icon_back}}} <span>{{#str}}previous, local_siraj{{/str}}</span></a>{{/prevurl}}
+            {{^prevurl}}<span></span>{{/prevurl}}
+            <div class="siraj-complete">
+                {{#manual}}
+                <form method="post" action="{{formurl}}">
+                    <input type="hidden" name="sesskey" value="{{sesskey}}">
+                    {{^isdone}}
+                    <input type="hidden" name="action" value="done">
+                    {{#nexturl}}<input type="hidden" name="goto" value="{{nexturl}}">{{/nexturl}}
+                    {{^manualquiet}}<button class="btn siraj-btn-flame" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}{{#nexturl}} · {{#str}}andcontinue, local_siraj{{/str}}{{/nexturl}}</button>{{/manualquiet}}
+                    {{#manualquiet}}<button class="btn btn-link siraj-undo" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}</button>{{/manualquiet}}
+                    {{/isdone}}
+                    {{#isdone}}
+                    <input type="hidden" name="action" value="undone">
+                    <button class="btn btn-link siraj-undo" type="submit">{{#str}}markundone, local_siraj{{/str}}</button>
+                    {{/isdone}}
+                </form>
+                {{/manual}}
+                {{#automatic}}{{^isdone}}<span class="siraj-sub">{{#str}}autocomplete, local_siraj{{/str}}</span>{{/isdone}}{{/automatic}}
+                {{^manual}}{{^automatic}}<span class="siraj-sub">{{#str}}autosave, local_siraj{{/str}}</span>{{/automatic}}{{/manual}}
+            </div>
+            {{#nexturl}}<a class="btn {{#isdone}}siraj-btn-flame{{/isdone}}{{^isdone}}btn-secondary{{/isdone}} siraj-next" href="{{nexturl}}" title="{{nextname}}"><span>{{#str}}next, local_siraj, {{nextname}}{{/str}}</span> {{{icon_arrow}}}</a>{{/nexturl}}
+            {{^nexturl}}<a class="btn btn-secondary siraj-next" href="{{courseurl}}"><span>{{#str}}backtocourse, local_siraj{{/str}}</span> {{{icon_arrow}}}</a>{{/nexturl}}
+        </footer>
+    </article>
+
+    <div class="siraj-side-backdrop" data-action="siraj-side-close"></div>
+    <aside class="siraj-player-side" id="siraj-player-side" aria-label="Siraj AI">
+        <button type="button" class="siraj-side-close" data-action="siraj-side-close" aria-label="{{#str}}closebuttontitle{{/str}}">{{{icon_x}}}</button>
+        <div class="siraj-panel siraj-ai">
+            <div class="siraj-ai-head"><span class="siraj-ai-orb"></span><div><b>{{#str}}ai_name, theme_siraj{{/str}}</b><small>{{#str}}ai_companion, local_siraj{{/str}}{{^aiready}} · {{#str}}ai_soon, local_siraj{{/str}}{{/aiready}}</small></div></div>
+            <p>{{#str}}ai_player_text, local_siraj{{/str}}</p>
+            <button type="button" class="siraj-ai-prompt" {{#aiready}}data-siraj-ai="{{#str}}ai_s_explain, theme_siraj{{/str}}"{{/aiready}}{{^aiready}}disabled{{/aiready}}>{{#str}}ai_p1, local_siraj{{/str}}</button>
+            <button type="button" class="siraj-ai-prompt" {{#aiready}}data-siraj-ai="{{#str}}ai_s_summary, theme_siraj{{/str}}"{{/aiready}}{{^aiready}}disabled{{/aiready}}>{{#str}}ai_p2, local_siraj{{/str}}</button>
+            <button type="button" class="siraj-ai-prompt" {{#aiready}}data-siraj-ai="" data-siraj-ai-mode="quiz"{{/aiready}}{{^aiready}}disabled{{/aiready}}>{{#str}}ai_p3, local_siraj{{/str}}</button>
+        </div>
+        <div class="siraj-panel">
+            <div class="siraj-eyebrow">{{#str}}courseprogress, local_siraj{{/str}}</div>
+            <span class="siraj-progress wide"><i style="width: {{progress}}%"></i></span>
+            <p class="siraj-sub siraj-small">{{progress}}% · {{progresstext}}</p>
+            <a class="siraj-link" href="{{courseurl}}">{{#str}}viewpath, local_siraj{{/str}} {{{icon_arrow}}}</a>
+        </div>
+    </aside>
+</div>
+{{#js}}
+(function() {
+    var player = document.querySelector('[data-region="siraj-player"]');
+    if (!player) {
+        return;
+    }
+    // Siraj AI and course progress: a drawer, so the lesson gets the full width.
+    var aibtn = player.querySelector('[data-action="siraj-side"]');
+    // With Siraj AI connected the button opens the Siraj AI panel instead (theme_siraj/ai).
+    var setSide = function(open) {
+        player.classList.toggle('side-open', open);
+        if (aibtn) {
+            aibtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+    };
+    if (aibtn) {
+        aibtn.addEventListener('click', function() {
+            setSide(!player.classList.contains('side-open'));
+        });
+    }
+    player.querySelectorAll('[data-action="siraj-side-close"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            setSide(false);
+            if (aibtn) {
+                aibtn.focus();
+            }
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && player.classList.contains('side-open')) {
+            setSide(false);
+        }
+    });
+
+    // Forum: open / close the new-topic composer.
+    var composer = player.querySelector('[data-region="siraj-composer"]');
+    player.querySelectorAll('[data-action="siraj-compose"], [data-action="siraj-compose-cancel"]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            composer.hidden = btn.dataset.action === 'siraj-compose-cancel';
+            if (!composer.hidden) {
+                composer.querySelector('input[name="subject"]').focus();
+            }
+        });
+    });
+
+    var box = player.querySelector('[data-region="siraj-embed"]');
+    if (!box) {
+        return;
+    }
+    var frame = box.querySelector('iframe');
+
+    // Live progress while the lesson runs. The thin bar under the header follows the learner inside the lesson when
+    // the package exposes it (Rise shows "x% complete"; SCORM 2004 has cmi.progress_measure). The ring and the
+    // "Done" chip follow Moodle's completion, which changes when the package reports back.
+    var rail = player.querySelector('.siraj-player-rail i');
+    var railbox = player.querySelector('.siraj-player-rail');
+    var lessonlabel = player.querySelector('[data-region="siraj-lessonpct"]');
+    var lessonPct = function(win, depth) {
+        try {
+            var doc = win.document;
+            var el = doc.querySelector('.nav-sidebar-header__progress-text, [class*="progress-text"], [class*="progressText"]');
+            var m = el && el.textContent.match(/(\d{1,3})\s*%/);
+            if (m) {
+                return Math.min(100, parseInt(m[1], 10));
+            }
+            var api = win.API_1484_11;
+            if (api && api.GetValue) {
+                var v = parseFloat(api.GetValue('cmi.progress_measure'));
+                if (!isNaN(v) && v > 0) {
+                    return Math.round(v * 100);
+                }
+            }
+            for (var i = 0; i < win.frames.length && depth < 4; i++) {
+                var r = lessonPct(win.frames[i], depth + 1);
+                if (r !== null) {
+                    return r;
+                }
+            }
+        } catch (e) {
+            // Another origin: nothing to read.
+        }
+        return null;
+    };
+    var lastpct = null;
+    setInterval(function() {
+        var pct = lessonPct(frame.contentWindow, 0);
+        if (pct === null || pct === lastpct) {
+            return;
+        }
+        lastpct = pct;
+        rail.style.width = pct + '%';
+        railbox.setAttribute('aria-valuenow', pct);
+        railbox.setAttribute('aria-label', pct + '%');
+        lessonlabel.textContent = ' · ' + pct + '%';
+    }, 1500);
+    var ring = player.querySelector('.siraj-player-ring');
+    var poll = function() {
+        if (document.hidden) {
+            return;
+        }
+        fetch(M.cfg.wwwroot + '/local/siraj/progress.php?cmid=' + player.dataset.cmid, {credentials: 'same-origin'})
+            .then(function(r) {
+                return r.json();
+            })
+            .then(function(d) {
+                ring.style.setProperty('--p', d.pct);
+                ring.querySelector('b').textContent = d.pct + '%';
+                player.querySelector('[data-region="siraj-progresstext"]').textContent = d.text;
+                var state = player.querySelector('[data-region="siraj-state"]');
+                if (d.isdone && !player.dataset.done) {
+                    player.dataset.done = '1';
+                    state.className = 'siraj-chip green';
+                    state.textContent = state.dataset.donehtml;
+                    rail.style.width = '100%';
+                }
+            })
+            .catch(function() {
+                // Offline for a moment: try again on the next tick.
+            });
+    };
+    setInterval(poll, 15000);
+    document.addEventListener('visibilitychange', poll);
+    var start = new URL(frame.src, location.href).pathname;
+    // Moodle's SCORM player adds its own table of contents and navigation around the lesson; Siraj has the
+    // learning path, so hide them and let the lesson fill the stage.
+    var tidy = function(doc) {
+        if (!doc || doc.getElementById('siraj-stage-css')) {
+            return;
+        }
+        var css = doc.createElement('style');
+        css.id = 'siraj-stage-css';
+        css.textContent = '#scorm_toc_toggle,#scorm_toc,#scorm_navpanel,.scorm-right #scormtop,#page-header,' +
+            '#page-footer,.skip-links{display:none!important}' +
+            'html,body,#page,#page-wrapper,#page-content,#region-main,#maincontent{margin:0!important;padding:0!important;' +
+            'background:#fff!important;border:0!important;max-width:none!important;width:100%!important}' +
+            '#scorm_layout,#scorm_content,#scorm_object,.yui3-u-1{width:100%!important;left:0!important;margin:0!important}' +
+            '#scorm_object{height:100vh!important}';
+        (doc.head || doc.documentElement).appendChild(css);
+    };
+    // Apply as soon as the frame's page exists, not only once every video has loaded.
+    var poll = setInterval(function() {
+        try {
+            if (frame.contentDocument && frame.contentDocument.body) {
+                tidy(frame.contentDocument);
+            }
+        } catch (e) {
+            clearInterval(poll);
+        }
+    }, 50);
+    frame.addEventListener('load', function() {
+        clearInterval(poll);
+        try {
+            var here = frame.contentWindow.location;
+            // SCORM's own "exit" or a finished package can navigate the frame to a course page: take the whole
+            // window there instead of showing Moodle inside the player.
+            var allow = box.dataset.allow || '/mod/scorm/';
+            var inside = here.pathname.indexOf(allow) !== -1 || here.pathname.indexOf('/pluginfile.php') !== -1;
+            if (here.pathname !== start && !inside && here.href !== 'about:blank') {
+                window.location.href = here.href;
+                return;
+            }
+            tidy(frame.contentDocument);
+        } catch (e) {
+            // Different origin: leave it.
+        }
+    });
+    var full = player.querySelector('[data-action="siraj-fullscreen"]');
+    if (full && box.requestFullscreen) {
+        full.addEventListener('click', function() {
+            box.requestFullscreen();
+        });
+    } else if (full) {
+        full.hidden = true;
+    }
+})();
+{{/js}}

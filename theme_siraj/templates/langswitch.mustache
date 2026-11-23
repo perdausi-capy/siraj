@@ -1,0 +1,97 @@
+{{!
+    @template theme_siraj/langswitch
+
+    Language switch transition: clicking a language shows the Siraj screen (flame + the name in the new language),
+    then the page changes; the new page starts on the same screen and fades it away (see hook_callbacks.php).
+
+    Example context (json):
+    {}
+}}
+{{#js}}
+(function() {
+    if (window.sirajLangSwitch) {
+        return;
+    }
+    window.sirajLangSwitch = true;
+    var names = {ar: ['سراج', 'العربية'], en: ['Siraj', 'English']};
+    var rtl = /^(ar|he|fa|ur)/;
+    var flame = '<svg viewBox="0 0 30 36" aria-hidden="true"><defs><linearGradient id="slf" x1="0.2" y1="0" x2="0.8" y2="1">' +
+        '<stop offset="0" stop-color="#00E69A"/><stop offset=".5" stop-color="#33CCFF"/><stop offset="1" stop-color="#3A70B8"/>' +
+        '</linearGradient></defs><path fill="url(#slf)" d="M17 0C10 5 6 11 8.5 16.5c1.3 2.8 4.6 4.3 7.6 5.3 4.4 1.5 6.2 4.6 ' +
+        '3.4 9.1-1 1.7-2.6 3.3-4.5 5.1 6.3-2.6 11.4-7.6 12.3-13 .8-4.8-2-8.6-7.7-10.3-3.4-1-6-2.6-6.3-5.4C13.1 5 14.5 2.6 17 0Z"/></svg>';
+    document.addEventListener('click', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) {
+            return;
+        }
+        var code = a.dataset.lang || a.getAttribute('lang');
+        var inmenu = a.closest('.siraj-langmenu, .siraj-lang, .langmenu, [data-region="language-menu"]') || /[?&](lang|code)=/.test(a.href);
+        if (!code || !inmenu || a.getAttribute('aria-current') === 'true' || code === document.documentElement.lang.replace('-', '_')) {
+            return;
+        }
+        e.preventDefault();
+        var label = (a.textContent || '').trim().replace(/\s*\([^)]*\)\s*$/, '');
+        var n = names[code.substr(0, 2)] || [label, ''];
+        var dir = rtl.test(code) ? 'rtl' : 'ltr';
+        try {
+            sessionStorage.setItem('siraj-lang', JSON.stringify({w: n[0], s: n[1], d: dir, t: Date.now()}));
+        } catch (err) {
+            // No transition on the next page; the switch still works.
+        }
+        var veil = document.createElement('div');
+        veil.className = 'siraj-langveil';
+        veil.setAttribute('data-dir', dir);
+        veil.setAttribute('aria-live', 'polite');
+        veil.innerHTML = '<span class="siraj-langveil-mark">' + flame + '</span><b dir="' + dir + '"></b><small dir="' + dir + '"></small>';
+        document.body.appendChild(veil);
+        requestAnimationFrame(function() {
+            veil.classList.add('is-on');
+        });
+        // Load the new language's font first (it is declared on every page but only downloaded when used), so the
+        // word shows in its real font, and the next page finds the font cached instead of swapping it in.
+        var fonts = dir === 'rtl' ? ['400 16px "IBM Plex Sans Arabic"', '600 88px "IBM Plex Sans Arabic"']
+            : ['400 16px "Inter"', '400 88px "Instrument Serif"'];
+        var loaded = document.fonts && document.fonts.load ? Promise.all(fonts.map(function(f) {
+            return document.fonts.load(f, n[0] + n[1]);
+        })) : Promise.resolve();
+        var timeout = function(ms) {
+            return new Promise(function(resolve) {
+                setTimeout(resolve, ms);
+            });
+        };
+        Promise.race([loaded, timeout(400)]).catch(function() {
+            return null;
+        }).then(function() {
+            veil.querySelector('b').textContent = n[0];
+            veil.querySelector('small').textContent = n[1];
+        });
+        var wait = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 50 : 750;
+        Promise.all([Promise.race([loaded, timeout(1500)]).catch(function() {
+            return null;
+        }), timeout(wait)]).then(function() {
+            window.location.href = a.href;
+        });
+    }, true);
+    // The browser's page-to-page crossfade would blend the two Siraj screens; this switch has its own.
+    window.addEventListener('pageswap', function(e) {
+        if (document.querySelector('.siraj-langveil') && e.viewTransition) {
+            var vt = e.viewTransition;
+            ['ready', 'finished', 'updateCallbackDone'].forEach(function(k) {
+                if (vt[k] && vt[k].catch) {
+                    vt[k].catch(function() {
+                        return null;
+                    });
+                }
+            });
+            vt.skipTransition();
+        }
+    });
+    window.addEventListener('pageshow', function(e) {
+        if (e.persisted) {
+            document.querySelectorAll('.siraj-langveil').forEach(function(v) {
+                v.remove();
+            });
+        }
+    });
+})();
+{{/js}}

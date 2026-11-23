@@ -1,0 +1,96 @@
+{{!
+    @template local_siraj/person
+
+    Siraj person page: header, KPIs, courses, certificates, learning rhythm, notes and reminders.
+
+    Example context (json):
+    {"backurl": "#", "backtext": "My team", "name": "Layla Hassan", "initials": "LH", "sub": "Engineer · Engineering", "email": "layla@example.com",
+     "chip": {"label": "On track", "class": "blue"}, "reason": "", "remindable": true, "kpis": [], "courses": [], "certificates": [],
+     "bars": [], "timeline": [], "action": "#", "sesskey": "x", "profileurl": "#"}
+}}
+<div class="siraj-dashboard siraj-personpage-inner">
+    <a class="siraj-back" href="{{backurl}}">{{backtext}}</a>
+    <header class="siraj-panel siraj-personhead">
+        <span class="siraj-avatar lg" aria-hidden="true">{{initials}}</span>
+        <div class="siraj-personhead-text">
+            <h1>{{name}}</h1>
+            <p class="siraj-sub">{{sub}}{{#sub}} · {{/sub}}<a href="mailto:{{email}}">{{email}}</a></p>
+            <p class="siraj-personhead-status"><span class="siraj-chip {{chip.class}}"><i></i>{{chip.label}}</span>{{#reason}}<span>{{reason}}</span>{{/reason}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            {{#remindable}}
+            <form method="post" action="{{action}}">
+                <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="remind">
+                <button type="submit" class="btn siraj-btn-flame">{{{icon_bell}}} {{#str}}sendreminder, local_siraj{{/str}}</button>
+            </form>
+            {{/remindable}}
+            <a class="btn btn-outline-secondary" href="{{profileurl}}">{{{icon_external}}} {{#str}}moodleprofile, local_siraj{{/str}}</a>
+        </div>
+    </header>
+
+    <div class="siraj-kpis three">
+        {{#kpis}}
+        <div class="siraj-kpi tone-{{tone}}">
+            <span class="siraj-kpi-icon" aria-hidden="true">{{{icon}}}</span>
+            <div><strong>{{value}}</strong><span>{{label}}</span><small>{{sub}}</small></div>
+        </div>
+        {{/kpis}}
+    </div>
+
+    <div class="siraj-dash-grid">
+        <div class="siraj-dash-main">
+            <section class="siraj-panel">
+                <h3>{{#str}}courses, local_siraj{{/str}}</h3>
+                {{#hascourses}}
+                <div class="siraj-prows">
+                    {{#courses}}
+                    <div class="siraj-prow">
+                        <span class="siraj-cover {{coverclass}}" aria-hidden="true"></span>
+                        <div class="siraj-course-info">
+                            <b>{{name}}{{#mandatory}} <span class="siraj-chip sm">{{#str}}mandatory, local_siraj{{/str}}</span>{{/mandatory}}</b>
+                            <small>{{count}}{{#meta}} · {{meta}}{{/meta}}</small>
+                            <span class="siraj-progress"><i style="width: {{pct}}%"></i></span>
+                        </div>
+                        <span class="siraj-chip {{chip.class}}"><i></i>{{chip.label}}</span>
+                    </div>
+                    {{/courses}}
+                </div>
+                {{/hascourses}}
+                {{^hascourses}}<p class="siraj-empty-line">{{#str}}nocourses_person, local_siraj{{/str}}</p>{{/hascourses}}
+            </section>
+            <section class="siraj-panel">
+                <div class="siraj-panel-head"><h3>{{#str}}rhythm12, local_siraj{{/str}}</h3><small class="siraj-faint">{{#str}}since, local_siraj, {{barsfirst}}{{/str}}</small></div>
+                <div class="siraj-minibars" role="img" aria-label="{{#str}}rhythm12, local_siraj{{/str}}">
+                    {{#bars}}<span class="{{#zero}}zero{{/zero}}" style="height: {{h}}%" title="{{label}}"></span>{{/bars}}
+                </div>
+            </section>
+        </div>
+        <aside class="siraj-side">
+            <section class="siraj-panel">
+                <h3>{{#str}}stat_certificates, local_siraj{{/str}}</h3>
+                {{#hascertificates}}
+                <ul class="siraj-certlist">
+                    {{#certificates}}<li><span class="siraj-earned-icon sm" aria-hidden="true">{{{icon_award}}}</span><span><b>{{name}}</b><small>{{date}} · <code>{{code}}</code></small></span></li>{{/certificates}}
+                </ul>
+                <a class="siraj-link" href="{{verifyurl}}">{{#str}}checkcertificate, local_siraj{{/str}}</a>
+                {{/hascertificates}}
+                {{^hascertificates}}<p class="siraj-empty-line">{{#str}}nocertificates_person, local_siraj{{/str}}</p>{{/hascertificates}}
+            </section>
+            <section class="siraj-panel">
+                <h3>{{#str}}notes, local_siraj{{/str}}</h3>
+                <form method="post" action="{{action}}" class="siraj-noteform">
+                    <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="note">
+                    <label class="visually-hidden" for="siraj-note">{{#str}}addnote, local_siraj{{/str}}</label>
+                    <textarea id="siraj-note" name="note" rows="3" class="form-control" maxlength="2000" placeholder="{{#str}}noteplaceholder, local_siraj{{/str}}" required></textarea>
+                    <button type="submit" class="btn btn-outline-secondary">{{#str}}addnote, local_siraj{{/str}}</button>
+                </form>
+                {{#hastimeline}}
+                <ol class="siraj-timeline">
+                    {{#timeline}}<li class="{{#reminder}}is-reminder{{/reminder}}"><span class="siraj-tl-icon" aria-hidden="true">{{#reminder}}{{{icon_bell}}}{{/reminder}}{{^reminder}}{{{icon_message}}}{{/reminder}}</span><div><p>{{text}}</p><small>{{who}} · {{when}}</small></div></li>{{/timeline}}
+                </ol>
+                {{/hastimeline}}
+                <p class="siraj-faint siraj-small">{{#str}}notes_private, local_siraj{{/str}}</p>
+            </section>
+        </aside>
+    </div>
+</div>

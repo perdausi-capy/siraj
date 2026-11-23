@@ -1,0 +1,83 @@
+{{!
+    @template local_siraj/explore
+
+    Siraj Explore: featured collection, course rows per collection, instant search.
+
+    Example context (json):
+    {"hasrows": true, "total": 1, "featured": {"name": "Compliance", "description": "Mandatory training.", "anchor": "#x", "count": "4 courses"},
+     "rows": [{"id": 1, "name": "Compliance", "count": 1, "description": "", "tiles": [{"name": "Fire Safety", "url": "#", "lname": "fire safety",
+       "coverclass": "cv1", "lessons": "5 activities", "state": "open", "statelabel": "Open to enrol", "progress": 0}]}]}
+}}
+<div class="siraj-explore" data-region="siraj-explore">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}library, local_siraj{{/str}}</div>
+            <h1>{{#str}}explore_title, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{#str}}explore_sub, local_siraj{{/str}}</p>
+        </div>
+        <label class="siraj-search-inline siraj-search-big">{{{icon_search}}}<input type="search" placeholder="{{#str}}searchlibrary, local_siraj, {{total}}{{/str}}" aria-label="{{#str}}searchlibrary, local_siraj, {{total}}{{/str}}" data-region="q" value="{{q}}"></label>
+    </header>
+
+    {{#featured}}
+    <section class="siraj-feature{{#photo}} siraj-feature-photo{{/photo}}"{{#photo}} style="--si-photo: url('{{{.}}}')"{{/photo}}>
+        <div>
+            <div class="siraj-eyebrow">{{#str}}featuredcollection, local_siraj{{/str}} · {{count}}</div>
+            <h2>{{name}}</h2>
+            <p>{{description}}</p>
+            <a class="btn siraj-btn-flame" href="{{anchor}}">{{#str}}browsecollection, local_siraj{{/str}} {{{icon_arrow}}}</a>
+        </div>
+        {{^photo}}<div class="siraj-feature-art" aria-hidden="true">{{{flame}}}</div>{{/photo}}
+    </section>
+    {{/featured}}
+
+    {{#rows}}
+    <section class="siraj-row" id="siraj-cat-{{id}}">
+        <div class="siraj-sectionhead"><div><h2>{{name}}</h2>{{#description}}<p class="siraj-sub">{{description}}</p>{{/description}}</div></div>
+        <div class="siraj-tiles">
+            {{#tiles}}
+            <a class="siraj-tile" href="{{url}}" data-name="{{lname}}">
+                <span class="siraj-cover siraj-tile-cover {{coverclass}}" {{#cover}}style="background-image:url('{{cover}}')"{{/cover}}>
+                    {{#mandatory}}<span class="siraj-chip siraj-chip-glass">{{#str}}mandatory, local_siraj{{/str}}</span>{{/mandatory}}
+                </span>
+                <span class="siraj-tile-body">
+                    <b>{{name}}</b>
+                    {{#summary}}<small>{{summary}}</small>{{/summary}}
+                    <span class="siraj-tile-meta">{{#duration}}<span>{{{icon_clock}}}{{duration}}</span>{{/duration}}<span>{{{icon_layers}}}{{lessons}}</span></span>
+                    {{#inprogress}}<span class="siraj-progress" aria-hidden="true"><i style="width: {{progress}}%"></i></span>{{/inprogress}}
+                    <span class="siraj-tile-state state-{{state}}">{{#isdone}}{{{icon_check}}} {{/isdone}}{{statelabel}}{{#inprogress}} · {{progress}}%{{/inprogress}}</span>
+                </span>
+            </a>
+            {{/tiles}}
+        </div>
+    </section>
+    {{/rows}}
+    <div class="siraj-empty" data-region="nomatch" hidden><h3>{{#str}}nomatch, local_siraj{{/str}}</h3><p>{{#str}}nomatch_text, local_siraj{{/str}}</p></div>
+    {{^hasrows}}<div class="siraj-empty"><h3>{{#str}}nolibrary, local_siraj{{/str}}</h3></div>{{/hasrows}}
+</div>
+{{#js}}
+(function() {
+    var root = document.querySelector('[data-region="siraj-explore"]');
+    var q = root && root.querySelector('[data-region="q"]');
+    if (!q) {
+        return;
+    }
+    q.addEventListener('input', function() {
+        var term = q.value.trim().toLowerCase(), shown = 0;
+        root.querySelectorAll('.siraj-tile').forEach(function(t) {
+            t.hidden = term !== '' && t.dataset.name.indexOf(term) === -1;
+            shown += t.hidden ? 0 : 1;
+        });
+        root.querySelectorAll('.siraj-row').forEach(function(r) {
+            r.hidden = !r.querySelector('.siraj-tile:not([hidden])');
+        });
+        var f = root.querySelector('.siraj-feature');
+        if (f) {
+            f.hidden = term !== '';
+        }
+        root.querySelector('[data-region="nomatch"]').hidden = shown > 0;
+    });
+    if (q.value) {
+        q.dispatchEvent(new Event('input'));
+    }
+})();
+{{/js}}

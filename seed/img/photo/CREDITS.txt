@@ -1,0 +1,12 @@
+Stock photos used as demo course covers. All CC0 from StockSnap.io (via Openverse); no attribution required.
+hse.jpg | Construction Zone | https://stocksnap.io/photo/construction-zone-6EAB6C3900 | CC0 (StockSnap)
+conduct.jpg | Business Meeting | https://stocksnap.io/photo/business-meeting-SKBXLJOILI | CC0 (StockSnap)
+lead.jpg | Business Meeting | https://stocksnap.io/photo/business-meeting-Z1ZIMB54UM | CC0 (StockSnap)
+infosec.jpg | Coding Business | https://stocksnap.io/photo/coding-business-DZ1EFM9PIK | CC0 (StockSnap)
+dpe.jpg | Macbook Laptop | https://stocksnap.io/photo/macbook-laptop-UNB7V2H5L4 | CC0 (StockSnap)
+pm.jpg | Whiteboard Post-Itnotes | https://stocksnap.io/photo/whiteboard-post-itnotes-YR89OQFMT1 | CC0 (StockSnap)
+abc.jpg | Work Business | https://stocksnap.io/photo/work-business-J5LXKNDREC | CC0 (StockSnap)
+fire.jpg | Fire Extinguisher | https://stocksnap.io/photo/fire-extinguisher-NLIILCDIDD | CC0 (StockSnap)
+ar-safety.jpg | Construction Builder | https://stocksnap.io/photo/construction-builder-A5Q1BUP3OF | CC0 (StockSnap)
+ar-service.jpg | People Man | https://stocksnap.io/photo/people-man-4EV2SRG4II | CC0 (StockSnap)
+wellness.jpg | Woman Yoga | https://stocksnap.io/photo/woman-yoga-NK0FIGBQJM | CC0 (StockSnap)

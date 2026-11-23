@@ -1,0 +1,11 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext({ viewport: { width: 320, height: 568 }, isMobile: true, hasTouch: true })).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'layla'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.goto(BASE + '/calendar/view.php?view=month', { waitUntil: 'networkidle' });
+  console.log(await p.evaluate(() => { const vw = innerWidth; const o = [];
+    document.querySelectorAll('body *').forEach(e => { const r = e.getBoundingClientRect(); if (r.width && r.right > vw + 1) o.push(`${e.tagName}.${[...e.classList].slice(0,3).join('.')} pos=${getComputedStyle(e).position} right=${Math.round(r.right)} w=${Math.round(r.width)}`); });
+    return 'scrollW=' + document.documentElement.scrollWidth + '\n' + o.slice(0, 12).join('\n'); }));
+  await b.close(); })();

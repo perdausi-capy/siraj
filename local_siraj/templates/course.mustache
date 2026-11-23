@@ -1,0 +1,99 @@
+{{!
+    @template local_siraj/course
+
+    Siraj course overview: cover, progress, learning path, details.
+
+    Example context (json):
+    {
+        "name": "Workplace Health & Safety", "eyebrow": "Mandatory learning", "summarytext": "Site rules.", "cover": null,
+        "meta": [], "progress": 80, "done": 4, "total": 5, "started": true, "complete": false, "nexturl": "#", "nextname": "Knowledge check",
+        "steps": [{"num": 1, "name": "Introduction", "count": "1 activity", "state": "done", "done": true, "open": false,
+                   "activities": [{"name": "Welcome", "type": "Page", "icon": "", "url": "#", "done": true}]}],
+        "details": [{"k": "Category", "v": "Compliance"}]
+    }
+}}
+<div class="siraj-course">
+    <a class="siraj-back" href="{{learningurl}}">{{backlabel}}</a>
+    <section class="siraj-course-cover {{#cover}}has-image{{/cover}}" {{#cover}}style="--cover: url('{{cover}}')"{{/cover}}>
+        <div class="siraj-course-cover-copy">
+            <span class="siraj-chip siraj-chip-glass">{{eyebrow}}</span>
+            <h1>{{name}}</h1>
+            <p>{{summarytext}}</p>
+            <div class="siraj-hero-meta">{{#meta}}<span>{{{icon}}}{{text}}</span>{{/meta}}</div>
+            <div class="siraj-course-actions">
+                {{#nexturl}}
+                <a class="btn siraj-btn-flame" href="{{nexturl}}">
+                    {{^started}}{{#str}}startcourse, local_siraj{{/str}}{{/started}}
+                    {{#started}}{{^complete}}{{#str}}continuecourse, local_siraj{{/str}}{{/complete}}{{#complete}}{{#str}}reviewcourse, local_siraj{{/str}}{{/complete}}{{/started}}
+                    {{{icon_arrow}}}
+                </a>
+                {{/nexturl}}
+                {{#preview}}
+                    {{#canenrol}}
+                    <form method="post" action="{{formurl}}">
+                        <input type="hidden" name="sesskey" value="{{sesskey}}"><input type="hidden" name="action" value="enrol">
+                        <button class="btn siraj-btn-flame" type="submit">{{#str}}enrolstart, local_siraj{{/str}} {{{icon_arrow}}}</button>
+                    </form>
+                    {{/canenrol}}
+                    {{^canenrol}}
+                        {{#enrolpageurl}}<a class="btn siraj-btn-flame" href="{{enrolpageurl}}">{{#str}}enroloptions, local_siraj{{/str}} {{{icon_arrow}}}</a>{{/enrolpageurl}}
+                        {{^enrolpageurl}}<span class="siraj-chip siraj-chip-glass">{{#str}}askenrol, local_siraj{{/str}}</span>{{/enrolpageurl}}
+                    {{/canenrol}}
+                {{/preview}}
+                {{#classicurl}}<a class="btn siraj-btn-glass" href="{{classicurl}}">{{{icon_settings}}} {{#str}}editcourse, local_siraj{{/str}}</a>{{/classicurl}}
+            </div>
+        </div>
+        {{^preview}}<div class="siraj-course-progress" aria-label="{{#str}}progresslabel, local_siraj, {{progress}}{{/str}}">
+            <svg class="siraj-hero-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" class="track"/><circle cx="60" cy="60" r="52" class="fill" style="stroke-dasharray: calc({{progress}} * 3.267) 400"/></svg>
+            <div><b>{{progress}}%</b><small>{{#str}}doneoftotal, local_siraj, {"done": {{done}}, "total": {{total}} }{{/str}}</small></div>
+        </div>{{/preview}}
+    </section>
+
+    <div class="siraj-grid-two siraj-course-grid">
+        <div>
+            <div class="siraj-sectionhead"><h2>{{^preview}}{{#str}}learningpath, local_siraj{{/str}}{{/preview}}{{#preview}}{{#str}}whatsinside, local_siraj{{/str}}{{/preview}}</h2>{{#nextname}}<span class="siraj-sub">{{#str}}next, local_siraj, {{nextname}}{{/str}}</span>{{/nextname}}</div>
+            <ol class="siraj-path">
+                {{#steps}}
+                <li class="siraj-path-step {{state}}">
+                    <details {{#open}}open{{/open}}>
+                        <summary>
+                            <span class="siraj-stepball" aria-hidden="true">{{#done}}{{{icon_check}}}{{/done}}{{^done}}{{num}}{{/done}}</span>
+                            <span class="siraj-step-text"><b>{{name}}</b><small>{{count}}{{#done}} · {{#str}}completed, local_siraj{{/str}}{{/done}}{{#current}} · {{#str}}inprogress, local_siraj{{/str}}{{/current}}</small></span>
+                            <span class="siraj-step-caret" aria-hidden="true"></span>
+                        </summary>
+                        <ul class="siraj-acts">
+                            {{#activities}}
+                            <li>
+                                {{#url}}<a class="siraj-act {{#isnext}}is-next{{/isnext}}" href="{{url}}">{{/url}}{{^url}}<div class="siraj-act is-locked">{{/url}}
+                                    <span class="siraj-act-icon mod-{{modname}}">{{{icon}}}</span>
+                                    <span class="siraj-act-text"><b>{{name}}</b><small>{{type}}</small></span>
+                                    {{#done}}<span class="siraj-chip green">{{{icon_check}}} {{#str}}done, local_siraj{{/str}}</span>{{/done}}
+                                    {{#isnext}}<span class="siraj-chip siraj-chip-next">{{{icon_play}}} {{#str}}upnext, local_siraj{{/str}}</span>{{/isnext}}
+                                {{#url}}</a>{{/url}}{{^url}}</div>{{/url}}
+                            </li>
+                            {{/activities}}
+                        </ul>
+                    </details>
+                </li>
+                {{/steps}}
+            </ol>
+        </div>
+        <aside class="siraj-side">
+            <div class="siraj-panel">
+                <h3>{{#str}}aboutcourse, local_siraj{{/str}}</h3>
+                <dl class="siraj-kv">{{#details}}<dt>{{k}}</dt><dd>{{v}}</dd>{{/details}}</dl>
+            </div>
+            {{#summary}}
+            <div class="siraj-panel siraj-summary">
+                <h3>{{#str}}whatyoulllearn, local_siraj{{/str}}</h3>
+                <div class="siraj-prose">{{{summary}}}</div>
+            </div>
+            {{/summary}}
+            <div class="siraj-panel siraj-ai">
+                <div class="siraj-ai-head"><span class="siraj-ai-orb"></span><div><b>{{#str}}ai_course_title, local_siraj{{/str}}</b>{{^aiready}}<small>{{#str}}ai_soon, local_siraj{{/str}}</small>{{/aiready}}</div></div>
+                <p>{{#str}}ai_course_text, local_siraj{{/str}}</p>
+                {{#aiready}}<div class="siraj-ai-actions"><button type="button" class="btn btn-secondary" data-siraj-ai="">{{{icon_sparkles}}} {{#str}}ai_askcourse, theme_siraj{{/str}}</button></div>{{/aiready}}
+            </div>
+        </aside>
+    </div>
+</div>

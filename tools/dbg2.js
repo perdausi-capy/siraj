@@ -1,0 +1,10 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome', ignoreDefaultArgs: ['--hide-scrollbars'] });
+  const p = await (await b.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'layla'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  await p.goto(BASE + '/local/siraj/index.php', { waitUntil: 'networkidle' });
+  console.log(await p.evaluate(() => { const out = []; let e = document.querySelector('#page-footer');
+    while (e) { const cs = getComputedStyle(e); out.push(`${e.tagName}#${e.id}.${[...e.classList].slice(0,2).join('.')} h=${e.clientHeight} sh=${e.scrollHeight} ovY=${cs.overflowY} pos=${cs.position} height=${cs.height} display=${cs.display}`); e = e.parentElement; } return out.join('\n'); }));
+  await b.close(); })();

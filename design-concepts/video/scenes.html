@@ -1,0 +1,125 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#06182B;overflow:hidden}canvas{display:block}</style></head><body>
+<canvas id="c"></canvas>
+<script>
+// Three looping backgrounds for the Siraj sign-in page. draw(scene, t) is pure in t; every motion has period T, so the loop is seamless.
+const T = 16, TAU = Math.PI * 2;
+const c = document.getElementById('c'), x = c.getContext('2d');
+let W, H;
+function size(w, h) { W = c.width = w; H = c.height = h; }
+const P = (t, k = 1) => Math.sin(TAU * k * t / T), Q = (t, k = 1) => Math.cos(TAU * k * t / T);
+function rng(seed) { return () => (seed = (seed * 16807) % 2147483647) / 2147483647; }
+function base(top, bottom) {
+  const g = x.createLinearGradient(0, 0, W * .3, H); g.addColorStop(0, top); g.addColorStop(1, bottom);
+  x.globalCompositeOperation = 'source-over'; x.fillStyle = g; x.fillRect(0, 0, W, H);
+}
+function glow(cx, cy, r, color, a) {
+  const g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, color.replace('A', a)); g.addColorStop(1, color.replace('A', 0));
+  x.fillStyle = g; x.fillRect(cx - r, cy - r, r * 2, r * 2);
+}
+function vignette() {
+  x.globalCompositeOperation = 'source-over';
+  const g = x.createRadialGradient(W * .55, H * .45, H * .2, W * .5, H * .5, W * .8);
+  g.addColorStop(0, 'rgba(4,14,26,0)'); g.addColorStop(1, 'rgba(4,14,26,.75)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+}
+// 1. Flowing light ribbons
+function ribbons(t) {
+  base('#06182B', '#0A2A47');
+  x.globalCompositeOperation = 'lighter';
+  glow(W * (.25 + .05 * P(t)), H * .75, W * .5, 'rgba(0,201,140,A)', .10);
+  glow(W * (.8 + .04 * Q(t)), H * .2, W * .45, 'rgba(47,184,240,A)', .12);
+  const cols = [[0, 230, 154], [51, 204, 255], [58, 112, 184], [0, 201, 140], [95, 179, 240], [51, 204, 255]];
+  for (let k = 0; k < 6; k++) {
+    const [r, g, b] = cols[k], ph = k * 1.1, amp = H * (.08 + .03 * k), y0 = H * (.38 + .07 * k);
+    for (let pass = 0; pass < 3; pass++) {
+      x.beginPath();
+      for (let i = 0; i <= 80; i++) {
+        const u = i / 80, px = -W * .05 + u * W * 1.1;
+        const py = y0 + amp * Math.sin(u * TAU * (.7 + .1 * k) + ph + TAU * t / T * (k % 2 ? 1 : -1))
+          + amp * .4 * Math.sin(u * TAU * 1.9 - ph + TAU * 2 * t / T);
+        i ? x.lineTo(px, py) : x.moveTo(px, py);
+      }
+      x.lineWidth = [26, 9, 2.2][pass] * (W / 1920); x.strokeStyle = `rgba(${r},${g},${b},${[.04, .09, .55][pass]})`;
+      x.shadowBlur = pass === 2 ? 18 * W / 1920 : 0; x.shadowColor = `rgb(${r},${g},${b})`; x.stroke();
+    }
+  }
+  x.shadowBlur = 0;
+  const R = rng(7);
+  for (let i = 0; i < 70; i++) {
+    const bx = R() * W, by = R() * H, sp = R(), s = (1 + R() * 2.2) * W / 1920;
+    const px = (bx + W * .08 * P(t, 1) * (sp - .5) + W) % W, py = (by + H * (t / T) * (sp > .5 ? 1 : -1) * .25 + H) % H;
+    x.fillStyle = `rgba(190,235,255,${.15 + .35 * (0.5 + 0.5 * P(t * 2 + i, 1))})`; x.beginPath(); x.arc(px, py, s, 0, TAU); x.fill();
+  }
+  vignette();
+}
+// 2. Glass towers seen from below, with light sliding across the glass
+function tower(t, x0, x1, vp, shade, cols, phase) {
+  // Rows in world units projected with perspective; the whole facade scrolls exactly 2 rows per loop.
+  const rows = 40, shift = 2 * t / T;
+  const yOf = r => H * 1.05 - H * 1.9 * (1 - 1 / (1 + (r - shift) * .085));
+  const edge = (bx, y) => bx + (vp[0] - bx) * (H * 1.05 - y) / (H * 1.05 - vp[1]);
+  const sweepPos = ((t / T + phase) % 1) * 2.2 - .6; // light band moves across, wraps out of view
+  for (let r = 0; r < rows; r++) {
+    const ya = yOf(r), yb = yOf(r + 1);
+    if (yb > H * 1.1 || ya < -H * .1) continue;
+    for (let k = 0; k < cols; k++) {
+      const u0 = k / cols, u1 = (k + 1) / cols;
+      const bx0 = x0 + (x1 - x0) * u0, bx1 = x0 + (x1 - x0) * u1;
+      const q = [[edge(bx0, ya), ya], [edge(bx1, ya), ya], [edge(bx1, yb), yb], [edge(bx0, yb), yb]];
+      const mid = (u0 + u1) / 2 - (r - shift) * .02;
+      const light = Math.max(0, 1 - Math.abs(mid - sweepPos) / .22);
+      const sky = .18 + .25 * (1 - ya / H);
+      x.beginPath(); q.forEach(([px, py], i) => i ? x.lineTo(px, py) : x.moveTo(px, py)); x.closePath();
+      const g = x.createLinearGradient(q[0][0], q[0][1], q[2][0], q[2][1]);
+      g.addColorStop(0, `rgba(${60 + 150 * light},${120 + 110 * light},${175 + 70 * light},${(sky + light * .5) * shade})`);
+      g.addColorStop(1, `rgba(18,60,100,${(.2 + light * .25) * shade})`);
+      x.fillStyle = g; x.fill();
+      x.strokeStyle = `rgba(160,215,245,${(.12 + light * .3) * shade})`; x.lineWidth = 1.4 * W / 1920; x.stroke();
+    }
+  }
+}
+function facade(t) {
+  const g = x.createLinearGradient(0, H, W * .6, 0); g.addColorStop(0, '#06182B'); g.addColorStop(.6, '#0D3555'); g.addColorStop(1, '#2C6E9A');
+  x.globalCompositeOperation = 'source-over'; x.fillStyle = g; x.fillRect(0, 0, W, H);
+  x.globalCompositeOperation = 'lighter'; glow(W * .9, H * .05, W * .5, 'rgba(120,200,255,A)', .22 + .05 * P(t)); x.globalCompositeOperation = 'source-over';
+  tower(t, -W * .25, W * .3, [W * .15, -H * 2.2], .55, 7, .5);
+  tower(t, W * .28, W * 1.15, [W * .7, -H * 1.6], 1, 9, 0);
+  x.globalCompositeOperation = 'lighter';
+  glow(W * .1, H * .95, W * .45, 'rgba(0,201,140,A)', .08);
+  vignette();
+}
+// 3. Aurora + rising embers + a faint flame
+function aurora(t) {
+  base('#05152A', '#0A2440');
+  x.globalCompositeOperation = 'lighter';
+  const blobs = [[.2, .3, 'rgba(0,201,140,A)', .22], [.55, .2, 'rgba(51,204,255,A)', .2], [.8, .45, 'rgba(58,112,184,A)', .25], [.4, .7, 'rgba(0,230,154,A)', .12]];
+  blobs.forEach(([bx, by, col, a], i) => glow(W * (bx + .08 * P(t, 1 + (i % 2)) * (i % 2 ? 1 : -1)), H * (by + .06 * Q(t, 1)), W * (.35 + .05 * P(t + i * 3)), col, a));
+  // curtain bands
+  for (let k = 0; k < 4; k++) {
+    x.beginPath();
+    for (let i = 0; i <= 60; i++) {
+      const u = i / 60, px = u * W, py = H * (.28 + .1 * k) + H * .06 * Math.sin(u * TAU * 1.2 + k + TAU * t / T * (k % 2 ? 1 : -1));
+      i ? x.lineTo(px, py) : x.moveTo(px, py);
+    }
+    x.lineTo(W, 0); x.lineTo(0, 0); x.closePath();
+    const g = x.createLinearGradient(0, 0, 0, H * .7); g.addColorStop(0, 'rgba(51,204,255,0)'); g.addColorStop(1, `rgba(${k % 2 ? '0,201,140' : '51,204,255'},.05)`);
+    x.fillStyle = g; x.fill();
+  }
+  // faint flame
+  x.save(); x.translate(W * .72, H * .55); const s = H / 36 * .55 * (1 + .02 * P(t, 2)); x.scale(s, s); x.translate(-15, -18);
+  const p = new Path2D('M17 0C10 5 6 11 8.5 16.5c1.3 2.8 4.6 4.3 7.6 5.3 4.4 1.5 6.2 4.6 3.4 9.1-1 1.7-2.6 3.3-4.5 5.1 6.3-2.6 11.4-7.6 12.3-13 .8-4.8-2-8.6-7.7-10.3-3.4-1-6-2.6-6.3-5.4C13.1 5 14.5 2.6 17 0Z');
+  const fg = x.createLinearGradient(0, 0, 30, 36); fg.addColorStop(0, 'rgba(0,230,154,.10)'); fg.addColorStop(.5, 'rgba(51,204,255,.08)'); fg.addColorStop(1, 'rgba(58,112,184,.06)');
+  x.fillStyle = fg; x.fill(p); x.restore();
+  // embers rising, each wraps exactly once per loop
+  const R = rng(3);
+  for (let i = 0; i < 90; i++) {
+    const bx = R(), off = R(), sz = (1 + R() * 2.5) * W / 1920, sway = R() * 40 * W / 1920;
+    const prog = (off + t / T) % 1, py = H * (1.05 - prog * 1.15), px = W * bx + sway * Math.sin(TAU * (prog * 2 + off));
+    const a = Math.sin(Math.PI * prog) * (.25 + .5 * R());
+    x.fillStyle = `rgba(${R() > .5 ? '120,240,200' : '150,215,255'},${a})`; x.shadowBlur = 8 * W / 1920; x.shadowColor = 'rgba(120,230,255,.8)';
+    x.beginPath(); x.arc(px, py, sz, 0, TAU); x.fill();
+  }
+  x.shadowBlur = 0; vignette();
+}
+window.render = (scene, t) => ({ ribbons, facade, aurora })[scene](t);
+window.size = size; window.T = T;
+</script></body></html>

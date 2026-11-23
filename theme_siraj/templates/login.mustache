@@ -1,0 +1,163 @@
+{{!
+    @template theme_siraj/login
+
+    Siraj sign-in page.
+
+    Example context (json):
+    {
+        "output": {"doctype": "<!DOCTYPE html>", "page_title": "Sign in", "favicon": "favicon.ico", "main_content": "<form></form>"},
+        "sitename": "Siraj Learning", "tagline": "Learning that lights the way.", "subline": "A clearer path.", "year": "2026"
+    }
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="siraj-signin-wrap siraj-signin-video">
+    {{{ output.standard_top_of_body_html }}}
+    <div class="siraj-signin-bg is-loading" aria-hidden="true" data-region="siraj-bg">
+        <div class="siraj-signin-poster" style="background-image: url('{{videoposter}}')"></div>
+        <div class="siraj-signin-loader"><i></i></div>
+        <video muted loop playsinline preload="none" poster="{{videoposter}}" data-webm="{{videowebm}}" data-mp4="{{videomp4}}" data-region="siraj-bgvideo"></video>
+    </div>
+    <header class="siraj-signin-head">
+        <div class="siraj-art-brand">
+            {{#panellogo}}<img src="{{panellogo}}" alt="{{sitename}}">{{/panellogo}}
+            {{^panellogo}}{{{flame}}}<span class="siraj-brandname">SIRAJ<small>LEARNING</small></span>{{/panellogo}}
+        </div>
+        <div class="siraj-signin-top">
+            {{#haslanguages}}
+            <details class="siraj-lang siraj-langpick">
+                <summary class="siraj-pillbtn" aria-label="{{#str}}language{{/str}}">{{{icon_globe}}}<span>{{currentshort}}</span></summary>
+                <div class="siraj-langpick-menu" role="menu">
+                    {{#languages}}<a href="{{url}}" role="menuitem" lang="{{code}}" data-lang="{{code}}" {{#current}}aria-current="true"{{/current}}><span>{{name}}</span>{{#current}}{{{icon_check}}}{{/current}}</a>{{/languages}}
+                </div>
+            </details>
+            {{/haslanguages}}
+            <button type="button" class="siraj-pillbtn siraj-pillbtn-round" data-siraj-action="theme" aria-label="{{#str}}toggletheme, theme_siraj{{/str}}">{{{icon_sun}}}{{{icon_moon}}}</button>
+        </div>
+    </header>
+    <script>
+    (function() {
+        // Works as soon as the page shows, without waiting for Moodle's scripts (slow on phones).
+        document.addEventListener('click', function(e) {
+            var b = e.target.closest('[data-siraj-action="theme"]');
+            if (b) {
+                var root = document.documentElement;
+                var dark = root.getAttribute('data-bs-theme') !== 'dark';
+                root.setAttribute('data-bs-theme', dark ? 'dark' : 'light');
+                document.cookie = 'siraj-theme=' + (dark ? 'dark' : 'light') + '; path=/; max-age=31536000; SameSite=Lax';
+            }
+            var open = document.querySelector('.siraj-langpick[open]');
+            if (open && !open.contains(e.target)) {
+                open.removeAttribute('open');
+            }
+        });
+        document.addEventListener('keydown', function(e) {
+            var open = document.querySelector('.siraj-langpick[open]');
+            if (e.key === 'Escape' && open) {
+                open.removeAttribute('open');
+                open.querySelector('summary').focus();
+            }
+        });
+    })();
+    </script>
+    <main id="page" class="siraj-signin">
+        <section class="siraj-signin-copy">
+            <div class="siraj-eyebrow">{{#str}}login_eyebrow, theme_siraj{{/str}}</div>
+            <h1>{{tagline}}</h1>
+            <p>{{subline}}</p>
+        </section>
+        <section class="siraj-signin-card" id="region-main">
+            <div class="siraj-eyebrow">{{#str}}welcometo, theme_siraj, {{sitename}}{{/str}}</div>
+            <h2>{{#str}}goodtohaveyou, theme_siraj{{/str}}</h2>
+            <p class="siraj-sub">{{#str}}signinsub, theme_siraj{{/str}}</p>
+            <div class="login-wrapper"><div class="login-container">
+                {{{ output.main_content }}}
+            </div></div>
+        </section>
+    </main>
+    <footer class="siraj-signin-foot">
+        <span>© {{year}} {{#str}}footer_line, theme_siraj{{/str}}</span>
+        <button type="button" class="siraj-footlink" data-modal="alert" data-modal-title-str='["cookiesenabled", "core"]' data-modal-content-str='["cookiesenabled_help_html", "core"]'>{{#str}}cookiesnotice, theme_siraj{{/str}}</button>
+    </footer>
+    <div class="siraj-signing" aria-hidden="true" data-region="siraj-signing" hidden>
+        <div class="siraj-signing-mark">{{{flame}}}<span class="siraj-signing-ring"></span></div>
+        <b>{{#str}}signing_welcome, theme_siraj{{/str}}</b>
+        <small>{{#str}}signing_text, theme_siraj{{/str}}</small>
+    </div>
+    {{{ output.standard_end_of_body_html }}}
+</div>
+{{> theme_siraj/langswitch }}
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader'], function() {
+    M.util.js_complete('theme_boost/loader');
+    // Sign-in moment: the button shows progress, then the page fades to the Siraj flame while the dashboard loads.
+    // Fields stay enabled (disabled fields are not sent with the form).
+    var form = document.getElementById('login');
+    var signing = document.querySelector('[data-region="siraj-signing"]');
+    if (form && signing) {
+        form.addEventListener('submit', function() {
+            if (!form.checkValidity || form.checkValidity()) {
+                var btn = document.getElementById('loginbtn');
+                if (btn) {
+                    btn.classList.add('is-busy');
+                    btn.setAttribute('aria-busy', 'true');
+                    btn.innerHTML = '<span class="siraj-btnspin" aria-hidden="true"></span> ' + btn.dataset.busy;
+                }
+                document.body.classList.add('siraj-is-signing');
+                try {
+                    sessionStorage.setItem('siraj-welcome', Date.now());
+                } catch (e) {
+                    // Private mode: no welcome entrance, nothing else changes.
+                }
+                signing.hidden = false;
+                setTimeout(function() {
+                    signing.classList.add('is-on');
+                }, 450);
+            }
+        });
+        // Back button after signing in: undo the overlay when the page is restored from cache.
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                document.body.classList.remove('siraj-is-signing');
+                signing.classList.remove('is-on');
+            }
+        });
+    }
+    // Background video on every screen, unless "reduce motion" or data saver is on (then the poster stays).
+    // While it buffers, the poster drifts slowly and a light sweeps across it; the video fades in when it plays.
+    var v = document.querySelector('[data-region="siraj-bgvideo"]');
+    var bg = document.querySelector('[data-region="siraj-bg"]');
+    var saver = navigator.connection && navigator.connection.saveData;
+    var done = function() {
+        bg.classList.remove('is-loading');
+    };
+    if (!v || window.matchMedia('(prefers-reduced-motion: reduce)').matches || saver) {
+        done();
+    } else {
+        [['webm', 'video/webm'], ['mp4', 'video/mp4']].forEach(function(f) {
+            var src = document.createElement('source');
+            src.src = v.dataset[f[0]];
+            src.type = f[1];
+            v.appendChild(src);
+        });
+        v.addEventListener('playing', function() {
+            v.classList.add('is-playing');
+            setTimeout(done, 900);
+        });
+        v.addEventListener('error', done, true);
+        setTimeout(done, 15000);
+        v.load();
+        var p = v.play();
+        if (p && p.catch) {
+            p.catch(function() {
+                return null;
+            });
+        }
+    }
+});
+{{/js}}

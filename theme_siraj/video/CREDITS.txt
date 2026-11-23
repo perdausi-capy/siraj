@@ -1,0 +1,6 @@
+Stock footage (Pexels License: free for commercial use, no attribution required; https://www.pexels.com/license/):
+siraj-dubai-sunrise   https://www.pexels.com/video/skyline-of-dubai-at-sunrise-with-burj-khalifa-35972202/
+siraj-dubai-night     https://www.pexels.com/video/stunning-aerial-night-view-of-dubai-skyscrapers-35027116/
+siraj-dubai-dusk      https://www.pexels.com/video/drone-footage-of-a-city-in-evening-sky-8397996/
+siraj-skyline-clouds  https://www.pexels.com/video/stunning-dubai-skyline-timelapse-with-clouds-30316418/
+Trimmed, cross-faded into seamless loops, lightly graded and compressed for the web. siraj-ribbons/facade/aurora are generated (scenes.html).

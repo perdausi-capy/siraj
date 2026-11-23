@@ -1,0 +1,23 @@
+{{!
+    @template local_siraj/learning_item
+
+    One course row in My learning.
+
+    Example context (json):
+    {"name": "Workplace Health & Safety", "url": "#", "actionurl": "#", "action": "Continue", "progress": 80, "status": "progress",
+     "mandatory": true, "chip": {"text": "Mandatory", "class": ""}, "sub": "Next: Quiz", "coverclass": "cv1"}
+}}
+<article class="siraj-item" data-type="{{#mandatory}}mandatory{{/mandatory}}{{^mandatory}}optional{{/mandatory}}" data-status="{{status}}"
+         data-duesoon="{{#duesoon}}1{{/duesoon}}{{^duesoon}}0{{/duesoon}}" data-name="{{lname}}">
+    <a class="siraj-cover siraj-item-cover {{coverclass}}" href="{{url}}" tabindex="-1" aria-hidden="true" {{#cover}}style="background-image:url('{{cover}}')"{{/cover}}></a>
+    <div class="siraj-item-info">
+        <span class="siraj-chip {{chip.class}}">{{chip.text}}</span>
+        <a class="siraj-item-title" href="{{url}}">{{name}}</a>
+        <small>{{sub}}</small>
+        <span class="siraj-progress" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" aria-label="{{name}}"><i style="width: {{progress}}%"></i></span>
+    </div>
+    <div class="siraj-item-end">
+        <span class="siraj-percent">{{progress}}%</span>
+        <a class="btn {{#primary}}siraj-btn-flame{{/primary}}{{^primary}}btn-secondary{{/primary}}" href="{{actionurl}}">{{action}}</a>
+    </div>
+</article>

@@ -1,0 +1,15 @@
+{{!
+    @template theme_siraj/mobilebar
+
+    Bottom tab bar on phones.
+
+    Example context (json):
+    {"hasmobile": true, "mobile": [{"text": "Home", "url": "#", "icon": "", "active": true}, {"text": "Menu", "action": "sidenav", "icon": ""}]}
+}}
+{{#hasmobile}}
+<nav class="siraj-mobilebar" aria-label="{{#str}}nav_label, theme_siraj{{/str}}">
+    {{#mobile}}{{#action}}<button type="button" class="{{#active}}active{{/active}}" data-siraj-action="{{action}}" aria-expanded="false">{{{icon}}}<span>{{text}}</span></button>{{/action}}{{^action}}<a href="{{url}}" class="{{#active}}active{{/active}}" {{#active}}aria-current="page"{{/active}}><span class="siraj-tabicon">{{{icon}}}{{#badge}}<em class="siraj-tabbadge">{{badge}}</em>{{/badge}}</span><span>{{text}}</span></a>{{/action}}{{/mobile}}
+</nav>
+<div class="siraj-sidenav-backdrop" data-siraj-action="sidenav" hidden></div>
+<button type="button" class="siraj-sidenav-close" data-siraj-action="sidenav" aria-label="{{#str}}closebuttontitle{{/str}}" title="{{#str}}closebuttontitle{{/str}}">{{{icon_navclose}}}</button>
+{{/hasmobile}}

@@ -1,0 +1,118 @@
+// ---------- Moodle components in the Siraj style ----------
+// Buttons
+.btn { border-radius: 10px; font-weight: 600; letter-spacing: -.005em; }
+.btn-primary { background: #0F3F66; border-color: #0F3F66; color: #fff; }
+.btn-primary:hover, .btn-primary:focus { background: #0A2943; border-color: #0A2943; color: #fff; }
+.siraj-btn-flame, .btn-primary.siraj-btn-flame {
+    background: var(--si-flame); border: 0; color: #062C40;
+    box-shadow: 0 6px 18px rgba(0, 201, 140, .2);
+    &:hover, &:focus { background: var(--si-flame); color: #062C40; filter: brightness(1.05); }
+}
+.btn-secondary, .btn-outline-secondary {
+    background: var(--si-surface); border: 1px solid var(--si-line); color: var(--si-ink);
+    &:hover { background: var(--si-surface-2); border-color: var(--si-line); color: var(--si-ink); }
+}
+[data-bs-theme="dark"] .btn-primary { background: #8BCAFF; border-color: #8BCAFF; color: #062C40; }
+[data-bs-theme="dark"] .btn-primary:hover { background: #B4DCFF; border-color: #B4DCFF; color: #062C40; }
+[data-bs-theme="dark"] .btn-primary.siraj-btn-flame, [data-bs-theme="dark"] .btn-primary.siraj-btn-flame:hover { background: var(--si-flame); border: 0; color: #062C40; }
+
+// Surfaces
+.card, .block.card, .list-group-item, .dropdown-menu, .modal-content, .popover, .table, .drawer {
+    background-color: var(--si-surface); color: var(--si-ink); border-color: var(--si-line);
+}
+.card, .block.card { border-radius: var(--si-radius); box-shadow: var(--si-soft); }
+.bg-white { background-color: var(--si-surface) !important; }
+.bg-light, .bg-gray-100 { background-color: var(--si-surface-2) !important; }
+.text-muted, .dimmed_text { color: var(--si-muted) !important; }
+.border, .border-top, .border-bottom { border-color: var(--si-line) !important; }
+a { color: var(--si-accent-ink); }
+
+// Forms
+.form-control, .form-select, .custom-select {
+    border-radius: 10px; border-color: var(--si-line); background-color: var(--si-surface); color: var(--si-ink);
+    &:focus { border-color: var(--si-mint); box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-mint) 20%, transparent); }
+}
+
+// Page header
+#page-header h1, .page-header-headings h1 { font-size: 1.9rem; font-weight: 700; letter-spacing: -.03em; }
+#page-header .card, #page-header .card-body { background: transparent; box-shadow: none; border: 0; padding: 0; }
+
+// Secondary navigation (course tabs etc.)
+.secondary-navigation {
+    background: transparent; border-bottom: 1px solid var(--si-line); margin-bottom: 1.5rem;
+    .navigation .nav-tabs { border: 0; }
+    .navigation .nav-tabs .nav-link {
+        color: var(--si-muted); font-weight: 600; font-size: .85rem; border: 0; border-bottom: 2px solid transparent; background: transparent;
+        &.active, &:hover { color: var(--si-accent-ink); border-bottom-color: var(--si-mint); background: transparent; }
+    }
+}
+
+// Drawers (course index, blocks)
+.drawer { background: var(--si-surface); border-color: var(--si-line); box-shadow: none; }
+.drawer.drawer-left { border-right: 1px solid var(--si-line); }
+.drawer.drawer-right { border-left: 1px solid var(--si-line); }
+.drawer-toggler .btn, .drawer-toggles .btn {
+    background: var(--si-surface); border: 1px solid var(--si-line); border-radius: 11px; box-shadow: var(--si-soft); color: var(--si-muted);
+}
+.courseindex .courseindex-item {
+    border-radius: 8px;
+    &.pageitem { background: var(--si-mint-soft); color: var(--si-accent-ink); a { color: var(--si-accent-ink); } }
+    .courseindex-link { color: var(--si-ink); }
+}
+.courseindex .courseindex-section-title .courseindex-link { font-weight: 700; }
+
+// Course sections and activities: the section is one card, activities are rows inside it.
+.course-content .course-section, .course-section { background: transparent; border: 0 !important; padding: 0 !important; margin: 0 0 1rem; box-shadow: none; }
+.course-section .section-item {
+    background: var(--si-surface); border: 1px solid var(--si-line); border-radius: var(--si-radius);
+    padding: 1.1rem 1.4rem; box-shadow: var(--si-soft);
+}
+.course-section ul.section { border: 0; margin: 0; }
+.course-section ul.section:empty { display: none; }
+.course-section .activity { border: 0; }
+.course-section .activity + .activity .activity-item { border-top: 1px solid var(--si-line); }
+.activity-item, .activity-item:not(.activityinline) { border: 0; border-radius: 12px; background: transparent; }
+.activity-item:hover { background: var(--si-surface-2); }
+.course-section-header .sectionname { font-size: 1.15rem; }
+.course-section-header .icons-collapse-expand { background: var(--si-surface-2); border-radius: 10px; color: var(--si-muted); }
+.completion-info .btn, .activity-information .badge { border-radius: 999px; font-weight: 600; }
+.btn-success, .badge.bg-success, .completion-info .btn-success {
+    background: color-mix(in srgb, var(--si-mint) 14%, var(--si-surface)) !important; color: var(--si-mint-ink) !important; border: 0;
+}
+
+// Progress
+.progress { height: 6px; border-radius: 9px; background: var(--si-surface-2); }
+.progress-bar { background: var(--si-flame); border-radius: 9px; }
+
+// Dashboard course cards (Moodle's My courses page)
+.dashboard-card {
+    border-radius: 16px; overflow: hidden; border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+    transition: transform .18s ease, box-shadow .18s ease;
+    &:hover { transform: translateY(-2px); box-shadow: var(--si-shadow); }
+    .card-img, .dashboard-card-img { border-radius: 0; }
+    .coursename { color: var(--si-ink); font-weight: 700; }
+    .card-footer { background: var(--si-surface); border-color: var(--si-line); }
+}
+.block_myoverview .card, .block_myoverview .card-body { background: transparent; box-shadow: none; border: 0; }
+
+// Tables, alerts, badges
+.table { --bs-table-bg: var(--si-surface); --bs-table-color: var(--si-ink); }
+.table th { color: var(--si-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
+.alert { border-radius: 12px; border: 0; }
+.badge { border-radius: 999px; font-weight: 600; }
+
+// Quiz
+.que .info { border-radius: 12px; background: var(--si-surface-2); border-color: var(--si-line); }
+.que .content .formulation { border-radius: 14px; background: var(--si-surface); border: 1px solid var(--si-line); color: var(--si-ink); }
+#mod_quiz_navblock .qnbutton { border-radius: 8px; }
+
+// Dark mode: Moodle pieces that hard-code white.
+[data-bs-theme="dark"] {
+    #region-main, #region-main-box, #page-content, .secondary-navigation, .secondary-navigation .navigation,
+    #page-header, .bg-white, .main-inner, .nav-tabs, .more-nav { background-color: transparent !important; }
+    .sectionname, .sectionname a, .course-section-header .sectionname, .page-header-headings h1, .activityname a, .instancename { color: var(--si-ink); }
+    .activity-altcontent, .activity-description, .text-dark { color: var(--si-muted) !important; }
+    .dropdown-item { color: var(--si-ink); }
+    .dropdown-item:hover { background: var(--si-surface-2); }
+}
+.siraj-palette-form input:focus, .siraj-palette-form input:focus-visible { outline: none !important; box-shadow: none; }

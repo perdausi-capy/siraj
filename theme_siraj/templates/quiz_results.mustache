@@ -1,0 +1,28 @@
+{{!
+    @template theme_siraj/quiz_results
+
+    Results card on top of the quiz review page.
+
+    Example context (json):
+    {"state": "pass", "pass": true, "title": "Passed", "text": "Well done.", "pct": 80, "grade": "8 / 10", "correct": "4 of 5 correct",
+     "time": "3 mins", "courseurl": "#"}
+}}
+<section class="siraj-results state-{{state}}">
+    <div class="siraj-results-ring" style="--p: {{pct}}" role="img" aria-label="{{pct}}%"><b>{{pct}}%</b></div>
+    <div class="siraj-results-body">
+        <span class="siraj-eyebrow">{{#str}}results_eyebrow, theme_siraj{{/str}}</span>
+        <h2>{{title}}</h2>
+        <p>{{text}}</p>
+        <div class="siraj-results-meta">
+            <span>{{{icon_check}}}{{correct}}</span>
+            <span>{{{icon_layers}}}{{#str}}results_grade, theme_siraj, {{grade}}{{/str}}</span>
+            <span>{{{icon_clock}}}{{time}}</span>
+            {{#attempts}}<span>{{attempts}}</span>{{/attempts}}
+        </div>
+    </div>
+    <div class="siraj-results-actions">
+        {{#retakeurl}}<a class="btn siraj-btn-flame" href="{{retakeurl}}">{{#str}}results_retake, theme_siraj{{/str}} {{{icon_arrow}}}</a>{{/retakeurl}}
+        <a class="btn {{#retakeurl}}btn-secondary{{/retakeurl}}{{^retakeurl}}siraj-btn-flame{{/retakeurl}}" href="{{courseurl}}">{{#str}}results_backtocourse, theme_siraj{{/str}}</a>
+        <a class="btn btn-link siraj-results-review" href="#responseform">{{#str}}results_review, theme_siraj{{/str}} ↓</a>
+    </div>
+</section>

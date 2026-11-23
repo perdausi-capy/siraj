@@ -1,0 +1,936 @@
+// ---------- Concept A (18 Nov 2026): calm navy palette, Inter + Instrument Serif, pill buttons, navy sidebar ----------
+// Loaded last, so it refines the earlier parts without rewriting them. Remove 'concepta' from lib.php to go back.
+
+// Palette: navy is the primary colour; mint stays for success and progress states only.
+:root, [data-bs-theme="light"] {
+    --si-bg: #F3F6FA;
+    --si-surface: #FFFFFF;
+    --si-surface-2: #EEF3F9;
+    --si-ink: #0E1B2A;
+    --si-muted: #5B6B7C;
+    --si-faint: #6B7A8B;  // 4.5:1 on white (small labels, table headers, footer)
+    --si-line: #E4E9F0;
+    --si-accent-ink: #12406A;
+    --si-navy: #0B2E4F;
+    --si-link: #1E5FA8;
+    --si-flame: linear-gradient(90deg, #12406A, #1E5FA8);
+    --si-shadow: 0 1px 2px rgba(14, 27, 42, .04), 0 12px 32px rgba(14, 27, 42, .08);
+    --si-soft: 0 1px 2px rgba(14, 27, 42, .04), 0 8px 24px rgba(14, 27, 42, .06);
+    --si-iconbg: #EEF3F9; --si-iconfg: #12406A;
+    --si-side-1: #0B2E4F; --si-side-2: #0A2742;
+    --bs-link-color-rgb: 30, 95, 168;
+}
+[data-bs-theme="dark"] {
+    --si-bg: #0A1220;
+    --si-surface: #111B2B;
+    --si-surface-2: #172438;
+    --si-ink: #E8EEF5;
+    --si-muted: #9AAABD;
+    --si-faint: #6D7E93;
+    --si-line: #1F2D42;
+    --si-accent-ink: #8CC8F7;
+    --si-navy: #5FB3F0;
+    --si-link: #6CB8F5;
+    --si-flame: linear-gradient(90deg, #3E8FD6, #6CB8F5);
+    --si-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 12px 32px rgba(0, 0, 0, .35);
+    --si-soft: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 24px rgba(0, 0, 0, .3);
+    --si-iconbg: #18283F; --si-iconfg: #8CC8F7;
+    --si-side-1: #071424; --si-side-2: #06101D;
+    --bs-body-bg: #0A1220; --bs-secondary-bg: #172438; --bs-tertiary-bg: #111B2B; --bs-border-color: #1F2D42;
+    --bs-link-color-rgb: 108, 184, 245;
+}
+body { font-family: "Inter", "IBM Plex Sans Arabic", system-ui, sans-serif; font-feature-settings: "cv11", "ss01"; }
+h1, h2, h3, h4, h5, .h1, .h2, .h3, .h4, .h5 { font-weight: 600; letter-spacing: -.015em; }
+
+// Display type: the big moments are serif (greeting, page titles, heroes, big numbers).
+.siraj-serif, .siraj-pagehead h1, .siraj-hero h2, .siraj-feature h2, .siraj-course-cover h1, .siraj-profile-hero h1,
+.siraj-signin-art h1, .siraj-signin-form h2 {
+    font-family: var(--si-serif); font-weight: 400; letter-spacing: -.01em;
+}
+.siraj-pagehead h1 { font-size: clamp(2.2rem, 3.2vw, 3.25rem); line-height: 1.04; }
+.siraj-hero h2, .siraj-feature h2 { font-size: clamp(2rem, 2.8vw, 2.6rem); line-height: 1.08; letter-spacing: -.005em; }
+.siraj-course-cover h1 { font-size: clamp(2rem, 3vw, 2.9rem); line-height: 1.06; }
+[dir="rtl"] .siraj-serif, [dir="rtl"] .siraj-pagehead h1, [dir="rtl"] .siraj-hero h2 { font-family: var(--si-head); font-weight: 600; }
+.siraj-eyebrow { font: 600 11px/1.2 var(--si-head); letter-spacing: .2em; }
+
+// Buttons: pills. Primary is solid navy; the old gradient button becomes navy too.
+.btn:not(.btn-link):not(.dropdown-toggle):not(.btn-icon):not(.input-group .btn):not(.btn-group > .btn) { border-radius: 999px; }
+.btn-primary, .siraj-btn-flame, .btn-primary.siraj-btn-flame {
+    background: var(--si-navy); border: 1px solid var(--si-navy); color: #fff; box-shadow: none;
+    &:hover, &:focus { background: #12406A; border-color: #12406A; color: #fff; filter: none; }
+}
+[data-bs-theme="dark"] {
+    .btn-primary, .siraj-btn-flame, .btn-primary.siraj-btn-flame {
+        background: #5FB3F0; border-color: #5FB3F0; color: #06243C;
+        &:hover, &:focus { background: #8CC8F7; border-color: #8CC8F7; color: #06243C; }
+    }
+}
+// On photos and dark heroes the primary action is a white pill.
+.siraj-hero .siraj-btn-flame, .siraj-feature .siraj-btn-flame, .siraj-course-cover .siraj-btn-flame, .siraj-carousel .siraj-btn-flame,
+[data-bs-theme="dark"] .siraj-carousel .siraj-btn-flame, [data-bs-theme="dark"] .siraj-hero .siraj-btn-flame, [data-bs-theme="dark"] .siraj-feature .siraj-btn-flame, [data-bs-theme="dark"] .siraj-course-cover .siraj-btn-flame {
+    background: #fff; border-color: #fff; color: #0B2E4F;
+    &:hover, &:focus { background: #EAF2FA; border-color: #EAF2FA; color: #0B2E4F; }
+}
+.siraj-link, a.siraj-link { color: var(--si-link); }
+
+// Cards: hairline borders, soft shadows.
+.siraj-panel, .card, .block.card { border-color: var(--si-line); box-shadow: var(--si-soft); }
+
+// Sidebar: navy in both themes.
+.siraj-sidebar {
+    background: radial-gradient(120% 40% at 0% 100%, rgba(30, 106, 138, .35), transparent 60%),
+        linear-gradient(180deg, var(--si-side-1), var(--si-side-2));
+    border-right: 0;
+    --si-ink: #fff; --si-muted: #A9BFD1; --si-faint: #6F8CA4; --si-line: rgba(255, 255, 255, .1);
+    --si-surface: rgba(255, 255, 255, .06); --si-surface-2: rgba(255, 255, 255, .08);
+    .siraj-brandname { color: #fff; small { color: #9FC3D4; } }
+    .siraj-navlabel { color: #6F8CA4; }
+    .siraj-nav a {
+        color: #A9BFD1 !important; font-weight: 500;
+        .si-icon { color: inherit !important; }
+        &:hover { background: rgba(255, 255, 255, .06); color: #fff !important; }
+        &.active { background: rgba(255, 255, 255, .1); color: #fff !important; font-weight: 600; }
+    }
+    .siraj-sidefoot { border-top-color: rgba(255, 255, 255, .1); }
+    .siraj-editbtn {
+        background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .14); color: #A9BFD1;
+        &:hover { color: #fff; border-color: rgba(255, 255, 255, .35); }
+        &.is-on { background: #5FB3F0; border-color: #5FB3F0; color: #06243C; box-shadow: none; }
+    }
+}
+// Sidebar foot: edit mode and collapse, side by side (stacked when collapsed).
+.siraj-sidebar .siraj-sidefoot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 12px 6px 4px; border-top: 1px solid rgba(255, 255, 255, .1);
+    form { margin: 0; } }
+.siraj-sidebar .siraj-collapse {
+    position: static; width: 42px; height: 42px; margin-left: auto; border-radius: 12px; box-shadow: none; transition: transform .25s ease;
+    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); color: #A9BFD1;
+    .si-icon { width: 17px; height: 17px; }
+    &:hover, &:focus-visible { background: rgba(255, 255, 255, .12); border-color: rgba(255, 255, 255, .3); color: #fff; }
+}
+body.siraj-collapsed, .siraj-collapsed-early body {
+    .siraj-sidebar .siraj-sidefoot { flex-direction: column; padding: 12px 0 4px; }
+    .siraj-sidebar .siraj-collapse { margin-left: 0; }
+}
+// Mobile slide-in menu uses the same sidebar.
+body.siraj-sidenav-open .siraj-sidebar { background: linear-gradient(180deg, var(--si-side-1), var(--si-side-2)); }
+
+// Top bar: transparent over the page, pill search.
+.navbar.fixed-top.siraj-topbar { background: color-mix(in srgb, var(--si-bg) 88%, transparent) !important; border-bottom-color: transparent; }
+.siraj-search-trigger { border-radius: 999px; height: 40px; padding: 0 16px; }
+.siraj-iconbtn { border-radius: 50%; border-color: transparent; background: transparent; &:hover { background: var(--si-surface-2); } }
+.siraj-langbtn { border-radius: 999px !important; width: auto !important; padding: 0 12px !important; }
+
+// Progress: navy (light blue in dark) instead of the mint gradient.
+.siraj-progress i, .siraj-player-rail i { background: var(--si-flame); }
+
+// Chips
+.siraj-chip { border-radius: 999px; }
+
+// ---------- Home (Concept A) ----------
+.siraj-home .siraj-pagehead { align-items: center; margin-bottom: 32px;
+    h1 { margin: 10px 0 6px; } .siraj-sub { font-size: 1.05rem; margin: 0; } }
+.siraj-chip-status { height: 34px; padding: 0 14px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft); }
+.siraj-a { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; margin-bottom: 40px; }
+.siraj-a-main { display: grid; gap: 32px; min-width: 0; }
+.siraj-a-rail { display: grid; gap: 24px; position: sticky; top: calc(var(--si-top-h) + 16px); }
+.siraj-a-rail .siraj-panel { margin: 0; padding: 24px; border-radius: 18px; }
+.siraj-a-rail .siraj-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 16px; h3 { margin: 0; } }
+.siraj-a-rail h3 { font: 600 1.125rem/1.3 var(--si-head); }
+.siraj-a .siraj-sectionhead { margin: 0 0 16px; h2 { font: 600 1.125rem/1.3 var(--si-head); margin: 0; } }
+
+// Hero carousel: photo slides with a navy fade behind the text.
+.siraj-carousel { position: relative; overflow: hidden; height: 340px; border-radius: 22px; background: #0A1E33; box-shadow: var(--si-shadow); color: #fff;
+    // Keep the fading slides inside the rounded corners (no light hairline from the photos at the edges).
+    isolation: isolate; transform: translateZ(0); }
+.siraj-carousel > .siraj-slide { border-radius: inherit; }
+.siraj-slide {
+    position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 40px; opacity: 0; visibility: hidden;
+    transition: opacity .6s ease, visibility 0s linear .6s;
+    background: linear-gradient(90deg, rgba(8, 24, 42, 1) 0%, rgba(8, 24, 42, .9) 22%, rgba(8, 24, 42, .85) 38%, rgba(8, 24, 42, .25) 72%, rgba(8, 24, 42, .05) 100%),
+        var(--si-photo, linear-gradient(135deg, #0B2E4F, #12406A)) right center / cover no-repeat, #0B2E4F;
+    &.on { opacity: 1; visibility: visible; transition: opacity .6s ease; }
+}
+[dir="rtl"] .siraj-slide { background: linear-gradient(270deg, rgba(8, 24, 42, 1) 0%, rgba(8, 24, 42, .9) 22%, rgba(8, 24, 42, .85) 38%, rgba(8, 24, 42, .25) 72%, rgba(8, 24, 42, .05) 100%),
+    var(--si-photo, linear-gradient(135deg, #0B2E4F, #12406A)) left center / cover no-repeat, #0B2E4F; }
+.siraj-slide-copy { max-width: 580px;
+    .siraj-eyebrow { color: #9FD8F2; }
+    h2 { margin: 12px 0 8px; color: #fff; font: 400 clamp(2rem, 2.8vw, 2.6rem)/1.08 var(--si-serif); }
+    p { margin: 0 0 24px; color: #C9D9E6; font-size: 15px; } }
+[dir="rtl"] .siraj-slide-copy h2 { font-family: var(--si-head); font-weight: 600; }
+.siraj-slide-row { display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    > span { display: inline-flex; align-items: center; gap: 8px; color: #DCE8F1; font-size: 13px; white-space: nowrap; .si-icon { width: 16px; height: 16px; } }
+    .btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 22px; .si-icon { width: 16px; height: 16px; } } }
+.siraj-carousel-bars { position: absolute; z-index: 2; left: 40px; top: 32px; display: flex; gap: 6px;
+    i { width: 22px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .3); transition: width .3s, background .3s; }
+    i.on { width: 34px; background: #fff; } }
+.siraj-carousel-nav {
+    position: absolute; z-index: 2; right: 32px; bottom: 32px; display: flex; align-items: center; gap: 8px;
+    padding: 5px 5px 5px 14px; border-radius: 999px; background: rgba(8, 24, 42, .55); backdrop-filter: blur(8px);
+    font: 600 12px var(--si-head); color: #fff;
+    button { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(255, 255, 255, .22);
+        background: rgba(255, 255, 255, .1); color: #fff; .si-icon { width: 15px; height: 15px; } &:hover { background: rgba(255, 255, 255, .22); } }
+}
+.siraj-slide-calm { background: linear-gradient(135deg, #0B2E4F, #12406A 60%, #1E5FA8); }
+
+// Stat strip
+.siraj-statstrip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.siraj-stat { display: flex; align-items: center; gap: 16px; padding: 24px; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+    b { display: block; font: 600 1.5rem/1.1 var(--si-head); color: var(--si-ink); }
+    small { color: var(--si-muted); font-size: 12.5px; } }
+.siraj-stat-icon { width: 44px; height: 44px; flex: none; border-radius: 12px; display: grid; place-items: center; background: var(--si-iconbg); color: var(--si-iconfg); .si-icon { width: 20px; height: 20px; } }
+
+// Photo cards
+.siraj-photocards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.siraj-photocard { display: flex; flex-direction: column; overflow: hidden; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line);
+    box-shadow: var(--si-soft); color: var(--si-ink); text-decoration: none !important; transition: transform .2s ease, box-shadow .2s ease;
+    &:hover { transform: translateY(-3px); box-shadow: var(--si-shadow); b { color: var(--si-link); } }
+    .siraj-cover { width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 0; } }
+.siraj-photocard-body { flex: 1; display: flex; flex-direction: column; padding: 16px 20px 20px;
+    b { font: 600 15px/1.35 var(--si-head); margin-bottom: 4px; } small { color: var(--si-muted); font-size: 12.5px; } }
+.siraj-photocard-tag { font: 600 11px var(--si-head); letter-spacing: .12em; text-transform: uppercase; color: var(--si-link); margin-bottom: 10px; }
+.siraj-photocard-row { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 16px;
+    .siraj-progress { flex: 1; margin: 0; max-width: none; } em { font: 600 12.5px var(--si-head); font-style: normal; } }
+.siraj-photocard-go { display: inline-flex; align-items: center; gap: 6px; font: 600 13px var(--si-head); color: var(--si-link); .si-icon { width: 15px; height: 15px; } }
+
+// Coming up
+.siraj-upcoming { display: grid;
+    a { display: flex; align-items: center; gap: 12px; padding: 12px 0; color: var(--si-ink); text-decoration: none; }
+    a + a { border-top: 1px solid var(--si-line); }
+    a:hover b { color: var(--si-link); } }
+.siraj-datetile { width: 46px; flex: none; text-align: center; padding: 6px 0; border-radius: 10px; background: var(--si-surface-2);
+    b { display: block; font: 600 16px/1 var(--si-head); } small { font: 600 10px var(--si-head); letter-spacing: .1em; color: var(--si-muted); } }
+.siraj-upcoming-text { min-width: 0;
+    b { display: block; font: 600 13.5px/1.35 var(--si-head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    small { display: block; color: var(--si-muted); font-size: 12.5px; } small.late { color: #C2410C; } }
+[data-bs-theme="dark"] .siraj-upcoming-text small.late { color: #FB923C; }
+.siraj-a-rail .siraj-ai { background: linear-gradient(160deg, color-mix(in srgb, var(--si-mint) 10%, var(--si-surface)), var(--si-surface) 60%); }
+
+@media (max-width: 1399.98px) {
+    .siraj-a { grid-template-columns: minmax(0, 1fr); }
+    .siraj-a-rail { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; }
+}
+@media (max-width: 1199.98px) { .siraj-statstrip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .siraj-photocards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@include media-breakpoint-down(md) {
+    .siraj-home .siraj-pagehead { flex-direction: column; align-items: flex-start; gap: 12px; margin-bottom: 24px; }
+    .siraj-a, .siraj-a-main { gap: 24px; }
+    .siraj-carousel { height: 400px; }
+    .siraj-slide { padding: 24px; background: linear-gradient(0deg, rgba(8, 24, 42, .96) 0%, rgba(8, 24, 42, .8) 50%, rgba(8, 24, 42, .2) 100%),
+        var(--si-photo, linear-gradient(135deg, #0B2E4F, #12406A)) center / cover no-repeat, #0B2E4F !important; }
+    .siraj-slide-copy h2 { font-size: 1.9rem; }
+    .siraj-slide-row { gap: 16px; > span:nth-of-type(n+2) { display: none; } }
+    .siraj-carousel-nav { top: 20px; bottom: auto; right: 20px; }
+    .siraj-carousel-bars { display: none; }
+    .siraj-statstrip { gap: 12px; } .siraj-stat { padding: 16px; gap: 12px; b { font-size: 1.25rem; } }
+    .siraj-stat-icon { width: 38px; height: 38px; }
+    .siraj-photocards { grid-template-columns: 1fr; }
+    .siraj-a-rail { grid-template-columns: 1fr; }
+}
+
+[data-bs-theme="dark"] .siraj-photocard, [data-bs-theme="dark"] .siraj-upcoming a { color: var(--si-ink) !important; }
+[data-bs-theme="dark"] .siraj-photocard b, [data-bs-theme="dark"] .siraj-upcoming b { color: var(--si-ink) !important; }
+[data-bs-theme="dark"] .siraj-photocard:hover b, [data-bs-theme="dark"] .siraj-upcoming a:hover b { color: var(--si-link) !important; }
+.siraj-stat small { white-space: nowrap; }
+
+// ---------- Messages drawer (Moodle's messaging panel in Siraj's style) ----------
+.drawer:has(.message-app), [data-region="right-hand-drawer"] {
+    background: var(--si-surface) !important; border-left: 1px solid var(--si-line); box-shadow: -18px 0 50px rgba(8, 24, 42, .12);
+    width: 380px !important; max-width: 100vw;
+}
+.message-app {
+    background: var(--si-surface); color: var(--si-ink); font-family: var(--si-head);
+    .closewidget { padding: 14px 16px 0 !important;
+        a { width: 34px; height: 34px; display: inline-grid; place-items: center; border-radius: 50%; color: var(--si-muted) !important; text-decoration: none; }
+        a:hover { background: var(--si-surface-2); color: var(--si-ink) !important; } }
+    .header-container, .footer-container { background: var(--si-surface); }
+    .header-container > [data-region="view-overview"] { border-bottom: 1px solid var(--si-line) !important; padding: 8px 20px 14px !important; }
+    // Search
+    .simplesearchform .form-control, [data-region="view-overview-search-input"], [data-region="search-input"] {
+        height: 42px; border-radius: 999px 0 0 999px !important; border: 1px solid var(--si-line); border-right: 0; background: var(--si-surface-2);
+        padding-left: 18px; font-size: 14px; color: var(--si-ink); box-shadow: none !important; }
+    .simplesearchform .btn-submit, .simplesearchform .btn { height: 42px; border-radius: 0 999px 999px 0 !important; border: 1px solid var(--si-line);
+        border-left: 0; background: var(--si-surface-2); color: var(--si-muted); padding: 0 14px; display: grid; place-items: center; }
+    [data-region="view-overview"] .ms-2 a, [data-region="view-overview"] .text-end a, [data-route] {
+        color: var(--si-muted); text-decoration: none; }
+    [data-region="view-overview"] .ms-2 a { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%;
+        &:hover { background: var(--si-surface-2); color: var(--si-ink); } }
+    [data-region="view-overview"] .text-end { margin-top: 10px !important; text-align: left !important;
+        a { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 999px; font: 600 12.5px var(--si-head);
+            background: var(--si-surface-2); color: var(--si-ink); &:hover { background: var(--si-iconbg); color: var(--si-link); } } }
+    // Sections (Starred / Group / Private)
+    .section.card { background: transparent; box-shadow: none; border: 0 !important; }
+    .section .card-header { background: transparent; border: 0; padding: 0 12px; }
+    .overview-section-toggle {
+        height: 44px; padding: 0 8px !important; color: var(--si-faint) !important; text-decoration: none !important;
+        font: 600 11px var(--si-head); letter-spacing: .14em; text-transform: uppercase; border-radius: 10px !important;
+        .fw-bold { font-weight: 600 !important; } .icon { font-size: 11px; color: var(--si-faint); }
+        &:hover { background: var(--si-surface-2); color: var(--si-ink) !important; }
+        .badge { background: var(--si-navy) !important; color: #fff !important; font: 600 11px var(--si-head); letter-spacing: 0; }
+    }
+    .lazy-load-list { border-bottom: 0 !important; }
+    .list-group { padding: 2px 8px 8px; }
+    // Conversation rows
+    .list-group-item.list-group-item-action {
+        border: 0 !important; border-radius: 14px !important; margin: 2px 0; padding: 10px 12px !important; background: transparent;
+        color: var(--si-ink); position: relative;
+        img.rounded-circle { width: 42px; height: 42px !important; margin-top: 0 !important; align-self: center !important; object-fit: cover;
+            box-shadow: 0 0 0 2px var(--si-surface); background: var(--si-surface-2); }
+        strong { font: 600 14px var(--si-head); color: var(--si-ink) !important; }
+        .last-message { color: var(--si-muted); font-size: 13px; font-weight: 400 !important; }
+        [data-region="last-message-date"] { top: 10px; right: 12px; color: var(--si-faint); font-size: 11.5px; }
+        [data-region="unread-count"] { background: var(--si-navy) !important; color: #fff !important; min-width: 20px; }
+        .text-muted .icon { display: none; }
+        &:hover, &:focus { background: var(--si-surface-2); }
+    }
+    .contact-status.online { background: #10B981; border: 2px solid var(--si-surface); }
+    .view-overview-body .text-muted, [data-region="empty-message-container"] p { color: var(--si-faint) !important; font-size: 13px; }
+    // Conversation header
+    [data-region="view-conversation"] .border-bottom, .header-container [data-region="view-conversation"] { border-color: var(--si-line) !important; }
+    .header-container [data-region="view-conversation"] { padding: 10px 14px !important;
+        img.rounded-circle { width: 40px; height: 40px !important; object-fit: cover; }
+        strong, .fw-bold, a, h5, .h5 { font: 600 15px var(--si-head) !important; color: var(--si-ink) !important; text-decoration: none; }
+        .text-muted, small { color: var(--si-muted) !important; font-size: 12.5px; }
+        .btn-link, a[data-route-back], [data-action="go-back"] { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: var(--si-ink); text-decoration: none;
+            &:hover { background: var(--si-surface-2); } }
+        .icon.fa-star { color: #E5A23B; }
+    }
+    // Messages
+    .body-container { background: var(--si-bg); }
+    [data-region="day-container"] [data-region="day-messages-container"] { padding: 4px 14px; }
+    [data-region="day-container"] > h6, .day-container h6, [data-region="day-container"] .text-center h6 {
+        display: block; text-align: center; margin: 16px 0 6px; font: 600 11px var(--si-head) !important; letter-spacing: .12em;
+        text-transform: uppercase; color: var(--si-faint); }
+    .message {
+        max-width: 82%; border-radius: 18px !important; padding: 10px 14px !important; margin: 6px 0 !important; box-shadow: none;
+        font-size: 14px; line-height: 1.45; border: 0;
+        .tail { display: none !important; }
+        h6 { font: 600 12.5px var(--si-head) !important; }
+        img.rounded-circle { height: 24px !important; width: 24px; }
+        .time { font-size: 11px; color: var(--si-faint); }
+        [data-region="text-container"] p:last-child { margin-bottom: 0; }
+        // One-to-one chat: the header already says who it is, so no avatar and name on each bubble.
+        &.received > .d-flex.align-items-center { padding-bottom: 2px !important; > div:has(> img), > .text-truncate { display: none !important; } }
+        &.received { background: var(--si-surface) !important; color: var(--si-ink); border: 1px solid var(--si-line); border-bottom-left-radius: 6px !important; margin-right: auto !important; }
+        &.send { background: var(--si-navy) !important; color: #fff !important; border-bottom-right-radius: 6px !important; margin-left: auto !important;
+            .time { color: #BFD6EA; } a { color: #BFE3FF; } }
+        &.selected { box-shadow: 0 0 0 2px var(--si-link) !important; }
+    }
+    [data-bs-theme="dark"] & .message.send { background: #1E5FA8 !important; }
+    // Composer
+    .footer-container [data-region="view-conversation"] { padding: 12px 14px !important; border-top: 1px solid var(--si-line) !important; background: var(--si-surface); }
+    [data-region="send-message-txt"] {
+        border-radius: 22px !important; border: 1px solid var(--si-line) !important; background: var(--si-surface-2) !important;
+        padding: 11px 16px !important; font-size: 14px; min-height: 44px !important; max-height: 140px; resize: none; color: var(--si-ink);
+        &:focus { border-color: var(--si-link) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-link) 18%, transparent) !important; background: var(--si-surface) !important; }
+    }
+    [data-action="send-message"] { width: 40px; height: 40px; border-radius: 50% !important; background: var(--si-navy) !important; color: #fff !important;
+        display: grid !important; place-items: center; padding: 0 !important; margin-left: 6px;
+        .icon { color: #fff !important; margin: 0; } &:hover { filter: brightness(1.15); } }
+    [data-action="toggle-emoji-picker"] { width: 36px; height: 36px; border-radius: 50% !important; color: var(--si-muted) !important; display: grid !important; place-items: center; padding: 0 !important;
+        &:hover { background: var(--si-surface-2); } }
+    // "See all" footer
+    .footer-container > [data-region="view-overview"] { padding: 12px !important; border-top: 1px solid var(--si-line);
+        a { display: inline-flex; align-items: center; height: 36px; padding: 0 18px; border-radius: 999px; font: 600 13px var(--si-head);
+            color: var(--si-link); text-decoration: none; &:hover { background: var(--si-surface-2); } } }
+    .dropdown-menu { border-radius: 14px; }
+}
+[data-bs-theme="dark"] .message-app .message.send { background: #1E5FA8 !important; }
+[data-bs-theme="dark"] .drawer:has(.message-app) { box-shadow: -18px 0 50px rgba(0, 0, 0, .45); }
+
+// ---------- Siraj chat (own panel; Moodle's message drawer is switched off in config.php) ----------
+.siraj-plugins.has-siraj-chat [data-region="popover-region-messages"] { display: none !important; }
+.siraj-chatbtn { position: relative; .si-icon { width: 19px; height: 19px; } }
+.siraj-chatbadge { position: absolute; top: 3px; right: 1px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; display: grid; place-items: center;
+    background: #D93F3F; color: #fff; font: 700 10px var(--si-head); box-shadow: 0 0 0 2px var(--si-bg); &[hidden] { display: none; } }
+.siraj-chat-backdrop { position: fixed; inset: 0; z-index: 1060; background: rgba(8, 24, 42, .28); animation: siraj-fade .2s ease; &[hidden] { display: none; } }
+@keyframes siraj-fade { from { opacity: 0; } }
+.siraj-chat {
+    position: fixed; z-index: 1061; top: 12px; right: 12px; bottom: 12px; width: min(400px, calc(100vw - 24px));
+    display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
+    background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: 0 30px 80px rgba(8, 24, 42, .25);
+    transform: translateX(calc(100% + 24px)); visibility: hidden; transition: transform .28s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .28s;
+    &.open { transform: none; visibility: visible; transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
+}
+// The position mirrors automatically in Arabic; the slide-in direction does not, so it is set here.
+[dir="rtl"] .siraj-chat { transform: translateX(calc(-100% - 24px)); &.open { transform: none; } }
+[data-bs-theme="dark"] .siraj-chat { box-shadow: 0 30px 80px rgba(0, 0, 0, .55); }
+.siraj-chat-view { display: flex; flex-direction: column; flex: 1; min-height: 0; &[hidden] { display: none; } }
+.siraj-chat-head { display: flex; align-items: center; gap: 8px; padding: 18px 16px 12px 22px; flex: none;
+    h2 { flex: 1; margin: 0; font: 400 28px/1 var(--si-serif); letter-spacing: -.01em; } }
+[dir="rtl"] .siraj-chat-head h2 { font-family: var(--si-head); font-weight: 600; font-size: 22px; }
+.siraj-chat-icon { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; color: var(--si-muted);
+    .si-icon { width: 18px; height: 18px; } &:hover, &:focus-visible { background: var(--si-surface-2); color: var(--si-ink); } &[hidden] { display: none; } }
+.siraj-chat-tools { padding: 0 16px 10px; flex: none; display: grid; gap: 10px; }
+.siraj-chat-search { position: relative; margin: 0; display: block;
+    .si-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--si-faint); }
+    input { width: 100%; height: 42px; border-radius: 999px; border: 1px solid var(--si-line); background: var(--si-surface-2); color: var(--si-ink);
+        padding: 0 16px 0 40px; font-size: 14px; outline: none; &:focus { border-color: var(--si-link); background: var(--si-surface); } } }
+.siraj-chat-tabs { display: flex; gap: 4px; padding: 3px; border-radius: 999px; background: var(--si-surface-2);
+    button { flex: 1; height: 32px; border: 0; border-radius: 999px; background: transparent; color: var(--si-muted); font: 600 12.5px var(--si-head);
+        &[aria-selected="true"] { background: var(--si-surface); color: var(--si-ink); box-shadow: 0 1px 3px rgba(14, 27, 42, .1); } } }
+.siraj-chat-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 8px 12px; scrollbar-width: thin; }
+.siraj-chat-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 0; border-radius: 14px; background: transparent;
+    text-align: start; color: var(--si-ink); &:hover, &:focus-visible { background: var(--si-surface-2); } }
+.siraj-chat-av { position: relative; width: 44px; height: 44px; flex: none; border-radius: 50%; display: grid; place-items: center; overflow: visible;
+    background: linear-gradient(135deg, #123E66, #1E6A8A); color: #fff; font: 600 14px var(--si-head);
+    img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    &.sm { width: 36px; height: 36px; font-size: 12.5px; } }
+.siraj-chat-online { position: absolute; right: 0; bottom: 1px; width: 11px; height: 11px; border-radius: 50%; background: #10B981; box-shadow: 0 0 0 2px var(--si-surface); }
+.siraj-chat-rowtext { flex: 1; min-width: 0; display: grid; gap: 2px; > b { font: 600 14px var(--si-head); } }
+.siraj-chat-rowtop, .siraj-chat-rowbottom { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.siraj-chat-rowtop b { flex: 1; min-width: 0; font: 600 14px var(--si-head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.siraj-chat-rowtop time { flex: none; font-size: 11.5px; color: var(--si-faint); }
+.siraj-chat-rowbottom small { flex: 1; min-width: 0; font-size: 13px; color: var(--si-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.siraj-chat-rowbottom em { flex: none; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 99px; display: grid; place-items: center;
+    background: var(--si-navy); color: #fff; font: 700 11px var(--si-head); font-style: normal; }
+[data-bs-theme="dark"] .siraj-chat-rowbottom em { color: #06243C; }
+.siraj-chat-row.is-unread { .siraj-chat-rowbottom small { color: var(--si-ink); font-weight: 500; } .siraj-chat-rowtop time { color: var(--si-link); font-weight: 600; } }
+.siraj-chat-empty { display: grid; gap: 4px; place-items: center; text-align: center; padding: 48px 24px; color: var(--si-muted); font-size: 13.5px;
+    b { color: var(--si-ink); font: 600 15px var(--si-head); } }
+.siraj-chat-foot { flex: none; padding: 10px; border-top: 1px solid var(--si-line); text-align: center;
+    a { display: inline-flex; align-items: center; gap: 6px; font: 600 12.5px var(--si-head); color: var(--si-muted); text-decoration: none;
+        .si-icon { width: 14px; height: 14px; } &:hover { color: var(--si-link); } } }
+// Conversation
+.siraj-chat-convhead { padding: 14px 12px; border-bottom: 1px solid var(--si-line); }
+.siraj-chat-who { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;
+    > span:last-child { min-width: 0; display: grid; } b { font: 600 15px var(--si-head); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    small { font-size: 12px; color: var(--si-muted); } small.is-online { color: #0E9F6E; } }
+.siraj-chat-star[aria-pressed="true"] { color: #E5A23B; .si-icon { fill: currentColor; } }
+.siraj-chat-msgs { background: var(--si-bg); padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 4px; }
+.siraj-chat-day { align-self: center; margin: 12px 0 6px; padding: 3px 10px; border-radius: 99px; background: var(--si-surface);
+    font: 600 11px var(--si-head); color: var(--si-faint); letter-spacing: .04em; }
+.siraj-chat-msg { max-width: 82%; padding: 9px 13px 6px; border-radius: 18px; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere;
+    time { display: block; text-align: end; font-size: 10.5px; margin-top: 2px; opacity: .7; }
+    .siraj-chat-text > :last-child { margin-bottom: 0; } .siraj-chat-text p { margin: 0 0 .4em; } .siraj-chat-text img { max-width: 100%; height: auto; }
+    &.theirs { align-self: flex-start; background: var(--si-surface); color: var(--si-ink); border: 1px solid var(--si-line); border-bottom-left-radius: 6px; }
+    &.mine { align-self: flex-end; background: var(--si-navy); color: #fff; border-bottom-right-radius: 6px; a { color: #BFE3FF; } }
+    &.mine + .mine, &.theirs + .theirs { margin-top: -1px; }
+    &.is-sending { opacity: .6; } &.is-failed { background: #FDECEC; color: #8A1C1C; border: 1px solid #F3B8B8; } }
+[data-bs-theme="dark"] .siraj-chat-msg.mine { background: #1E5FA8; }
+.siraj-chat-from { display: block; font: 600 12px var(--si-head); color: var(--si-link); margin-bottom: 2px; }
+.siraj-chat-retry { display: block; margin-top: 4px; padding: 0; border: 0; background: none; color: inherit; font: 600 12px var(--si-head); text-decoration: underline; }
+.siraj-chat-compose { flex: none; display: flex; align-items: flex-end; gap: 8px; padding: 12px 14px 14px; border-top: 1px solid var(--si-line); background: var(--si-surface);
+    textarea { flex: 1; min-height: 44px; max-height: 140px; padding: 11px 16px; border-radius: 22px; border: 1px solid var(--si-line); background: var(--si-surface-2);
+        color: var(--si-ink); font: 400 14px/1.45 var(--si-head); resize: none; outline: none;
+        &:focus { border-color: var(--si-link); background: var(--si-surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-link) 16%, transparent); } } }
+.siraj-chat-send { width: 44px; height: 44px; flex: none; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--si-navy); color: #fff;
+    .si-icon { width: 18px; height: 18px; } &:hover { filter: brightness(1.15); } }
+[data-bs-theme="dark"] .siraj-chat-send { color: #06243C; }
+body.siraj-chat-open { overflow: hidden; }
+@include media-breakpoint-down(md) {
+    .siraj-chat { top: 0; right: 0; bottom: 0; width: 100vw; border-radius: 0; border: 0; }
+}
+.siraj-chat input:focus, .siraj-chat input:focus-visible, .siraj-chat textarea:focus, .siraj-chat textarea:focus-visible {
+    outline: none !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-link) 16%, transparent) !important; border-color: var(--si-link) !important; }
+.siraj-chat input[type="search"]::-webkit-search-cancel-button { filter: grayscale(1); opacity: .5; }
+// Settings view
+.siraj-chat-settings { padding: 8px 20px 24px;
+    fieldset { margin: 0 0 24px; padding: 0; border: 0; }
+    legend { float: none; width: auto; margin: 0 0 6px; font: 600 15px var(--si-head); }
+    > fieldset > p { margin: 0 0 12px; color: var(--si-muted); font-size: 13px; } }
+.siraj-chat-opt { display: flex; align-items: center; gap: 12px; padding: 12px 14px; margin: 0 0 8px; border-radius: 14px; border: 1px solid var(--si-line);
+    cursor: pointer; font-size: 14px; input { width: 18px; height: 18px; accent-color: var(--si-navy); margin: 0; flex: none; }
+    &:has(input:checked) { border-color: var(--si-link); background: color-mix(in srgb, var(--si-link) 7%, var(--si-surface)); } }
+.siraj-chat-switch { display: flex; align-items: center; gap: 16px; padding: 12px 0; margin: 0; cursor: pointer;
+    & + & { border-top: 1px solid var(--si-line); }
+    > span { flex: 1; display: grid; gap: 2px; } b { font: 600 14px var(--si-head); } small { color: var(--si-muted); font-size: 12.5px; }
+    input { appearance: none; width: 42px; height: 24px; flex: none; border-radius: 99px; background: var(--si-line); position: relative; cursor: pointer; transition: background .2s; margin: 0;
+        &::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); transition: transform .2s; }
+        &:checked { background: var(--si-navy); &::after { transform: translateX(18px); } } } }
+[dir="rtl"] .siraj-chat-switch input:checked::after { transform: translateX(-18px); }
+.siraj-chat-saved { margin: 0; color: #0E9F6E; font: 600 13px var(--si-head); }
+// Placeholder (page, no chat open)
+.siraj-chat-placeholder { align-items: center; justify-content: center; text-align: center; gap: 8px; padding: 32px; color: var(--si-muted);
+    b { color: var(--si-ink); font: 400 30px/1.1 var(--si-serif); margin-top: 8px; } .btn { margin-top: 16px; display: inline-flex; align-items: center; gap: 8px; .si-icon { width: 16px; height: 16px; } } }
+.siraj-chat-bigicon { width: 64px; height: 64px; border-radius: 20px; display: grid; place-items: center; background: var(--si-iconbg); color: var(--si-iconfg); .si-icon { width: 28px; height: 28px; } }
+.siraj-chat-pane { display: contents; }
+
+// ---------- Messages page: the chat in the page, list left and chat right ----------
+.siraj-chat.is-page {
+    position: relative; inset: auto; z-index: auto; width: 100%; transform: none; visibility: visible; transition: none;
+    height: calc(100dvh - var(--si-top-h, 72px) - 64px); min-height: 520px; flex-direction: row; box-shadow: var(--si-soft);
+    [data-chat="close"] { display: none; }
+    > [data-chat="list"] { flex: 0 0 360px; border-right: 1px solid var(--si-line); }
+    .siraj-chat-pane { display: flex; flex: 1; min-width: 0; flex-direction: column; background: var(--si-bg); }
+    .siraj-chat-pane > .siraj-chat-view { background: var(--si-surface); }
+    .siraj-chat-pane > .siraj-chat-placeholder { background: transparent; }
+    [data-chat="conv"] [data-chat="back"], [data-chat="settingsview"] [data-chat="back"], [data-chat="people"] [data-chat="back"] { display: none; }
+    .siraj-chat-msgs { padding: 16px clamp(16px, 4vw, 48px) 20px; }
+    .siraj-chat-msg { max-width: min(70%, 620px); }
+    .siraj-chat-settings { max-width: 640px; }
+}
+body.siraj-messages #page.drawers .main-inner { padding-bottom: 24px; }
+body.siraj-messages .siraj-footer { display: none; }
+@include media-breakpoint-down(lg) {
+    .siraj-chat.is-page { height: calc(100dvh - var(--si-top-h, 64px) - 68px - 40px); min-height: 460px;
+        > [data-chat="list"] { flex: 1; border: 0; }
+        .siraj-chat-pane { display: none; }
+        &.has-detail { > [data-chat="list"] { display: none; } .siraj-chat-pane { display: flex; } [data-chat="back"] { display: grid !important; } } }
+}
+body.siraj-messages .siraj-plugins [data-region="popover-region-messages"] { display: none !important; }
+
+// ---------- Welcome entrance (first page after signing in; html.siraj-welcome for ~3 seconds) ----------
+@property --p { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes siraj-w-veil { 0%, 30% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes siraj-w-up { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes siraj-w-in-side { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes siraj-w-in-nav { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+@keyframes siraj-w-hero { from { opacity: 0; transform: translateY(26px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes siraj-w-photo { from { background-size: auto, 118% auto, auto; } }
+@keyframes siraj-w-fill { from { transform: scaleX(0); } }
+@keyframes siraj-w-ring { from { --p: 0; } }
+@keyframes siraj-w-pop { 0% { opacity: 0; transform: translateY(14px) scale(.96); } 70% { transform: translateY(-2px) scale(1.01); } 100% { opacity: 1; transform: none; } }
+html.siraj-welcome {
+    // The navy "Welcome back" screen from sign-in, fading away to reveal the page.
+    body::after { content: ""; position: fixed; inset: 0; z-index: 3000; pointer-events: none;
+        background: radial-gradient(60% 60% at 50% 45%, #0B2E4F, #061424); animation: siraj-w-veil 1.1s ease forwards; }
+    .siraj-sidebar .siraj-nav a { animation: siraj-w-in-nav .6s cubic-bezier(.2, .8, .2, 1) both; }
+    @for $i from 1 through 12 { .siraj-sidebar .siraj-nav a:nth-child(#{$i}) { animation-delay: #{.35 + $i * .04}s; } }
+    .siraj-topbar > * { animation: siraj-w-up .6s ease .4s both; }
+    .siraj-pagehead > * { animation: siraj-w-up .8s cubic-bezier(.2, .8, .2, 1) both; }
+    .siraj-pagehead > :nth-child(1) { animation-delay: .45s; }
+    .siraj-pagehead > :nth-child(2) { animation-delay: .6s; }
+    .siraj-carousel { animation: siraj-w-hero 1s cubic-bezier(.2, .8, .2, 1) .65s both; }
+    .siraj-slide.on { animation: siraj-w-photo 2.4s cubic-bezier(.2, .8, .2, 1) .65s both; }
+    .siraj-slide.on .siraj-slide-copy > * { animation: siraj-w-up .8s cubic-bezier(.2, .8, .2, 1) both; }
+    @for $i from 1 through 4 { .siraj-slide.on .siraj-slide-copy > :nth-child(#{$i}) { animation-delay: #{.9 + $i * .1}s; } }
+    .siraj-stat { animation: siraj-w-pop .7s cubic-bezier(.2, .8, .2, 1) both; }
+    @for $i from 1 through 4 { .siraj-stat:nth-child(#{$i}) { animation-delay: #{.85 + $i * .09}s; } }
+    .siraj-sectionhead, .siraj-photocard { animation: siraj-w-up .8s cubic-bezier(.2, .8, .2, 1) both; }
+    .siraj-sectionhead { animation-delay: 1.15s; }
+    @for $i from 1 through 3 { .siraj-photocard:nth-child(#{$i}) { animation-delay: #{1.2 + $i * .1}s; } }
+    .siraj-a-rail > * { animation: siraj-w-in-side .8s cubic-bezier(.2, .8, .2, 1) both; }
+    @for $i from 1 through 5 { .siraj-a-rail > :nth-child(#{$i}) { animation-delay: #{.9 + $i * .12}s; } }
+    .siraj-progress i, .siraj-photocard .siraj-progress i { transform-origin: left center; animation: siraj-w-fill 1.2s cubic-bezier(.2, .8, .2, 1) 1.4s both; }
+    .siraj-ring { animation: siraj-w-ring 1.4s cubic-bezier(.2, .8, .2, 1) 1.2s both; }
+    .siraj-day { animation: siraj-w-pop .5s ease both; }
+    @for $i from 1 through 7 { .siraj-day:nth-child(#{$i}) { animation-delay: #{1.3 + $i * .05}s; } }
+    .siraj-myblocks { animation: siraj-w-up .9s ease 1.6s both; }
+    // Other landing pages (a course, My learning) get the simple version: veil, then the content rises.
+    #page.drawers .main-inner > :not(:has(.siraj-a)) { animation: siraj-w-up .8s ease .5s both; }
+}
+html.siraj-welcome[dir="rtl"] .siraj-progress i { transform-origin: right center; }
+@media (prefers-reduced-motion: reduce) {
+    html.siraj-welcome *, html.siraj-welcome body::after { animation-duration: .01s !important; animation-delay: 0s !important; }
+}
+
+// ---------- Language switch: the Siraj screen between languages ----------
+@keyframes siraj-lv-in { from { opacity: 0; } to { opacity: 1; } }
+/*rtl:begin:ignore*/
+@keyframes siraj-lv-sweep-ltr { from { transform: translateX(-60%); } to { transform: translateX(60%); } }
+/*rtl:end:ignore*/
+/*rtl:begin:ignore*/
+@keyframes siraj-lv-sweep-rtl { from { transform: translateX(60%); } to { transform: translateX(-60%); } }
+/*rtl:end:ignore*/
+@keyframes siraj-lv-flame { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(0, 230, 154, .55)); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 32px rgba(51, 204, 255, .9)); } }
+.siraj-langveil {
+    // Word exactly in the middle, flame above, language name below: the new page draws the same screen (body::before/after).
+    position: fixed; inset: 0; z-index: 5000; overflow: hidden; color: #fff; text-align: center;
+    background: radial-gradient(60% 60% at 50% 45%, #0F3F66, #061424); opacity: 0; transition: opacity .35s ease;
+    &.is-on { opacity: 1; }
+    &::before { content: ""; position: absolute; inset: -20% -40%; background: linear-gradient(100deg, transparent 40%, rgba(159, 216, 242, .18) 50%, transparent 60%);
+        animation: siraj-lv-sweep-ltr 1.2s ease-in-out infinite; }
+    &[data-dir="rtl"]::before { animation-name: siraj-lv-sweep-rtl; }
+    b { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); font: 400 88px/1 "Instrument Serif", "IBM Plex Sans Arabic", serif; animation: siraj-lv-word .7s cubic-bezier(.2, .8, .2, 1) .1s both; }
+    &[data-dir="rtl"] b { font-family: "IBM Plex Sans Arabic", var(--si-head); font-weight: 600; }
+    small { position: absolute; left: 0; right: 0; top: calc(50% + 62px); font: 600 12px var(--si-head); letter-spacing: .24em; text-transform: uppercase; color: #9FD8F2; animation: siraj-lv-word .7s ease .3s both; }
+    &[data-dir="rtl"] small { letter-spacing: 0; font-size: 15px; text-transform: none; }
+}
+@keyframes siraj-lv-word { from { opacity: 0; margin-top: 14px; } to { opacity: 1; margin-top: 0; } }
+.siraj-langveil-mark { position: absolute; left: calc(50% - 32px); top: calc(50% - 150px); width: 64px; height: 76px;
+    svg { display: block; width: 100%; height: 100%; animation: siraj-lv-flame 1.4s ease-in-out infinite; } }
+// The new page starts on the same screen and fades it away.
+@keyframes siraj-lv-out { 0%, 35% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+html.siraj-langin body::before, html.siraj-langin body::after { position: fixed; z-index: 5000; pointer-events: none; animation: siraj-lv-out 1.3s ease forwards; }
+html.siraj-langin body::before {
+    content: var(--siraj-lang-word, ""); inset: 0; display: grid; place-content: center; color: #fff; font: 400 88px/1 "Instrument Serif", "IBM Plex Sans Arabic", serif;
+    background: radial-gradient(60% 60% at 50% 45%, #0F3F66, #061424);
+}
+html.siraj-langin body::after { content: ""; inset: auto; left: calc(50% - 32px); top: calc(50% - 150px); width: 64px; height: 76px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 36'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0.2' y1='0' x2='0.8' y2='1'%3E%3Cstop offset='0' stop-color='%2300E69A'/%3E%3Cstop offset='.5' stop-color='%2333CCFF'/%3E%3Cstop offset='1' stop-color='%233A70B8'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M17 0C10 5 6 11 8.5 16.5c1.3 2.8 4.6 4.3 7.6 5.3 4.4 1.5 6.2 4.6 3.4 9.1-1 1.7-2.6 3.3-4.5 5.1 6.3-2.6 11.4-7.6 12.3-13 .8-4.8-2-8.6-7.7-10.3-3.4-1-6-2.6-6.3-5.4C13.1 5 14.5 2.6 17 0Z'/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 0 18px rgba(0, 230, 154, .55)); }
+html.siraj-langin[dir="rtl"] body::before { font-family: "IBM Plex Sans Arabic", var(--si-head); font-weight: 600; }
+// The scrollbar's space is always reserved, so it never shifts the layout. During the language switch the scrollbar
+// turns transparent over the switch screen's colour, so nothing shows over it (hiding it would change the width).
+html { scrollbar-gutter: stable; background: var(--si-bg); }
+html.siraj-langin, html:has(> body > .siraj-langveil.is-on) { scrollbar-color: transparent transparent; background: #061424; }
+// The page content arrives gently from the reading direction.
+/*rtl:begin:ignore*/
+@keyframes siraj-lv-content-ltr { from { opacity: 0; transform: translateX(-18px); } }
+/*rtl:end:ignore*/
+/*rtl:begin:ignore*/
+@keyframes siraj-lv-content-rtl { from { opacity: 0; transform: translateX(18px); } }
+/*rtl:end:ignore*/
+html.siraj-langin #page.drawers .main-inner, html.siraj-langin .siraj-signin { animation: siraj-lv-content-ltr .8s cubic-bezier(.2, .8, .2, 1) .45s both; }
+html.siraj-langin[dir="rtl"] #page.drawers .main-inner, html.siraj-langin[dir="rtl"] .siraj-signin { animation-name: siraj-lv-content-rtl; }
+@media (prefers-reduced-motion: reduce) {
+    .siraj-langveil *, .siraj-langveil::before, html.siraj-langin body::before, html.siraj-langin .main-inner, html.siraj-langin .siraj-signin { animation-duration: .01s !important; animation-delay: 0s !important; }
+}
+
+// ---------- Phone top bar: logo, search, messages, avatar (theme and language live in the avatar menu) ----------
+.siraj-me-phone { display: none; }
+.siraj-tabicon { position: relative; display: inline-grid; }
+.siraj-tabbadge { position: absolute; top: -5px; right: -9px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 99px; display: grid; place-items: center;
+    background: #D93F3F; color: #fff; font: 700 10px var(--si-head); font-style: normal; box-shadow: 0 0 0 2px var(--si-surface); }
+@include media-breakpoint-down(md) {
+    html body .navbar.fixed-top.siraj-topbar .siraj-top-actions { > [data-siraj-action="theme"], > .siraj-langswitch, > .siraj-lang, > .siraj-plugins { display: none !important; } }
+    .siraj-top-actions { gap: 6px; }
+    .siraj-me-phone { display: block; }
+    .siraj-me-menu { min-width: min(300px, calc(100vw - 24px)); }
+    .siraj-me-theme { width: 100%; border: 0; background: none; text-align: start; }
+    .siraj-me-switch { margin-inline-start: auto; width: 38px; height: 22px; border-radius: 99px; background: var(--si-line); position: relative; flex: none; transition: background .2s;
+        &::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; } }
+    [data-bs-theme="dark"] .siraj-me-switch { background: #5FB3F0; &::after { transform: translateX(16px); } }
+    .siraj-me-langs { display: flex; align-items: center; gap: 6px; padding: 8px 10px;
+        > .si-icon { width: 17px; height: 17px; color: var(--si-muted); margin-inline-end: 4px; }
+        a { flex: 1; text-align: center; height: 36px; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--si-line);
+            color: var(--si-ink); font: 600 13px var(--si-head); text-decoration: none;
+            &[aria-current="true"] { background: var(--si-navy); border-color: var(--si-navy); color: #fff; } } }
+    html[data-bs-theme="dark"] body .siraj-me-menu .siraj-me-langs a[aria-current="true"] { background: #5FB3F0 !important; border-color: #5FB3F0 !important; color: #06243C !important; opacity: 1 !important; }
+    .siraj-me-langs a:not([aria-current="true"]) { color: var(--si-ink) !important; }
+}
+// Weekly rhythm day chips share the card's width (they kept a 35px minimum and pushed the card past small phones).
+.siraj-days { display: grid !important; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.siraj-day { min-width: 0 !important; width: auto !important; padding-left: 0 !important; padding-right: 0 !important; text-align: center; }
+.siraj-a-rail .siraj-panel-head { flex-wrap: wrap; row-gap: 8px; }
+@include media-breakpoint-down(md) {
+    .siraj-a-rail { grid-template-columns: minmax(0, 1fr) !important; }
+    .siraj-a-rail > *, .siraj-rhythm > div { min-width: 0; }
+}
+// Tabs that don't fit (Inbox on small phones) scroll sideways instead of being cut off.
+.siraj-tabs { overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; &::-webkit-scrollbar { display: none; } > * { flex: none; } }
+.siraj-upcoming a { min-width: 0; } .siraj-upcoming-text { flex: 1; overflow: hidden; }
+@include media-breakpoint-down(md) { .siraj-stat { min-width: 0; > span, > div { min-width: 0; } small { white-space: normal !important; } } }
+// Touch screens: text links in dashboard blocks get a taller tap area.
+@media (pointer: coarse) {
+    .siraj-myblocks .block_calendar_upcoming .event a, .siraj-myblocks .block_news_items a, .siraj-myblocks .block_timeline a { display: inline-block; padding-top: 7px; padding-bottom: 7px; }
+}
+.siraj-photocard .siraj-cover { position: relative; img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } }
+
+// ---------- Siraj Grades ----------
+.siraj-gradesp { display: grid; gap: 24px; max-width: 1100px; .siraj-pagehead { margin-bottom: 0; align-items: center; } }
+.siraj-gr-back { display: inline-flex; align-items: center; gap: 8px; .si-icon { width: 16px; height: 16px; } }
+.siraj-gr-summary, .siraj-gr-hero { display: flex; align-items: center; gap: 24px; padding: 24px; border-radius: 22px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+    b { font: 600 1.15rem var(--si-head); } p { margin: 4px 0 0; color: var(--si-muted); } }
+.siraj-gr-ring { --p: 0; width: 96px; height: 96px; flex: none; border-radius: 50%; display: grid; place-content: center; text-align: center;
+    background: radial-gradient(closest-side, var(--si-surface) 80%, transparent 82%), conic-gradient(var(--si-navy) calc(var(--p) * 1%), var(--si-surface-2) 0);
+    b { font: 400 28px/1 var(--si-serif) !important; } small { font-size: 11px; color: var(--si-muted); }
+    &.lg { width: 120px; height: 120px; b { font-size: 34px !important; } }
+    &.high { background: radial-gradient(closest-side, var(--si-surface) 80%, transparent 82%), conic-gradient(#0E9F6E calc(var(--p) * 1%), var(--si-surface-2) 0); }
+    &.low { background: radial-gradient(closest-side, var(--si-surface) 80%, transparent 82%), conic-gradient(#D97706 calc(var(--p) * 1%), var(--si-surface-2) 0); } }
+.siraj-gr-herotext { display: grid; gap: 6px; > b { font: 400 2rem/1 var(--si-serif) !important; } }
+.siraj-gr-list, .siraj-gr-items { display: grid; gap: 12px; }
+.siraj-gr-course { display: flex; align-items: center; gap: 16px; padding: 12px 18px 12px 12px; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line);
+    box-shadow: var(--si-soft); color: var(--si-ink); text-decoration: none !important; transition: transform .15s, box-shadow .15s;
+    &:hover { transform: translateY(-2px); box-shadow: var(--si-shadow); .siraj-gr-go { color: var(--si-link); } }
+    .siraj-cover { width: 84px; height: 56px; border-radius: 12px; position: relative; overflow: hidden; flex: none; img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; } } }
+.siraj-gr-name { flex: 1; min-width: 0; display: grid; gap: 8px; b { font: 600 15px var(--si-head); } small { color: var(--si-muted); } }
+.siraj-gr-bar { display: block; height: 6px; border-radius: 99px; background: var(--si-surface-2); overflow: hidden; max-width: 420px;
+    i { display: block; height: 100%; border-radius: 99px; background: var(--si-navy); } &.high i { background: #0E9F6E; } &.low i { background: #D97706; } }
+.siraj-gr-score { flex: none; text-align: end; display: grid; b { font: 600 18px var(--si-head); small { font-size: 12px; color: var(--si-muted); font-weight: 500; } }
+    > small { color: var(--si-muted); font-size: 12px; } .muted { font-size: 13px; color: var(--si-muted); font-weight: 500; }
+    &.high b { color: #0E9F6E; } &.low b { color: #B45309; } }
+[data-bs-theme="dark"] .siraj-gr-score { &.high b { color: #34D399; } &.low b { color: #FBBF24; } }
+.siraj-gr-go { color: var(--si-faint); .si-icon { width: 18px; height: 18px; } }
+.siraj-gr-item { padding: 18px 20px; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft); display: grid; gap: 12px;
+    .siraj-gr-bar { max-width: none; } }
+.siraj-gr-itemhead { display: flex; align-items: center; gap: 14px; }
+.siraj-gr-itemname { flex: 1; min-width: 0; display: grid; small { font: 600 11px var(--si-head); letter-spacing: .12em; text-transform: uppercase; color: var(--si-muted); }
+    a, b { font: 600 15px var(--si-head); color: var(--si-ink); text-decoration: none; } a:hover { color: var(--si-link); } }
+.siraj-gr-feedback { display: flex; gap: 12px; padding: 14px 16px; border-radius: 14px; background: var(--si-surface-2);
+    > .si-icon { width: 18px; height: 18px; color: var(--si-link); flex: none; margin-top: 2px; } small { font: 600 11px var(--si-head); letter-spacing: .12em; text-transform: uppercase; color: var(--si-muted); }
+    .siraj-prose { font-size: 14px; > :last-child { margin-bottom: 0; } } }
+.siraj-gr-full { margin: 0; }
+@include media-breakpoint-down(md) {
+    .siraj-gr-summary, .siraj-gr-hero { padding: 18px; gap: 16px; }
+    .siraj-gr-course { gap: 12px; padding: 10px 12px 10px 10px; .siraj-cover { width: 56px; height: 44px; } }
+    .siraj-gr-go { display: none; }
+}
+
+// ---------- Calendar (Concept A) ----------
+body.path-calendar {
+    #page-header h1, .page-header-headings h1, #region-main > h2:first-child { font: 400 clamp(2.2rem, 3.2vw, 3.1rem)/1.04 var(--si-serif) !important; letter-spacing: -.01em; }
+    .maincalendar div.header { gap: 10px; padding: 0 !important; margin-bottom: 8px; align-items: center;
+        .btn:not([data-action="new-event-button"]), .form-select { height: 42px; border-radius: 999px !important; border: 1px solid var(--si-line) !important; background-color: var(--si-surface) !important; padding: 0 18px; font-weight: 600; }
+        .form-select { padding-right: 38px; } }
+    [data-action="new-event-button"] { height: 42px; border-radius: 999px !important; padding: 0 20px !important; display: inline-flex !important; align-items: center; gap: 8px; }
+    .calendar-controls {
+        margin: 18px 0 20px; .current { font: 400 clamp(1.8rem, 2.6vw, 2.4rem)/1 var(--si-serif) !important; letter-spacing: -.01em; }
+        a { height: 42px; border-radius: 999px; padding: 0 18px; box-shadow: var(--si-soft); &:hover { border-color: var(--si-link); color: var(--si-link); } }
+    }
+    table.calendarmonth {
+        border-radius: 22px; box-shadow: var(--si-soft);
+        th { background: var(--si-surface); font: 600 11px var(--si-head); letter-spacing: .16em; padding: 16px 12px 12px 18px !important; }
+        td { height: 118px !important; padding: 10px; transition: background .15s; }
+        td.weekend:not(.dayblank) { background: color-mix(in srgb, var(--si-surface-2) 45%, var(--si-surface)); }
+        td.clickable:hover { background: color-mix(in srgb, var(--si-link) 5%, var(--si-surface)); }
+        .day-number-circle { width: 32px; height: 32px; font: 600 13.5px var(--si-head); }
+        td.today { background: color-mix(in srgb, var(--si-link) 6%, var(--si-surface)) !important; }
+        td.today .day-number-circle { background: var(--si-navy) !important; background-image: none !important; color: #fff !important; box-shadow: 0 4px 12px color-mix(in srgb, var(--si-navy) 35%, transparent); }
+        li .eventname { padding: 0 !important; background: none !important; &::before { display: none !important; } }
+        li a { position: relative; padding: 5px 8px 5px 18px; border-radius: 8px; font: 600 12px var(--si-head);
+            background: color-mix(in srgb, var(--si-link) 9%, var(--si-surface)); color: var(--si-ink) !important;
+            &::before { content: ""; position: absolute; left: 7px; top: 50%; width: 6px; height: 6px; margin-top: -3px; border-radius: 50%; background: var(--si-link); } }
+        li[data-event-eventtype="due"] a { background: color-mix(in srgb, #E5484D 10%, var(--si-surface)); &::before { background: #E5484D; } }
+        li[data-event-eventtype="close"] a { background: color-mix(in srgb, #E9A23B 14%, var(--si-surface)); &::before { background: #D97706; } }
+        li[data-event-eventtype="user"] a { background: color-mix(in srgb, #10B981 12%, var(--si-surface)); &::before { background: #10B981; } }
+    }
+    [data-bs-theme="dark"] & table.calendarmonth td.today .day-number-circle { color: #06243C !important; }
+    // Upcoming / day lists: compact rows.
+    .eventlist { display: grid; gap: 12px; }
+    .eventlist .event, .eventlist .event .card, .event .card { border-left: 1px solid var(--si-line) !important; }
+    h2.current, .eventlist ~ h2, #region-main h2 { font-family: var(--si-serif) !important; font-weight: 400 !important; }
+    .eventlist .event { margin: 0 !important; border-radius: 18px !important; position: relative;
+        &::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0; background: var(--si-link); }
+        &[data-event-eventtype="due"]::before { background: #E5484D; } &[data-event-eventtype="close"]::before { background: #D97706; }
+        .card-header { border-bottom: 0 !important; padding: 16px 20px 4px !important; .icon { color: var(--si-muted); } }
+        .card-body { padding: 4px 20px 12px !important; .row { margin: 0 0 4px; align-items: center; } .col-1 { width: 26px; flex: none; padding: 0; color: var(--si-faint); }
+            .col-11 { width: auto; flex: 1; padding: 0; } .description-content { color: var(--si-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } }
+        .card-body .row:has(.fa-calendar) { display: none; }
+        .card-footer { border-top: 0 !important; padding: 0 20px 16px !important; text-align: start !important;
+            a, .card-link { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border-radius: 999px; background: var(--si-navy); color: #fff !important; font: 600 13px var(--si-head); text-decoration: none; } }
+    }
+    [data-bs-theme="dark"] & .eventlist .event .card-footer a { color: #06243C !important; }
+    .bottom .footer-link a, .footer-link a { font-weight: 600; color: var(--si-link); }
+}
+
+// ---------- Quiz review (Concept A) ----------
+// The activity header is empty on the review page (no description or completion shown): no blank card.
+#page-mod-quiz-review .activity-header:not(:has(.activity-information *, .activity-description *)) { display: none !important; }
+#page-mod-quiz-review {
+    #page-header h1, .page-header-headings h1 { font: 400 clamp(2rem, 3vw, 2.8rem)/1.05 var(--si-serif) !important; }
+    .quizreviewsummary, table.generaltable.quizreviewsummary { border-radius: 18px !important; overflow: hidden; border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
+        th { width: 180px; background: var(--si-surface-2) !important; color: var(--si-muted) !important; font: 600 12.5px var(--si-head) !important; text-transform: none !important; letter-spacing: 0 !important; }
+        td { font-size: 14.5px; } tr:last-child td { font-weight: 600; } }
+    .que { border-radius: 20px !important; overflow: hidden; box-shadow: var(--si-soft); border: 1px solid var(--si-line) !important; margin-bottom: 20px !important;
+        .info { border-radius: 0 !important; background: var(--si-surface) !important; border: 0 !important; border-bottom: 1px solid var(--si-line) !important; }
+        .info .no { font: 400 1.4rem var(--si-serif) !important; }
+        .qtext { font: 600 1.05rem/1.4 var(--si-head); }
+        .answer > div { border-radius: 14px !important; }
+        .outcome, .comment { border-radius: 14px !important; } }
+    .submitbtns, .mod_quiz-next-nav { display: flex; justify-content: flex-end; }
+}
+
+// ---------- Concept A: text on the (now navy) accent fill is white; light blue fill in dark mode keeps dark text ----------
+.siraj-chip-next, .siraj-badge-icon, .siraj-profile-avatar, .path-mod-assign [data-region="grade-actions-panel"] .btn-primary { color: #fff !important; }
+.current .siraj-stepball { color: #fff !important; }
+[data-bs-theme="dark"] .current .siraj-stepball { color: #06243C !important; }
+[data-bs-theme="dark"] { .siraj-chip-next, .siraj-badge-icon, .path-mod-assign [data-region="grade-actions-panel"] .btn-primary { color: #06243C !important; } }
+.siraj-profile-avatar { background: linear-gradient(135deg, #123E66, #1E6A8A) !important; }
+
+// ---------- Certificate (Concept A): navy band with seal, serif name and course ----------
+.siraj-cert-toolbar .btn { display: inline-flex; align-items: center; gap: 8px; .si-icon { width: 16px; height: 16px; } }
+.siraj-certificate.siraj-cert-a {
+    padding: 0; overflow: hidden; display: grid; grid-template-columns: 27% 1fr; border-radius: 8px; color: #0E1B2A;
+    background: #fff radial-gradient(70% 90% at 100% 100%, rgba(30, 95, 168, .06), transparent 60%);
+}
+.siraj-cert-band { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 9% 6%; color: #fff;
+    background: radial-gradient(90% 60% at 50% 100%, rgba(30, 106, 138, .5), transparent 70%), linear-gradient(180deg, #0B2E4F, #071E34);
+    small { font: 600 10px var(--si-head); letter-spacing: .28em; text-transform: uppercase; color: #9FC3D4; text-align: center; }
+    &::after { content: ""; position: absolute; top: 0; bottom: 0; right: 0; width: 4px; background: linear-gradient(180deg, #C9A24A, #E8CD84, #C9A24A); } }
+.siraj-cert-bandlogo { .si-flame { width: 34px; height: 42px; } img { max-height: 48px; max-width: 80%; } }
+.siraj-cert-seal { position: relative; width: 64%; aspect-ratio: 1;
+    svg { width: 100%; height: 100%; animation: none; .r1 { fill: none; stroke: #C9A24A; stroke-width: 1.5; } .r2 { fill: rgba(201, 162, 74, .12); stroke: #E8CD84; stroke-width: 1; }
+        text { fill: #E8CD84; font: 600 7.4px "Inter", sans-serif; letter-spacing: 2.2px; text-transform: uppercase; } }
+    span { position: absolute; inset: 0; display: grid; place-items: center; .si-flame { width: 30%; height: auto; filter: drop-shadow(0 0 12px rgba(0, 230, 154, .6)); } } }
+.siraj-cert-body { display: flex; flex-direction: column; justify-content: center; padding: 6% 8% 6% 9%; text-align: start;
+    .siraj-certificate-kicker { color: #9A7B2F; letter-spacing: .3em; margin-bottom: 4%; }
+    .siraj-certificate-pre { color: #5B6B7C; font-size: clamp(12px, 1.3vw, 15px); }
+    h1 { font: 400 clamp(36px, 5.6vw, 68px)/1.02 var(--si-serif); color: #0B2E4F; margin: 1% 0 3%; letter-spacing: -.01em; }
+    h2 { font: 400 clamp(22px, 3vw, 36px)/1.15 var(--si-serif); color: #0E1B2A; margin: 1% 0 5%; }
+    .siraj-certificate-meta { justify-content: flex-start; gap: 9%; border-top: 1px solid #E4E9F0; padding-top: 3.5%; margin-top: 0;
+        small { color: #6B7A8B; font-size: 10px; } b { font: 600 clamp(12px, 1.3vw, 15px) var(--si-head); } }
+    .siraj-certificate-verify { color: #6B7A8B; margin-top: 3%; } }
+[dir="rtl"] .siraj-cert-body h1, [dir="rtl"] .siraj-cert-body h2 { font-family: var(--si-head); font-weight: 600; }
+@media print { .siraj-certificate.siraj-cert-a { display: grid; } }
+@include media-breakpoint-down(md) {
+    .siraj-certificate.siraj-cert-a { grid-template-columns: 1fr; aspect-ratio: auto; }
+    .siraj-cert-band { flex-direction: row; padding: 18px 20px; .siraj-cert-seal { width: 70px; } &::after { top: auto; left: 0; height: 4px; width: auto; } }
+    .siraj-cert-body { padding: 26px 22px; }
+}
+.siraj-cert-bandlogo { display: flex; align-items: center; gap: 10px; .siraj-brandname { color: #fff; font: 700 15px/1 var(--si-head); letter-spacing: .22em; small { display: block; font: 600 7.5px var(--si-head); letter-spacing: .42em; margin-top: 5px; color: #9FC3D4; } } }
+
+// ---------- Quiz attempt + summary, assignment submission (learners, Concept A) ----------
+body.siraj-moodlepage {
+    // Siraj's "Back to …" link already sits above the title: no second Back button, no empty header card.
+    .tertiary-navigation .navitem > a.btn-secondary { display: none; }
+    .tertiary-navigation:not(:has(.navitem > :not(a.btn-secondary))) { display: none; }
+    .activity-header:not(:has(.activity-information *, .activity-description *, [data-region="activity-dates"] *, .description *)) { display: none !important; }
+    #page-header h1, .page-header-headings h1 { font: 400 clamp(2rem, 3vw, 2.8rem)/1.05 var(--si-serif) !important; letter-spacing: -.01em; }
+}
+#page-mod-quiz-attempt, #page-mod-quiz-summary {
+    .que { border-radius: 20px !important; overflow: hidden; box-shadow: var(--si-soft); border: 1px solid var(--si-line) !important; margin-bottom: 20px !important;
+        .info { border-radius: 0 !important; background: var(--si-surface) !important; border: 0 !important; border-bottom: 1px solid var(--si-line) !important; }
+        .info .no { font: 400 1.4rem var(--si-serif) !important; }
+        .qtext { font: 600 1.05rem/1.45 var(--si-head); }
+        .answer > div { border-radius: 14px !important; } }
+    .submitbtns { display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px;
+        .btn, input[type="submit"] { min-height: 46px; padding: 0 24px; border-radius: 999px !important; } }
+    .qn_buttons .qnbutton { border-radius: 10px !important; }
+}
+#page-mod-quiz-summary {
+    #region-main > div > h2:first-of-type, [role="main"] > h2:first-child { display: none; }
+    #region-main h3 { font: 400 clamp(1.6rem, 2.4vw, 2.1rem) var(--si-serif) !important; margin: 4px 0 16px; }
+    table.quizsummaryofattempt { border-radius: 18px !important; overflow: hidden; border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
+        tr.quizsummaryheading { display: none; }
+        td, th { padding: 14px 20px !important; } tbody tr:nth-of-type(odd) td { background: var(--si-surface) !important; } }
+    .submitbtns, .quizattemptsummarybuttons, form[action*="processattempt"] { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn, input[type="submit"] { min-height: 46px; padding: 0 24px; border-radius: 999px !important; }
+    .quizattempttimer, #quiz-timer, .alert-info { border-radius: 14px; }
+}
+#page-mod-assign-view.siraj-moodlepage {
+    .submissionstatustable, .editsubmissionform, [data-region="activity-dates"], .activity-header { border-radius: 20px !important; }
+    #region-main .card, #region-main form.mform > fieldset { border-radius: 20px !important; box-shadow: var(--si-soft); }
+    .mform .fitem .col-form-label { font-weight: 600; }
+    #id_submitbutton, #id_cancel { min-height: 46px; padding: 0 24px; border-radius: 999px !important; }
+}
+[data-bs-theme="dark"] [data-region="activity-dates"] .badge, [data-bs-theme="dark"] .activity-dates .badge,
+[data-bs-theme="dark"] .activity-information .badge { background: var(--si-surface-2) !important; color: var(--si-ink) !important; border: 1px solid var(--si-line); }
+// Profile: Moodle's other preferences, grouped under Account.
+.siraj-prefgroup { border-top: 1px solid var(--si-line); margin-top: 6px;
+    summary { display: flex; align-items: center; justify-content: space-between; padding: 12px 2px; cursor: pointer; list-style: none;
+        font: 600 11px var(--si-head); letter-spacing: .14em; text-transform: uppercase; color: var(--si-muted);
+        &::-webkit-details-marker { display: none; }
+        &::after { content: ""; width: 8px; height: 8px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform .2s; margin-inline-end: 6px; } }
+    &[open] summary::after { transform: rotate(-135deg); }
+    .siraj-actionlist { padding-bottom: 6px; } }
+
+// ---------- Teacher and admin screens (Concept A) ----------
+body:not(.siraj-page):not(.pagelayout-login):not(.siraj-moodlepage) {
+    #page-header h1, .page-header-headings h1, #region-main > h2:first-child, .settingsform > h2 {
+        font: 400 clamp(1.9rem, 2.8vw, 2.6rem)/1.08 var(--si-serif) !important; letter-spacing: -.01em; }
+}
+// Course page in edit mode and course/activity settings: title on the left like every other page.
+body.path-course-view, body.path-course:not(.siraj-page), body.path-mod:not(.siraj-page) {
+    #page-header.header-maxwidth { max-width: none; padding-left: 0; padding-right: 0; }
+}
+body.path-course-view, body.path-course:not(.siraj-page), body.path-mod:not(.siraj-page) { #page-header { > div, .w-100, .d-flex { width: 100%; justify-content: flex-start !important; } .page-context-header { flex: 1; } .me-auto { margin-right: auto !important; } } }
+body[id^="page-admin-setting-"] #region-main h2:first-of-type, #page-admin-category #region-main h2:first-of-type { font: 400 clamp(1.9rem, 2.8vw, 2.6rem)/1.08 var(--si-serif) !important; }
+// Site administration search/home: each category is a card with its links in columns.
+#page-admin-search #region-main .container-fluid > .row, #page-admin-category #region-main .container-fluid > .row {
+    margin: 0 0 14px; padding: 18px 22px; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+    > .col-sm-3 h4, > .col-sm-3 h5 { font: 400 1.45rem/1.1 var(--si-serif); margin: 0; a { color: var(--si-ink); text-decoration: none; } }
+    ul { columns: 2 220px; column-gap: 28px; margin: 0; li { break-inside: avoid; padding: 3px 0; } a { font-weight: 500; } }
+}
+#page-admin-search .container-fluid > .row hr, #page-admin-category .container-fluid > .row hr { display: none; }
+// Settings pages: one card, a hairline between settings, save bar stays in reach.
+#adminsettings .settingsform {
+    padding: 8px 26px 0; border-radius: 22px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+    > h2 { margin: 22px 0 10px; }
+    .form-item { padding: 18px 0; margin: 0; border-top: 1px solid var(--si-line); &:first-of-type { border-top: 0; } }
+    .form-label label, .form-item .form-label { font-weight: 600; }
+    .form-shortname { color: var(--si-faint) !important; font-size: 11.5px; }
+    .form-description { color: var(--si-muted); font-size: 13.5px; }
+}
+#adminsettings > div > .row:last-child, #adminsettings .row:has(> .offset-sm-3 > .btn-primary) {
+    position: sticky; bottom: 0; z-index: 5; margin: 0 -1px; padding: 14px 0; background: color-mix(in srgb, var(--si-bg) 92%, transparent); backdrop-filter: blur(8px);
+    .btn-primary { min-height: 46px; padding: 0 28px; border-radius: 999px; }
+}
+// Activity and course settings forms: each section a card; Save buttons in a bar that stays visible.
+body#page-course-modedit, body#page-course-edit, body[id^="page-mod-"][id$="-mod"] {
+    form.mform fieldset.collapsible { margin: 0 0 16px; padding: 6px 22px 10px; border-radius: 20px; background: var(--si-surface); border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
+        legend, .ftoggler { font: 600 1.05rem var(--si-head); } }
+    form.mform .fitem .col-form-label, form.mform .fitem label { font-weight: 600; }
+    #fgroup_id_buttonar, [id^="fgroup_id_buttonar"] {
+        position: sticky; bottom: 0; z-index: 5; margin: 0; padding: 14px 0; background: color-mix(in srgb, var(--si-bg) 92%, transparent); backdrop-filter: blur(8px);
+        .btn { min-height: 46px; padding: 0 24px; border-radius: 999px !important; }
+    }
+}
+// Admin tables (users and similar): rounded card.
+#page-admin-user #region-main .table-dynamic, #page-admin-user #region-main table { border-radius: 18px; overflow: hidden; }
+
+// Live session (BigBlueButton): staff link to Moodle's room page for recordings and attendance.
+.siraj-live-manage { margin: 14px 0 0; font-size: .9rem;
+    a { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--si-accent-ink, var(--si-ink)); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    svg { width: 15px; height: 15px; } }
+
+// BigBlueButton staff page (Moodle's): room card and the recordings table, which is an old YUI data table.
+body.path-mod-bigbluebuttonbn {
+    #bigbluebuttonbn-room-view { align-items: center; gap: 16px; width: 100%; max-width: none;
+        padding: 20px 24px !important; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft); }
+    #bigbluebuttonbn-room-view-control-panel:empty, #bigbluebuttonbn-room-view-control-panel > :empty { display: none; }
+    #bigbluebuttonbn-room-view-action-buttons, #bigbluebuttonbn-view-action-button-box { border: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; }
+    .yui3-datatable, .yui3-datatable-table { width: 100%; border: 0 !important; background: transparent; font-family: inherit; }
+    .yui3-datatable-table { border-collapse: separate !important; border-spacing: 0; border: 1px solid var(--si-line) !important; border-radius: 14px; overflow: hidden; background: var(--si-surface); }
+    .yui3-datatable-header { background: var(--si-surface-2, var(--si-bg)) !important; color: var(--si-faint) !important; border: 0 !important;
+        border-bottom: 1px solid var(--si-line) !important; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 12px 14px !important; text-shadow: none; }
+    .yui3-datatable-cell, .yui3-datatable-message-content { border: 0 !important; border-top: 1px solid var(--si-line) !important; background: transparent !important; color: var(--si-ink); padding: 12px 14px !important; }
+    .yui3-datatable-message-content { color: var(--si-faint); text-align: center; padding: 28px 14px !important; }
+    .yui3-datatable-paginator-wrapper, .yui3-datatable-paginator { background: transparent !important; border: 0 !important; color: var(--si-faint); padding: 10px 0; font-size: .88rem;
+        input, select, button { border: 1px solid var(--si-line); border-radius: 10px; background: var(--si-surface); color: var(--si-ink); padding: 4px 10px; background-image: none; box-shadow: none; }
+        a, .control { color: var(--si-ink); text-decoration: none; border-radius: 8px; padding: 4px 8px; }
+        .control-disabled { color: var(--si-faint); opacity: .5; } }
+}
+
+// ---------- Siraj AI panel (answers come from Capybots; see theme_siraj/ai.mustache) ----------
+.siraj-aipanel {
+    position: fixed; z-index: 1062; top: 12px; right: 12px; bottom: 12px; width: min(440px, calc(100vw - 24px));
+    display: flex; flex-direction: column; overflow: hidden; border-radius: 22px;
+    background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: 0 30px 80px rgba(8, 24, 42, .25);
+    transform: translateX(calc(100% + 24px)); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
+    &.open { transform: none; }
+}
+// The position mirrors automatically in Arabic; the slide-in direction does not.
+[dir="rtl"] .siraj-aipanel { transform: translateX(calc(-100% - 24px)); &.open { transform: none; } }
+[data-bs-theme="dark"] .siraj-aipanel { box-shadow: 0 30px 80px rgba(0, 0, 0, .55); }
+.siraj-ai-backdrop { position: fixed; inset: 0; z-index: 1061; background: rgba(8, 24, 42, .28); opacity: 0; transition: opacity .25s;
+    &.open { opacity: 1; } }
+@include media-breakpoint-up(lg) { .siraj-ai-backdrop { background: transparent; } }
+.siraj-aipanel-head { display: flex; align-items: center; gap: 12px; padding: 16px 14px 14px 18px; border-bottom: 1px solid var(--si-line);
+    .siraj-ai-orb { flex: none; }
+    .siraj-aipanel-title { flex: 1; min-width: 0; h2 { margin: 0; font: 400 1.5rem/1.1 var(--si-serif); color: var(--si-ink); }
+        small { display: block; color: var(--si-faint); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } } }
+[dir="rtl"] .siraj-aipanel-head h2 { font-family: var(--si-head); font-weight: 600; font-size: 1.2rem; }
+.siraj-aipanel-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 16px; scrollbar-width: thin; }
+.siraj-aipanel-welcome { text-align: center; padding: 18px 6px 4px;
+    h3 { font: 600 1.15rem var(--si-head); margin: 12px 0 6px; color: var(--si-ink); }
+    p { color: var(--si-faint); font-size: 14px; margin: 0 0 16px; } }
+.siraj-aipanel-mark { display: inline-grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; color: #fff;
+    background: linear-gradient(135deg, #00E69A, #33CCFF 55%, #3A70B8); box-shadow: 0 10px 30px rgba(51, 204, 255, .3); svg { width: 24px; height: 24px; } }
+.siraj-aipanel-chips { display: flex; flex-direction: column; gap: 8px;
+    button { text-align: start; padding: 11px 14px; border-radius: 14px; border: 1px solid var(--si-line); background: var(--si-surface-2);
+        color: var(--si-ink); font: 500 14px var(--si-head); transition: border-color .15s, background .15s;
+        &:hover, &:focus-visible { border-color: var(--si-link); background: var(--si-surface); } } }
+.siraj-aipanel.is-busy .siraj-aipanel-chips button, .siraj-aipanel.is-busy .siraj-aipanel-send { opacity: .5; pointer-events: none; }
+.siraj-aipanel-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.siraj-aimsg { max-width: 88%; padding: 10px 14px; border-radius: 18px; font-size: 14.5px; line-height: 1.55; overflow-wrap: anywhere;
+    p { margin: 0 0 8px; &:last-child { margin: 0; } } ul, ol { margin: 4px 0 8px; padding-inline-start: 20px; } li { margin: 2px 0; }
+    code { font-size: 13px; padding: 1px 5px; border-radius: 6px; background: var(--si-surface-2); }
+    a { color: var(--si-link); font-weight: 600; }
+    &.mine { align-self: flex-end; background: #0B2E4F; color: #fff; border-bottom-right-radius: 6px; a { color: #9FD8F2; } code { background: rgba(255, 255, 255, .14); } }
+    &.theirs { align-self: flex-start; background: var(--si-surface-2); color: var(--si-ink); border-bottom-left-radius: 6px; } }
+[data-bs-theme="dark"] .siraj-aimsg.mine { background: #1E5FA8; }
+.siraj-aitype { display: inline-flex; gap: 4px; padding: 4px 0;
+    i { width: 7px; height: 7px; border-radius: 50%; background: var(--si-faint); animation: siraj-aitype 1s ease-in-out infinite; }
+    i:nth-child(2) { animation-delay: .15s; } i:nth-child(3) { animation-delay: .3s; } }
+@keyframes siraj-aitype { 0%, 100% { opacity: .3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+.siraj-aimsg-retry { margin-top: 8px; border: 0; background: none; padding: 0; color: var(--si-link); font-weight: 600; }
+.siraj-aiaction { margin-top: 10px; padding: 12px; border-radius: 14px; background: var(--si-surface); border: 1px solid var(--si-line);
+    display: flex; flex-wrap: wrap; gap: 8px; p { flex-basis: 100%; } .btn { height: 36px; padding: 0 16px; } }
+.siraj-aimsg.siraj-aiquiz { max-width: 100%; width: 100%; }
+.siraj-aiquiz-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; small { color: var(--si-faint); } }
+.siraj-aiq { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--si-line);
+    > p:first-child { font-weight: 600; } .siraj-aiq-n { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-inline-end: 8px;
+        border-radius: 50%; background: var(--si-surface); font-size: 12px; }
+    button { display: block; width: 100%; text-align: start; margin-top: 6px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--si-line);
+        background: var(--si-surface); color: var(--si-ink); font-size: 14px;
+        &:hover:not(:disabled) { border-color: var(--si-link); }
+        &.is-right { border-color: #12A877; background: rgba(18, 168, 119, .12); }
+        &.is-wrong { border-color: #D93F3F; background: rgba(217, 63, 63, .1); }
+        &:disabled { cursor: default; } }
+    .siraj-aiq-why { margin-top: 8px; font-size: 13.5px; color: var(--si-faint); } }
+.siraj-aiquiz-score { margin-top: 12px !important; font-weight: 700; }
+.siraj-aipanel-compose { display: flex; align-items: flex-end; gap: 8px; margin: 0 12px; padding: 8px 8px 8px 14px; border-radius: 20px;
+    border: 1px solid var(--si-line); background: var(--si-surface-2);
+    &:focus-within { border-color: var(--si-link); background: var(--si-surface); }
+    textarea { flex: 1; resize: none; border: 0; background: transparent; color: var(--si-ink); font-size: 14.5px; line-height: 1.45;
+        padding: 7px 0; max-height: 140px; outline: none !important; box-shadow: none !important; background: transparent !important; border-radius: 0; } }
+.siraj-aipanel-send { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; display: grid; place-items: center;
+    background: #0B2E4F; color: #fff; svg { width: 17px; height: 17px; } }
+[data-bs-theme="dark"] .siraj-aipanel-send { background: #5FB3F0; color: #061424; }
+.siraj-aipanel-note { margin: 8px 16px 12px; font-size: 11.5px; color: var(--si-faint); text-align: center; }
+.siraj-aibtn svg { color: #12A8C9; }
+@include media-breakpoint-down(md) {
+    .siraj-aipanel { top: 0; right: 0; bottom: 0; width: 100vw; border-radius: 0; border: 0; }
+    .siraj-aibtn { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) { .siraj-aipanel, .siraj-ai-backdrop { transition: none; } .siraj-aitype i { animation: none; } }

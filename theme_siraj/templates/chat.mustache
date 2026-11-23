@@ -1,0 +1,730 @@
+{{!
+    @template theme_siraj/chat
+
+    Siraj chat: a panel over the right edge with conversations and one conversation at a time. Data, sending,
+    read state and stars all go through Moodle's own messaging web services, so notifications, emails and the Moodle
+    app keep working. It answers Moodle's message drawer events, so "Message" buttons across Moodle open it.
+
+    Example context (json):
+    {"userid": 2, "unread": 1, "hasunread": true, "fullurl": "#"}
+}}
+{{^page}}<div class="siraj-chat-backdrop" data-chat="backdrop" hidden></div>{{/page}}
+<section class="siraj-chat{{#page}} is-page{{/page}}" id="siraj-chat" data-chat="panel" data-userid="{{userid}}" data-mode="{{#page}}page{{/page}}{{^page}}panel{{/page}}"
+    data-openuser="{{openuser}}" data-openusername="{{openusername}}" data-openconv="{{openconv}}" data-entertosend="{{#entertosend}}1{{/entertosend}}"
+    data-processors="{{processors}}" aria-label="{{#str}}chat_title, theme_siraj{{/str}}" {{^page}}aria-hidden="true" inert{{/page}}>
+    <div class="siraj-chat-view" data-chat="list">
+        <header class="siraj-chat-head">
+            <h2>{{#str}}chat_title, theme_siraj{{/str}}</h2>
+            <button type="button" class="siraj-chat-icon" data-chat="settings" title="{{#str}}chat_settings, theme_siraj{{/str}}" aria-label="{{#str}}chat_settings, theme_siraj{{/str}}">{{{icon_settings}}}</button>
+            <button type="button" class="siraj-chat-icon" data-chat="new" title="{{#str}}chat_new, theme_siraj{{/str}}" aria-label="{{#str}}chat_new, theme_siraj{{/str}}">{{{icon_plus}}}</button>
+            <button type="button" class="siraj-chat-icon" data-chat="close" title="{{#str}}chat_close, theme_siraj{{/str}}" aria-label="{{#str}}chat_close, theme_siraj{{/str}}">{{{icon_x}}}</button>
+        </header>
+        <div class="siraj-chat-tools">
+            <label class="siraj-chat-search">{{{icon_search}}}<input type="search" data-chat="filter" placeholder="{{#str}}chat_filter, theme_siraj{{/str}}" aria-label="{{#str}}chat_filter, theme_siraj{{/str}}"></label>
+            <div class="siraj-chat-tabs" role="tablist">
+                <button type="button" role="tab" aria-selected="true" data-tab="all">{{#str}}chat_all, theme_siraj{{/str}}</button>
+                <button type="button" role="tab" aria-selected="false" data-tab="unread">{{#str}}chat_unread, theme_siraj{{/str}}</button>
+                <button type="button" role="tab" aria-selected="false" data-tab="starred">{{#str}}chat_starred, theme_siraj{{/str}}</button>
+            </div>
+        </div>
+        <div class="siraj-chat-scroll" data-chat="convs" aria-live="polite"></div>
+        {{^page}}<footer class="siraj-chat-foot"><a href="{{fullurl}}">{{#str}}chat_full, theme_siraj{{/str}} {{{icon_external}}}</a></footer>{{/page}}
+    </div>
+
+    <div class="siraj-chat-pane">
+    <div class="siraj-chat-view siraj-chat-placeholder" data-chat="placeholder" hidden>
+        <span class="siraj-chat-bigicon">{{{icon_message}}}</span>
+        <b>{{#str}}chat_pick, theme_siraj{{/str}}</b>
+        <span>{{#str}}chat_pick_text, theme_siraj{{/str}}</span>
+        <button type="button" class="btn siraj-btn-flame" data-chat="new">{{{icon_plus}}} {{#str}}chat_new, theme_siraj{{/str}}</button>
+    </div>
+
+    <div class="siraj-chat-view" data-chat="settingsview" hidden>
+        <header class="siraj-chat-head">
+            <button type="button" class="siraj-chat-icon" data-chat="back" aria-label="{{#str}}chat_back, theme_siraj{{/str}}">{{{icon_back}}}</button>
+            <h2>{{#str}}chat_settings, theme_siraj{{/str}}</h2>
+            <button type="button" class="siraj-chat-icon" data-chat="close" aria-label="{{#str}}chat_close, theme_siraj{{/str}}">{{{icon_x}}}</button>
+        </header>
+        <div class="siraj-chat-scroll siraj-chat-settings">
+            <fieldset>
+                <legend>{{#str}}chat_privacy, theme_siraj{{/str}}</legend>
+                <p>{{#str}}chat_privacy_text, theme_siraj{{/str}}</p>
+                {{#privacy}}<label class="siraj-chat-opt"><input type="radio" name="siraj-chat-privacy" value="{{value}}" {{#checked}}checked{{/checked}} data-chat="privacy"><span>{{text}}</span></label>{{/privacy}}
+            </fieldset>
+            <fieldset>
+                <legend>{{#str}}chat_notifs, theme_siraj{{/str}}</legend>
+                <label class="siraj-chat-switch"><span><b>{{#str}}chat_email, theme_siraj{{/str}}</b><small>{{#str}}chat_email_text, theme_siraj{{/str}}</small></span><input type="checkbox" role="switch" data-chat="email" {{#emailoffline}}checked{{/emailoffline}}></label>
+                <label class="siraj-chat-switch"><span><b>{{#str}}chat_enter, theme_siraj{{/str}}</b><small>{{#str}}chat_enter_text, theme_siraj{{/str}}</small></span><input type="checkbox" role="switch" data-chat="enter" {{#entertosend}}checked{{/entertosend}}></label>
+            </fieldset>
+            <p class="siraj-chat-saved" data-chat="saved" hidden>{{#str}}chat_saved, theme_siraj{{/str}}</p>
+        </div>
+    </div>
+
+    <div class="siraj-chat-view" data-chat="people" hidden>
+        <header class="siraj-chat-head">
+            <button type="button" class="siraj-chat-icon" data-chat="back" aria-label="{{#str}}chat_back, theme_siraj{{/str}}">{{{icon_back}}}</button>
+            <h2>{{#str}}chat_new, theme_siraj{{/str}}</h2>
+            <button type="button" class="siraj-chat-icon" data-chat="close" aria-label="{{#str}}chat_close, theme_siraj{{/str}}">{{{icon_x}}}</button>
+        </header>
+        <div class="siraj-chat-tools">
+            <label class="siraj-chat-search">{{{icon_search}}}<input type="search" data-chat="peoplesearch" placeholder="{{#str}}chat_newsearch, theme_siraj{{/str}}" aria-label="{{#str}}chat_newsearch, theme_siraj{{/str}}"></label>
+        </div>
+        <div class="siraj-chat-scroll" data-chat="peoplelist"></div>
+    </div>
+
+    <div class="siraj-chat-view" data-chat="conv" hidden>
+        <header class="siraj-chat-head siraj-chat-convhead">
+            <button type="button" class="siraj-chat-icon" data-chat="back" aria-label="{{#str}}chat_back, theme_siraj{{/str}}">{{{icon_back}}}</button>
+            <span class="siraj-chat-who" data-chat="who"></span>
+            <button type="button" class="siraj-chat-icon siraj-chat-star" data-chat="star" aria-pressed="false">{{{icon_star}}}</button>
+            <button type="button" class="siraj-chat-icon" data-chat="close" aria-label="{{#str}}chat_close, theme_siraj{{/str}}">{{{icon_x}}}</button>
+        </header>
+        <div class="siraj-chat-scroll siraj-chat-msgs" data-chat="msgs" aria-live="polite"></div>
+        <form class="siraj-chat-compose" data-chat="compose">
+            <textarea rows="1" data-chat="text" placeholder="{{#str}}chat_write, theme_siraj{{/str}}" aria-label="{{#str}}chat_write, theme_siraj{{/str}}" maxlength="4000" dir="auto"></textarea>
+            <button type="submit" class="siraj-chat-send" aria-label="{{#str}}chat_send, theme_siraj{{/str}}" title="{{#str}}chat_hint, theme_siraj{{/str}}">{{{icon_send}}}</button>
+        </form>
+    </div>
+    </div>
+</section>
+{{#js}}
+require(['core/ajax', 'core/pubsub', 'core/str', 'core_message/message_drawer_helper'], function(Ajax, PubSub, Str, DrawerHelper) {
+    var panel = document.getElementById('siraj-chat');
+    if (!panel || panel.dataset.ready) {
+        return;
+    }
+    panel.dataset.ready = '1';
+    var me = parseInt(panel.dataset.userid, 10);
+    var backdrop = document.querySelector('[data-chat="backdrop"]');
+    var q = function(sel) {
+        return panel.querySelector(sel);
+    };
+    var page = panel.dataset.mode === 'page';
+    var views = {list: q('[data-chat="list"]'), people: q('[data-chat="people"]'), conv: q('[data-chat="conv"]'),
+        settings: q('[data-chat="settingsview"]'), placeholder: q('[data-chat="placeholder"]')};
+    var enterToSend = panel.dataset.entertosend === '1';
+    var S = {};
+    var keys = ['chat_none', 'chat_none_text', 'chat_nofilter', 'chat_you', 'chat_self', 'chat_today', 'chat_yesterday',
+        'chat_online', 'chat_members', 'chat_failed', 'chat_earlier', 'chat_nopeople', 'chat_star', 'chat_unstar', 'chat_say_hi'];
+    var strings = Str.get_strings(keys.map(function(k) {
+        return {key: k, component: 'theme_siraj'};
+    })).then(function(r) {
+        keys.forEach(function(k, i) {
+            S[k] = r[i];
+        });
+        return S;
+    });
+    var call = function(name, args) {
+        return Ajax.call([{methodname: name, args: args}])[0];
+    };
+    var el = function(tag, cls, text) {
+        var e = document.createElement(tag);
+        if (cls) {
+            e.className = cls;
+        }
+        if (text !== undefined) {
+            e.textContent = text;
+        }
+        return e;
+    };
+    var plain = function(html) {
+        var d = document.createElement('div');
+        d.innerHTML = html || '';
+        return (d.textContent || '').replace(/\s+/g, ' ').trim();
+    };
+    var initials = function(name) {
+        var p = (name || '?').trim().split(/\s+/);
+        return ((p[0] || '')[0] || '').concat(p.length > 1 ? p[p.length - 1][0] : '').toUpperCase();
+    };
+    // Moodle's default "no photo" image becomes initials on the brand gradient.
+    var avatar = function(name, url, size) {
+        var a = el('span', 'siraj-chat-av' + (size ? ' ' + size : ''));
+        if (url && !/\/u\/f[123](\?|$)|\/u\/f[123]$/.test(url)) {
+            var img = el('img');
+            img.src = url;
+            img.alt = '';
+            a.appendChild(img);
+        } else {
+            a.textContent = initials(name);
+        }
+        return a;
+    };
+    var lang = document.documentElement.lang || 'en';
+    var dayKey = function(t) {
+        var d = new Date(t * 1000);
+        return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+    };
+    var whenShort = function(t) {
+        var d = new Date(t * 1000);
+        var now = new Date();
+        if (dayKey(t) === dayKey(now / 1000)) {
+            return d.toLocaleTimeString(lang, {hour: '2-digit', minute: '2-digit'});
+        }
+        if ((now - d) < 6 * 864e5) {
+            return d.toLocaleDateString(lang, {weekday: 'short'});
+        }
+        return d.toLocaleDateString(lang, {day: 'numeric', month: 'short'});
+    };
+    var dayLabel = function(t) {
+        var now = Date.now() / 1000;
+        if (dayKey(t) === dayKey(now)) {
+            return S.chat_today;
+        }
+        if (dayKey(t) === dayKey(now - 86400)) {
+            return S.chat_yesterday;
+        }
+        return new Date(t * 1000).toLocaleDateString(lang, {weekday: 'long', day: 'numeric', month: 'long'});
+    };
+
+    // ---------- Open / close ----------
+    var lastFocus = null;
+    var isOpen = function() {
+        return panel.classList.contains('open');
+    };
+    var open = function() {
+        if (page) {
+            return;
+        }
+        if (!isOpen()) {
+            lastFocus = document.activeElement;
+            panel.classList.add('open');
+            panel.removeAttribute('inert');
+            panel.setAttribute('aria-hidden', 'false');
+            backdrop.hidden = false;
+            document.body.classList.add('siraj-chat-open');
+        }
+    };
+    var close = function() {
+        if (page) {
+            show('list');
+            return;
+        }
+        panel.classList.remove('open');
+        panel.setAttribute('inert', '');
+        panel.setAttribute('aria-hidden', 'true');
+        backdrop.hidden = true;
+        document.body.classList.remove('siraj-chat-open');
+        stopPoll();
+        current = null;
+        if (lastFocus && lastFocus.focus) {
+            lastFocus.focus();
+        }
+    };
+    var show = function(name) {
+        // Page: the list stays on the left and the right pane shows a chat, people, settings or a placeholder.
+        var target = page && name === 'list' ? 'placeholder' : name;
+        Object.keys(views).forEach(function(k) {
+            views[k].hidden = !(k === target || (page && k === 'list'));
+        });
+        panel.classList.toggle('has-detail', page && name !== 'list');
+        if (name !== 'conv') {
+            stopPoll();
+            current = null;
+        }
+    };
+
+    // ---------- Unread badge on the top bar button ----------
+    var setBadge = function(n) {
+        document.querySelectorAll('[data-chat-badge]').forEach(function(b) {
+            b.textContent = n > 9 ? '9+' : n;
+            b.hidden = !n;
+        });
+    };
+    var refreshBadge = function() {
+        return call('core_message_get_unread_conversations_count', {useridto: me}).then(setBadge).catch(function() {
+            return null;
+        });
+    };
+
+    // ---------- Conversation list ----------
+    var convs = [];
+    var tab = 'all';
+    var otherOf = function(c) {
+        return (c.members || []).filter(function(m) {
+            return m.id !== me;
+        })[0] || (c.members || [])[0] || {};
+    };
+    var convName = function(c) {
+        if (c.type === 3) {
+            return S.chat_self;
+        }
+        return c.name || otherOf(c).fullname || '';
+    };
+    var convImage = function(c) {
+        return c.type === 2 ? c.imageurl : (otherOf(c).profileimageurl || c.imageurl);
+    };
+    var renderList = function() {
+        var box = q('[data-chat="convs"]');
+        var f = (q('[data-chat="filter"]').value || '').toLowerCase();
+        box.textContent = '';
+        var rows = convs.filter(function(c) {
+            if (tab === 'unread' && !c.unreadcount) {
+                return false;
+            }
+            if (tab === 'starred' && !c.isfavourite) {
+                return false;
+            }
+            return !f || convName(c).toLowerCase().indexOf(f) !== -1;
+        });
+        if (!rows.length) {
+            var empty = el('div', 'siraj-chat-empty');
+            empty.appendChild(el('b', '', f || tab !== 'all' ? S.chat_nofilter : S.chat_none));
+            if (!f && tab === 'all') {
+                empty.appendChild(el('span', '', S.chat_none_text));
+            }
+            box.appendChild(empty);
+            return;
+        }
+        rows.forEach(function(c) {
+            var b = el('button', 'siraj-chat-row' + (c.unreadcount ? ' is-unread' : ''));
+            b.type = 'button';
+            var av = avatar(convName(c), convImage(c));
+            if (c.type === 1 && otherOf(c).isonline) {
+                av.appendChild(el('i', 'siraj-chat-online'));
+            }
+            b.appendChild(av);
+            var mid = el('span', 'siraj-chat-rowtext');
+            var top = el('span', 'siraj-chat-rowtop');
+            top.appendChild(el('b', '', convName(c)));
+            var last = (c.messages || [])[0];
+            if (last) {
+                top.appendChild(el('time', '', whenShort(last.timecreated)));
+            }
+            mid.appendChild(top);
+            var bottom = el('span', 'siraj-chat-rowbottom');
+            var prev = last ? (last.useridfrom === me ? S.chat_you + ' ' : '') + plain(last.text) : '';
+            bottom.appendChild(el('small', '', prev));
+            if (c.unreadcount) {
+                bottom.appendChild(el('em', '', c.unreadcount));
+            }
+            mid.appendChild(bottom);
+            b.appendChild(mid);
+            b.addEventListener('click', function() {
+                openConv(c.id);
+            });
+            box.appendChild(b);
+        });
+    };
+    var loadList = function() {
+        return call('core_message_get_conversations', {userid: me, limitfrom: 0, limitnum: 51, type: null,
+            favourites: null, mergeself: true}).then(function(r) {
+            convs = r.conversations || [];
+            convs.sort(function(a, b) {
+                return ((b.messages[0] || {}).timecreated || 0) - ((a.messages[0] || {}).timecreated || 0);
+            });
+            renderList();
+            return convs;
+        });
+    };
+
+    // ---------- One conversation ----------
+    var current = null;
+    var poll = null;
+    var stopPoll = function() {
+        if (poll) {
+            clearInterval(poll);
+            poll = null;
+        }
+    };
+    var renderWho = function(c, members) {
+        var who = q('[data-chat="who"]');
+        who.textContent = '';
+        var other = members.filter(function(m) {
+            return m.id !== me;
+        })[0] || members[0] || {};
+        var name = c ? convName(c) : other.fullname;
+        who.appendChild(avatar(name, c ? convImage(c) : other.profileimageurl, 'sm'));
+        var t = el('span');
+        t.appendChild(el('b', '', name));
+        if (c && c.type === 2) {
+            t.appendChild(el('small', '', S.chat_members.replace('{$a}', c.membercount)));
+        } else if (other.isonline && other.showonlinestatus) {
+            t.appendChild(el('small', 'is-online', S.chat_online));
+        }
+        who.appendChild(t);
+        var star = q('[data-chat="star"]');
+        star.hidden = !c;
+        if (c) {
+            star.setAttribute('aria-pressed', c.isfavourite ? 'true' : 'false');
+            star.title = c.isfavourite ? S.chat_unstar : S.chat_star;
+            star.setAttribute('aria-label', star.title);
+        }
+    };
+    var bubble = function(m, members) {
+        var mine = m.useridfrom === me;
+        var b = el('div', 'siraj-chat-msg ' + (mine ? 'mine' : 'theirs'));
+        b.dataset.id = m.id;
+        if (!mine && current && current.type === 2) {
+            var from = members.filter(function(x) {
+                return x.id === m.useridfrom;
+            })[0];
+            b.appendChild(el('span', 'siraj-chat-from', from ? from.fullname : ''));
+        }
+        var text = el('div', 'siraj-chat-text');
+        text.innerHTML = m.text; // Formatted and cleaned by Moodle's messaging API.
+        text.setAttribute('dir', 'auto');
+        b.appendChild(text);
+        b.appendChild(el('time', '', new Date(m.timecreated * 1000).toLocaleTimeString(lang, {hour: '2-digit', minute: '2-digit'})));
+        return b;
+    };
+    var renderMsgs = function(msgs, members, keepScroll) {
+        var box = q('[data-chat="msgs"]');
+        var atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 60;
+        box.textContent = '';
+        if (!msgs.length) {
+            var name = current ? convName(current) : (members.filter(function(m) {
+                return m.id !== me;
+            })[0] || {}).fullname;
+            box.appendChild(el('div', 'siraj-chat-empty', S.chat_say_hi.replace('{$a}', name || '')));
+        }
+        var lastDay = null;
+        msgs.forEach(function(m) {
+            var k = dayKey(m.timecreated);
+            if (k !== lastDay) {
+                box.appendChild(el('div', 'siraj-chat-day', dayLabel(m.timecreated)));
+                lastDay = k;
+            }
+            box.appendChild(bubble(m, members));
+        });
+        if (!keepScroll || atBottom) {
+            box.scrollTop = box.scrollHeight;
+        }
+    };
+    var state = {msgs: [], members: []};
+    var fetchMsgs = function(convid, keepScroll) {
+        return call('core_message_get_conversation_messages', {currentuserid: me, convid: convid, limitfrom: 0, limitnum: 100,
+            newest: true, timefrom: 0}).then(function(r) {
+            if (!current || current.id !== convid) {
+                return null;
+            }
+            var msgs = (r.messages || []).slice().sort(function(a, b) {
+                return a.timecreated - b.timecreated || a.id - b.id;
+            });
+            var changed = msgs.length !== state.msgs.length || (msgs.length && msgs[msgs.length - 1].id !== state.msgs[state.msgs.length - 1].id);
+            state.msgs = msgs;
+            state.members = r.members || state.members;
+            if (changed || !keepScroll) {
+                renderMsgs(msgs, state.members, keepScroll);
+            }
+            if (changed && current.unreadcount !== 0) {
+                markRead(convid);
+            }
+            return msgs;
+        });
+    };
+    var markRead = function(convid) {
+        return call('core_message_mark_all_conversation_messages_as_read', {userid: me, conversationid: convid}).then(function() {
+            convs.forEach(function(c) {
+                if (c.id === convid) {
+                    c.unreadcount = 0;
+                }
+            });
+            if (current) {
+                current.unreadcount = 0;
+            }
+            renderList();
+            return refreshBadge();
+        }).catch(function() {
+            return null;
+        });
+    };
+    var openConv = function(convid) {
+        var c = convs.filter(function(x) {
+            return x.id === convid;
+        })[0];
+        var ready = c ? Promise.resolve(c) : call('core_message_get_conversation', {userid: me, conversationid: convid,
+            includecontactrequests: false, includeprivacyinfo: false, memberlimit: 50, memberoffset: 0, messagelimit: 0,
+            messageoffset: 0, newestmessagesfirst: true});
+        return ready.then(function(conv) {
+            current = conv;
+            current.pending = null;
+            state = {msgs: [], members: conv.members || []};
+            renderWho(conv, state.members);
+            q('[data-chat="msgs"]').textContent = '';
+            show('conv');
+            open();
+            stopPoll();
+            poll = setInterval(function() {
+                if (!document.hidden && current) {
+                    fetchMsgs(current.id, true);
+                }
+            }, 8000);
+            q('[data-chat="text"]').focus();
+            return fetchMsgs(conv.id, false).then(function() {
+                return markRead(conv.id);
+            });
+        });
+    };
+    // A person without a conversation yet: show an empty chat; the first message creates it.
+    var openUser = function(userid, fullname, image) {
+        return call('core_message_get_conversation_between_users', {userid: me, otheruserid: userid, includecontactrequests: false,
+            includeprivacyinfo: false, memberlimit: 0, memberoffset: 0, messagelimit: 0, messageoffset: 0,
+            newestmessagesfirst: true}).then(function(c) {
+            return loadList().then(function() {
+                return openConv(c.id);
+            });
+        }).catch(function() {
+            stopPoll();
+            current = {id: 0, type: 1, touser: userid, members: [{id: userid, fullname: fullname, profileimageurl: image}]};
+            state = {msgs: [], members: current.members};
+            renderWho(null, current.members);
+            renderMsgs([], current.members, false);
+            show('conv');
+            open();
+            q('[data-chat="text"]').focus();
+        });
+    };
+
+    // ---------- Sending ----------
+    var text = q('[data-chat="text"]');
+    var grow = function() {
+        text.style.height = 'auto';
+        text.style.height = Math.min(text.scrollHeight, 140) + 'px';
+    };
+    text.addEventListener('input', grow);
+    text.addEventListener('keydown', function(e) {
+        if (enterToSend && e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+            e.preventDefault();
+            q('[data-chat="compose"]').requestSubmit();
+        }
+    });
+    var send = function(body) {
+        var box = q('[data-chat="msgs"]');
+        var empty = box.querySelector('.siraj-chat-empty');
+        if (empty) {
+            empty.remove();
+        }
+        var temp = bubble({id: 0, useridfrom: me, text: '', timecreated: Date.now() / 1000}, []);
+        temp.querySelector('.siraj-chat-text').textContent = body;
+        temp.classList.add('is-sending');
+        box.appendChild(temp);
+        box.scrollTop = box.scrollHeight;
+        var req = current.id ?
+            call('core_message_send_messages_to_conversation', {conversationid: current.id, messages: [{text: body, textformat: 2}]}) :
+            call('core_message_send_instant_messages', {messages: [{touserid: current.touser, text: body, textformat: 2}]})
+                .then(function(r) {
+                    if (r[0] && r[0].msgid > 0) {
+                        current.id = r[0].conversationid;
+                        return r;
+                    }
+                    throw new Error((r[0] && r[0].errormessage) || 'failed');
+                });
+        return req.then(function() {
+            var id = current.id;
+            return loadList().then(function() {
+                current = convs.filter(function(c) {
+                    return c.id === id;
+                })[0] || current;
+                renderWho(current.members ? current : null, state.members);
+                return fetchMsgs(id, false);
+            });
+        }).catch(function(err) {
+            temp.classList.remove('is-sending');
+            temp.classList.add('is-failed');
+            var note = el('button', 'siraj-chat-retry', (err && err.message && err.message !== 'failed') ? err.message : S.chat_failed);
+            note.type = 'button';
+            note.addEventListener('click', function() {
+                temp.remove();
+                send(body);
+            });
+            temp.appendChild(note);
+        });
+    };
+    q('[data-chat="compose"]').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var body = text.value.trim();
+        if (!body || !current) {
+            return;
+        }
+        text.value = '';
+        grow();
+        send(body);
+    });
+
+    // ---------- New message: people search ----------
+    var peopleTimer = null;
+    q('[data-chat="peoplesearch"]').addEventListener('input', function(e) {
+        clearTimeout(peopleTimer);
+        var term = e.target.value.trim();
+        var box = q('[data-chat="peoplelist"]');
+        if (term.length < 2) {
+            box.textContent = '';
+            return;
+        }
+        peopleTimer = setTimeout(function() {
+            call('core_message_message_search_users', {userid: me, search: term, limitfrom: 0, limitnum: 30}).then(function(r) {
+                var people = (r.contacts || []).concat(r.noncontacts || []);
+                box.textContent = '';
+                if (!people.length) {
+                    box.appendChild(el('div', 'siraj-chat-empty', S.chat_nopeople));
+                }
+                people.forEach(function(p) {
+                    var b = el('button', 'siraj-chat-row');
+                    b.type = 'button';
+                    b.appendChild(avatar(p.fullname, p.profileimageurl));
+                    var t = el('span', 'siraj-chat-rowtext');
+                    t.appendChild(el('b', '', p.fullname));
+                    b.appendChild(t);
+                    b.addEventListener('click', function() {
+                        openUser(p.id, p.fullname, p.profileimageurl);
+                    });
+                    box.appendChild(b);
+                });
+                return people;
+            }).catch(function() {
+                return null;
+            });
+        }, 250);
+    });
+
+    // ---------- Wiring ----------
+    q('[data-chat="filter"]').addEventListener('input', renderList);
+    panel.querySelectorAll('[data-tab]').forEach(function(t) {
+        t.addEventListener('click', function() {
+            tab = t.dataset.tab;
+            panel.querySelectorAll('[data-tab]').forEach(function(x) {
+                x.setAttribute('aria-selected', x === t ? 'true' : 'false');
+            });
+            renderList();
+        });
+    });
+    panel.querySelectorAll('[data-chat="close"]').forEach(function(b) {
+        b.addEventListener('click', close);
+    });
+    panel.querySelectorAll('[data-chat="back"]').forEach(function(b) {
+        b.addEventListener('click', function() {
+            show('list');
+            loadList();
+        });
+    });
+    panel.querySelectorAll('[data-chat="new"]').forEach(function(b) {
+        b.addEventListener('click', function() {
+            show('people');
+            q('[data-chat="peoplesearch"]').value = '';
+            q('[data-chat="peoplelist"]').textContent = '';
+            q('[data-chat="peoplesearch"]').focus();
+        });
+    });
+
+    // ---------- Settings (Moodle's own messaging preferences) ----------
+    q('[data-chat="settings"]').addEventListener('click', function() {
+        show('settings');
+    });
+    var saved = q('[data-chat="saved"]');
+    var savePrefs = function(prefs) {
+        return call('core_user_update_user_preferences', {userid: me, preferences: prefs}).then(function() {
+            saved.hidden = false;
+            clearTimeout(saved.timer);
+            saved.timer = setTimeout(function() {
+                saved.hidden = true;
+            }, 2000);
+            return null;
+        }).catch(function() {
+            return null;
+        });
+    };
+    panel.querySelectorAll('[data-chat="privacy"]').forEach(function(r) {
+        r.addEventListener('change', function() {
+            savePrefs([{type: 'message_blocknoncontacts', value: r.value}]);
+        });
+    });
+    q('[data-chat="email"]').addEventListener('change', function(e) {
+        var list = (panel.dataset.processors || '').split(',').filter(function(x) {
+            return x && x !== 'none' && x !== 'email';
+        });
+        if (e.target.checked) {
+            list.push('email');
+        }
+        panel.dataset.processors = list.join(',') || 'none';
+        savePrefs([{type: 'message_provider_moodle_instantmessage_enabled', value: panel.dataset.processors}]);
+    });
+    q('[data-chat="enter"]').addEventListener('change', function(e) {
+        enterToSend = e.target.checked;
+        savePrefs([{type: 'message_entertosend', value: enterToSend ? 1 : 0}]);
+    });
+    q('[data-chat="star"]').addEventListener('click', function() {
+        if (!current || !current.id) {
+            return;
+        }
+        var fav = !current.isfavourite;
+        call(fav ? 'core_message_set_favourite_conversations' : 'core_message_unset_favourite_conversations',
+            {userid: me, conversations: [current.id]}).then(function() {
+            current.isfavourite = fav;
+            renderWho(current, state.members);
+            return loadList();
+        }).catch(function() {
+            return null;
+        });
+    });
+    if (backdrop) {
+        backdrop.addEventListener('click', close);
+    }
+    document.addEventListener('keydown', function(e) {
+        if (!page && e.key === 'Escape' && isOpen()) {
+            close();
+        }
+    });
+    var openList = function() {
+        show('list');
+        open();
+        loadList();
+        setTimeout(function() {
+            q('[data-chat="filter"]').focus();
+        }, 50);
+    };
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('[data-siraj-action="chat"]')) {
+            e.preventDefault();
+            if (isOpen()) {
+                close();
+            } else {
+                strings.then(openList);
+            }
+        }
+    });
+    // Moodle's message drawer events ("Message" buttons on profiles and participants, notifications links).
+    strings.then(function() {
+        PubSub.subscribe('message-drawer-show', openList);
+        PubSub.subscribe('message-drawer-hide', close);
+        PubSub.subscribe('message-drawer-toggle', function() {
+            if (isOpen()) {
+                close();
+            } else {
+                openList();
+            }
+        });
+        PubSub.subscribe('message-drawer-show-conversation', function(args) {
+            loadList().then(function() {
+                return openConv(args.conversationid);
+            });
+        });
+        PubSub.subscribe('message-drawer-create-conversation-with-user', function(args) {
+            openUser(args.userid, args.fullname, args.profileimageurl);
+        });
+        // Moodle's "Message" buttons wait for the drawer to say it is ready.
+        DrawerHelper.markDrawerReady();
+        if (page) {
+            var start = loadList();
+            if (parseInt(panel.dataset.openconv, 10)) {
+                start.then(function() {
+                    return openConv(parseInt(panel.dataset.openconv, 10));
+                });
+            } else if (parseInt(panel.dataset.openuser, 10)) {
+                start.then(function() {
+                    return openUser(parseInt(panel.dataset.openuser, 10), panel.dataset.openusername, '');
+                });
+            } else if (window.location.hash === '#settings') {
+                show('settings');
+            } else {
+                show('list');
+            }
+        }
+        setInterval(function() {
+            if (!document.hidden) {
+                refreshBadge();
+            }
+        }, 60000);
+        return null;
+    });
+});
+{{/js}}

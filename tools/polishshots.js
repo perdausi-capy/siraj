@@ -1,0 +1,32 @@
+const { chromium } = require('playwright-core'); const fs = require('fs');
+const pass = fs.readFileSync(process.env.HOME + '/.config/siraj-local/admin-pass', 'utf8').trim(); const BASE = 'http://localhost:8000';
+const OUT = '../screenshots/polish'; fs.mkdirSync(OUT, { recursive: true });
+(async () => { const b = await chromium.launch({ executablePath: process.env.HOME + '/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome' });
+  const p = await (await b.newContext({ viewport: { width: 1600, height: 950 } })).newPage();
+  const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('response', r => { if (r.status() >= 500) errs.push(r.status() + ' ' + r.url()); });
+  for (let i = 0; i < 2; i++) await p.goto(BASE + '/login/index.php', { waitUntil: 'networkidle' });
+  await p.fill('#username', 'admin'); await p.fill('#password', pass); await Promise.all([p.waitForNavigation(), p.click('#loginbtn')]);
+  const editOn = async on => { const sw = p.locator('.editmode-switch-form input[type=checkbox]'); if ((await sw.count()) && (await sw.isChecked()) !== on) { await Promise.all([p.waitForNavigation(), sw.click()]); await p.waitForLoadState('networkidle'); } };
+  for (const theme of ['dark', 'light']) {
+    await p.evaluate(t => localStorage.setItem('siraj-theme', t), theme);
+    const shot = async n => { await p.waitForTimeout(700); await p.screenshot({ path: `${OUT}/${theme}-${n}.png` }); console.log('saved', theme, n); };
+    await p.goto(BASE + '/admin/category.php?category=appearance', { waitUntil: 'networkidle' }); await shot('admin-appearance');
+    await p.goto(BASE + '/course/modedit.php?update=6', { waitUntil: 'networkidle' });
+    await p.locator('a[href="#id_availabilityconditionsheadercontainer"]').first().click().catch(() => {}); await p.waitForTimeout(600);
+    await p.locator('button:has-text("Add restriction...")').first().click().catch(e => console.log('no restriction btn')); await shot('add-restriction');
+    await p.keyboard.press('Escape');
+    await p.goto(BASE + '/course/modedit.php?add=scorm&course=4&section=1', { waitUntil: 'networkidle' }); await shot('editor');
+    await p.locator('.filemanager .fp-btn-add a, .fp-btn-add a').first().click().catch(() => {}); await shot('filepicker');
+    await p.goto(BASE + '/course/view.php?id=4&siraj=classic', { waitUntil: 'networkidle' }); await editOn(true);
+    await p.locator('.course-section').nth(1).locator('.divider').last().hover().catch(() => {}); await shot('course-editing');
+    await p.locator('.course-section').nth(1).locator('.divider .btn.add-content').first().click({ force: true }).catch(e => console.log('no add-content')); await p.waitForTimeout(500);
+    await p.getByText('Activity or resource', { exact: false }).first().click({ timeout: 4000 }).catch(e => console.log('no chooser item')); await p.waitForTimeout(800); await shot('activity-chooser');
+    await p.keyboard.press('Escape');
+    await p.goto(BASE + '/message/notificationpreferences.php', { waitUntil: 'networkidle' }); await shot('notif-prefs');
+    await p.locator('.siraj-plugins .popover-region-toggle').first().click(); await shot('notif-popover');
+    await p.goto(BASE + '/local/siraj/learn.php?cmid=6', { waitUntil: 'networkidle' }); await shot('learn');
+    await p.goto(BASE + '/local/siraj/index.php', { waitUntil: 'networkidle' }); await shot('home');
+    await p.goto(BASE + '/local/siraj/explore.php', { waitUntil: 'networkidle' }); await shot('explore');
+    await p.goto(BASE + '/course/view.php?id=4&siraj=classic', { waitUntil: 'networkidle' }); await editOn(false);
+  }
+  console.log('errors:', errs.length ? errs : 'none'); await b.close(); })().catch(e => { console.error(e.message); process.exit(1); });

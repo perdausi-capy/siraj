@@ -1,0 +1,78 @@
+{{!
+    @template local_siraj/inbox
+
+    Siraj Inbox: notifications grouped by day, instant tabs, one action each.
+
+    Example context (json):
+    {"hasitems": true, "counts": {"all": 1, "training": 1, "achievements": 0, "updates": 0, "unread": 1}, "hasunread": true, "readallurl": "#",
+     "groups": [{"title": "Today", "items": [{"subject": "Due soon", "text": "4 days left", "when": "09:00", "kind": "training", "unread": true, "icon": ""}]}]}
+}}
+<div class="siraj-inbox" data-region="siraj-inbox">
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}stayintheloop, local_siraj{{/str}}</div>
+            <h1>{{#str}}inbox, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{#str}}inbox_sub, local_siraj{{/str}}</p>
+        </div>
+        <div class="siraj-head-actions">
+            <a class="btn btn-secondary" href="{{prefsurl}}">{{{icon_settings}}} {{#str}}preferences, local_siraj{{/str}}</a>
+            {{#hasunread}}<a class="btn btn-secondary" href="{{readallurl}}">{{{icon_check}}} {{#str}}markallread, local_siraj{{/str}}</a>{{/hasunread}}
+        </div>
+    </header>
+    {{#hasitems}}
+    <div class="siraj-tabs" role="tablist">
+        <button type="button" role="tab" class="active" data-kind="all" aria-selected="true">{{#str}}all, local_siraj{{/str}} <span>{{counts.all}}</span></button>
+        <button type="button" role="tab" data-kind="training" aria-selected="false">{{#str}}inbox_training, local_siraj{{/str}} <span>{{counts.training}}</span></button>
+        <button type="button" role="tab" data-kind="achievements" aria-selected="false">{{#str}}achievements, local_siraj{{/str}} <span>{{counts.achievements}}</span></button>
+        <button type="button" role="tab" data-kind="updates" aria-selected="false">{{#str}}inbox_updates, local_siraj{{/str}} <span>{{counts.updates}}</span></button>
+    </div>
+    <div class="siraj-panel siraj-inbox-panel">
+        {{#groups}}
+        <section class="siraj-inbox-group">
+            <div class="siraj-eyebrow">{{title}}</div>
+            {{#items}}
+            <article class="siraj-note {{#unread}}is-unread{{/unread}}" data-kind="{{kind}}">
+                <span class="siraj-note-icon kind-{{kind}}">{{{icon}}}</span>
+                <div class="siraj-note-body">
+                    <b>{{subject}}</b>
+                    {{#text}}<p>{{text}}</p>{{/text}}
+                    <small title="{{when}}">{{when}} · {{#str}}ago, local_siraj, {{ago}}{{/str}}</small>
+                </div>
+                <div class="siraj-note-actions">
+                    {{#actionurl}}<a class="btn btn-secondary" href="{{actionurl}}">{{actionname}} {{{icon_arrow}}}</a>{{/actionurl}}
+                    {{#readurl}}<a class="siraj-note-read" href="{{readurl}}" title="{{#str}}markread, local_siraj{{/str}}" aria-label="{{#str}}markread, local_siraj{{/str}}">{{{icon_check}}}</a>{{/readurl}}
+                </div>
+            </article>
+            {{/items}}
+        </section>
+        {{/groups}}
+    </div>
+    {{/hasitems}}
+    {{^hasitems}}
+    <div class="siraj-empty"><span class="siraj-empty-icon">{{{icon_inbox}}}</span><h3>{{#str}}inbox_empty, local_siraj{{/str}}</h3><p>{{#str}}inbox_empty_text, local_siraj{{/str}}</p></div>
+    {{/hasitems}}
+</div>
+{{#js}}
+(function() {
+    var root = document.querySelector('[data-region="siraj-inbox"]');
+    if (!root) {
+        return;
+    }
+    root.addEventListener('click', function(e) {
+        var t = e.target.closest('[data-kind][role="tab"]');
+        if (!t) {
+            return;
+        }
+        root.querySelectorAll('[role="tab"]').forEach(function(b) {
+            b.classList.toggle('active', b === t);
+            b.setAttribute('aria-selected', b === t ? 'true' : 'false');
+        });
+        root.querySelectorAll('.siraj-note').forEach(function(n) {
+            n.hidden = t.dataset.kind !== 'all' && n.dataset.kind !== t.dataset.kind;
+        });
+        root.querySelectorAll('.siraj-inbox-group').forEach(function(g) {
+            g.hidden = !g.querySelector('.siraj-note:not([hidden])');
+        });
+    });
+})();
+{{/js}}

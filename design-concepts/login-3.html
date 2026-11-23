@@ -1,0 +1,67 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Siraj sign in 3</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>
+:root{--bg:#F3F6FA;--surface:#fff;--soft:#EEF3F9;--line:#E4E9F0;--ink:#0E1B2A;--muted:#5B6B7C;--faint:#8A98A8;--navy:#0B2E4F;--link:#1E5FA8;
+--serif:"Instrument Serif",Georgia,serif;--sans:"Inter",system-ui,sans-serif;--shadow:0 1px 2px rgba(14,27,42,.04),0 18px 50px rgba(14,27,42,.1)}
+[data-theme="dark"]{--bg:#0A1220;--surface:#111B2B;--soft:#172438;--line:#1F2D42;--ink:#E8EEF5;--muted:#9AAABD;--faint:#6D7E93;--navy:#5FB3F0;--link:#6CB8F5;--shadow:0 18px 50px rgba(0,0,0,.45);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%}body{font:400 14px/1.5 var(--sans);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+a{color:var(--link);text-decoration:none}.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.flame{width:24px;height:29px}.brand{display:flex;align-items:center;gap:10px;color:inherit}.brand b{font:700 15px/1 var(--sans);letter-spacing:.22em}.brand small{display:block;font:600 7.5px/1 var(--sans);letter-spacing:.42em;margin-top:5px;opacity:.7}
+.serif{font-family:var(--serif);font-weight:400;letter-spacing:-.01em}.eyebrow{font:600 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.tools{display:flex;gap:8px;align-items:center}.tbtn{height:38px;min-width:38px;padding:0 12px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 12.5px var(--sans);cursor:pointer}
+.tbtn:hover{color:var(--ink)}.thm .m{display:none}[data-theme="dark"] .thm .s{display:none}[data-theme="dark"] .thm .m{display:block}
+.form{width:100%;max-width:380px}.form h2{font:400 40px/1.05 var(--serif);margin:12px 0 8px}.form p.sub{margin:0 0 28px;color:var(--muted)}
+label{display:block;font:600 12.5px var(--sans);color:var(--muted);margin:0 0 6px}.field{position:relative;margin-bottom:16px}
+input{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:0 16px;font:400 15px var(--sans);outline:none;transition:border-color .15s,box-shadow .15s}
+input:focus{border-color:var(--link);box-shadow:0 0 0 4px color-mix(in srgb,var(--link) 16%,transparent)}.field .eye{position:absolute;right:12px;bottom:13px;color:var(--faint)}
+.row{display:flex;justify-content:space-between;align-items:center;margin:4px 0 22px;font-size:13px;color:var(--muted)}.row label{display:inline-flex;gap:8px;align-items:center;margin:0;font-weight:500}
+.row input{width:16px;height:16px;accent-color:var(--navy)}
+.submit{width:100%;height:52px;border:0;border-radius:999px;background:var(--navy);color:#fff;font:600 15px var(--sans);display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+[data-theme="dark"] .submit{color:#06243C}.submit .ic{width:16px;height:16px}
+.or{display:flex;align-items:center;gap:12px;margin:22px 0;color:var(--faint);font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase}.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.sso{width:100%;height:48px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--sans);display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer}
+.ms{width:16px;height:16px;display:grid;grid-template-columns:1fr 1fr;gap:2px}.ms i{display:block}.ms i:nth-child(1){background:#F25022}.ms i:nth-child(2){background:#7FBA00}.ms i:nth-child(3){background:#00A4EF}.ms i:nth-child(4){background:#FFB900}
+.foot{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;color:var(--faint);font-size:12.5px}.foot a{color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.note{position:fixed;right:16px;bottom:16px;z-index:50;background:#0E1B2A;color:#fff;font:500 12px var(--sans);padding:8px 12px;border-radius:999px;opacity:.85}
+.page{min-height:100vh;display:flex;flex-direction:column;padding:28px 48px}.head{display:flex;justify-content:space-between;align-items:center}
+.body{flex:1;display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center;max-width:1320px;width:100%;margin:0 auto;padding:32px 0}
+.body h1{font:400 clamp(52px,6vw,96px)/.95 var(--serif);margin:16px 0 22px;letter-spacing:-.02em}.body h1 em{font-style:italic;color:var(--link)}.body p.lead{font-size:17px;color:var(--muted);max-width:480px;margin:0 0 36px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:620px}.strip figure{margin:0;border-radius:16px;overflow:hidden;aspect-ratio:3/4;position:relative}
+.strip img{width:100%;height:100%;object-fit:cover;display:block}.strip figure:nth-child(even){transform:translateY(24px)}
+.strip figcaption{position:absolute;left:10px;right:10px;bottom:10px;color:#fff;font:600 11.5px/1.3 var(--sans);text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:28px;padding:44px;box-shadow:var(--shadow);justify-self:end;width:100%;max-width:470px}
+@media (max-width:1000px){.body{grid-template-columns:1fr;gap:32px}.card{justify-self:stretch;padding:24px}.page{padding:16px}.strip{display:none}.body h1{font-size:46px}}</style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="fl" x1=".2" y1="0" x2=".8" y2="1"><stop offset="0" stop-color="#00E69A"/><stop offset=".5" stop-color="#33CCFF"/><stop offset="1" stop-color="#3A70B8"/></linearGradient></defs>
+<symbol id="flame" viewBox="0 0 30 36"><path fill="url(#fl)" d="M17 0C10 5 6 11 8.5 16.5c1.3 2.8 4.6 4.3 7.6 5.3 4.4 1.5 6.2 4.6 3.4 9.1-1 1.7-2.6 3.3-4.5 5.1 6.3-2.6 11.4-7.6 12.3-13 .8-4.8-2-8.6-7.7-10.3-3.4-1-6-2.6-6.3-5.4C13.1 5 14.5 2.6 17 0Z"/></symbol>
+<symbol id="home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6.5A2.5 2.5 0 0 0 4 21.5 2.5 2.5 0 0 0 6.5 24"/><path d="M8 7h8"/></symbol>
+<symbol id="play" viewBox="0 0 24 24"><path d="m7 4 13 8-13 8z"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-3-5.5"/></symbol>
+<symbol id="compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+<symbol id="calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></symbol>
+<symbol id="award" viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="m8.5 14 -1.5 8 5-3 5 3-1.5-8"/></symbol>
+<symbol id="inbox" viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-6z"/></symbol>
+<symbol id="chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/></symbol>
+<symbol id="shield" viewBox="0 0 24 24"><path d="M12 3 4.5 6v6c0 4.5 3.2 8 7.5 9 4.3-1 7.5-4.5 7.5-9V6z"/></symbol>
+<symbol id="trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/></symbol>
+<symbol id="file" viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+<symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+<symbol id="chevl" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+<symbol id="chevr" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+<symbol id="target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+<symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5h.01"/></symbol>
+<symbol id="layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+<symbol id="message" viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4z"/></symbol>
+</svg><svg width="0" height="0" style="position:absolute"><symbol id="moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol><symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol><symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol></svg><div class="page"><header class="head"><div class="brand"><svg class="flame"><use href="#flame"/></svg><span><b>SIRAJ</b><small>LEARNING</small></span></div><div class="tools"><button class="tbtn" type="button"><svg class="ic"><use href="#globe"/></svg>English</button><button class="tbtn thm" type="button" data-theme-toggle aria-label="Theme"><svg class="ic s"><use href="#sun"/></svg><svg class="ic m"><use href="#moon"/></svg></button></div></header><div class="body"><section><div class="eyebrow">Learn · Develop · Achieve</div><h1>Small steps.<br><em>Big impact.</em></h1>
+<p class="lead">Mandatory training, new skills and certificates, all in one calm place, in English and Arabic.</p><div class="strip"><figure><img src="img/hse.jpg" alt=""><figcaption>Health &amp; Safety</figcaption></figure><figure><img src="img/lead.jpg" alt=""><figcaption>Leadership</figcaption></figure><figure><img src="img/infosec.jpg" alt=""><figcaption>Information Security</figcaption></figure><figure><img src="img/wellness.jpg" alt=""><figcaption>Wellness</figcaption></figure></div></section>
+<div class="card"><form class="form" onsubmit="return false"><div class="eyebrow">Welcome to Siraj Learning</div><h2>Good to have you here.</h2><p class="sub">Sign in to continue your learning journey.</p>
+<div class="field"><label for="u">Username</label><input id="u" autocomplete="username" value="layla"></div>
+<div class="field"><label for="p">Password</label><input id="p" type="password" value="password123"><span class="eye"><svg class="ic"><use href="#eye"/></svg></span></div>
+<div class="row"><label><input type="checkbox" checked> Remember me</label><a>Forgot password?</a></div>
+<button class="submit">Sign in <svg class="ic"><use href="#arrow"/></svg></button><div class="or">or</div><button class="sso" type="button"><span class="ms"><i></i><i></i><i></i><i></i></span>Continue with Microsoft</button></form></div></div><div class="foot"><span>© 2026 Siraj Learning</span><a>Privacy</a><a>Cookies notice</a><a>Help</a></div></div><div class="note">Login 3: editorial, course photos</div><script>(function(){var r=document.documentElement,k='siraj-login-theme',s=null;try{s=localStorage.getItem(k)}catch(e){}
+r.dataset.theme=s||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+document.querySelectorAll('[data-theme-toggle]').forEach(function(b){b.onclick=function(){r.dataset.theme=r.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem(k,r.dataset.theme)}catch(e){}}});})();</script></body></html>

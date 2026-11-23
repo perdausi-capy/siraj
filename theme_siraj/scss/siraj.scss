@@ -1,0 +1,116 @@
+// Siraj layer on top of Boost. Uses only the $siraj-* variables, so every preset gets the same layout.
+
+// ---------- Top bar ----------
+.navbar.fixed-top {
+    background: $siraj-navy !important;
+    border-bottom: 3px solid $siraj-accent;
+    box-shadow: 0 2px 12px rgba(0,0,0,.12);
+    .navbar-brand { padding: 0; }
+    .navbar-brand .logo { max-height: 40px !important; }
+    .primary-navigation .nav-link,
+    .nav-link, .usermenu .login, .btn-footer-popover, .popover-region-toggle .icon, .navbar-text {
+        color: rgba(255,255,255,.88) !important;
+    }
+    .primary-navigation .nav-link.active {
+        color: #fff !important;
+        border-bottom-color: $siraj-accent !important;
+    }
+    .usermenu .userinitials, .userinitials { background: $siraj-accent; color: #fff; }
+    .editmode-switch-form label { color: rgba(255,255,255,.88); }
+    .divider { border-color: rgba(255,255,255,.25) !important; }
+    .icon { color: rgba(255,255,255,.88); }
+    .drawertoggle, .drawertoggle .icon, button .icon { color: #fff !important; }
+}
+
+// ---------- Page ----------
+h1, h2, h3, h4, .h1, .h2, .h3, .h4 { color: $siraj-navy; letter-spacing: -.01em; }
+#page-header h1, .page-header-headings h1 { font-weight: $headings-font-weight; }
+#page.drawers { background: $body-bg; }
+// Content sits directly on the soft page background; blocks and sections are the white cards.
+#region-main { background: transparent; border: 0; }
+#page.drawers .main-inner { background: transparent; box-shadow: none; border: 0; }
+.card, .list-group-item { background-color: #fff; }
+.secondary-navigation { background: transparent; }
+.course-content .section, .course-section { background: #fff; }
+.block_myoverview .card-body, .block_timeline .card-body { background: #fff; }
+.btn { border-radius: $border-radius; font-weight: 500; }
+.btn-primary { background: $siraj-navy; border-color: $siraj-navy; }
+.btn-primary:hover { background: $siraj-navy-dark; border-color: $siraj-navy-dark; }
+:focus-visible { outline: 3px solid $siraj-accent !important; outline-offset: 2px; }
+
+// ---------- Blocks and cards ----------
+.block.card, .card {
+    border-radius: $siraj-radius;
+    border: 1px solid rgba(16,24,40,.07);
+    box-shadow: 0 1px 3px rgba(16,24,40,.05);
+}
+.block .card-title { font-family: $siraj-heading-font; color: $siraj-navy; }
+.dashboard-card {
+    overflow: hidden;
+    transition: transform .15s ease, box-shadow .15s ease;
+    &:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16,24,40,.12); }
+    .dashboard-card-img { height: 120px !important; }
+    .coursename { color: $siraj-navy; font-weight: 600; }
+}
+.progress { height: 8px; border-radius: 99px; background: rgba(16,24,40,.08); }
+.progress-bar { background: $siraj-accent; border-radius: 99px; }
+
+// ---------- Course index / drawers ----------
+.drawer { background: #fff; }
+.courseindex .courseindex-item.pageitem { background: $siraj-navy; color: #fff; }
+.courseindex .courseindex-link:hover { color: $siraj-navy; }
+
+// ---------- Footer ----------
+#page-footer { background: $siraj-navy-dark; }
+.btn-footer-popover { background: $siraj-navy !important; border-color: $siraj-navy !important; color: #fff !important; }
+.siraj-poweredby { font-weight: 500; }
+
+// ---------- Login (split screen) ----------
+body.pagelayout-login {
+    background: #fff;
+    #page-wrapper.siraj-login { display: flex; flex-direction: row; min-height: 100vh; height: auto; }
+    #page { background: #fff !important; margin: 0; }
+}
+.siraj-login-brand {
+    position: relative;
+    flex: 0 0 44%;
+    background: $siraj-gradient;
+    color: $siraj-panel-text;
+    display: flex; align-items: flex-end;
+    padding: 3.5rem;
+    overflow: hidden;
+}
+.siraj-login-brand-inner { position: relative; z-index: 1; max-width: 30rem; }
+.siraj-login-brand-logo { max-width: 220px; max-height: 120px; margin-bottom: 2.5rem; }
+.siraj-login-tagline { font-family: $siraj-heading-font; font-size: 2.4rem; line-height: 1.15; font-weight: $headings-font-weight; margin-bottom: .75rem; }
+.siraj-login-subline { font-size: 1rem; opacity: .85; margin: 0; }
+.siraj-login-glow {
+    position: absolute; right: -20%; top: -15%; width: 70%; aspect-ratio: 1;
+    border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.25), transparent 65%);
+}
+.siraj-login-main {
+    flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 2rem 1.5rem; background: #fff;
+    #region-main { box-shadow: none; border: 0; background: transparent; padding: 0 !important; width: 100%; max-width: 400px; }
+    .login-wrapper, .login-container { padding: 0; box-shadow: none; background: transparent; max-width: none; }
+    .login-heading { font-size: 1.6rem; color: $siraj-navy; }
+    .login-logo { display: none; }  // logo is on the brand panel
+    .form-control { border-radius: $border-radius; padding: .7rem .9rem; }
+    #loginbtn { width: 100%; }
+}
+.siraj-login-title { font-size: 1.75rem; color: $siraj-navy; margin-bottom: .25rem; }
+.siraj-login-sub { color: #5B6573; margin-bottom: 1.75rem; }
+.siraj-login-footer { margin-top: 2.5rem; font-size: .8rem; color: #6B7280; text-align: center; }
+
+// SSH preset: SSH rules say no logo on busy or off-palette backgrounds, so the panel is flat grey.
+body.siraj-preset-ssh {
+    .siraj-login-glow { display: none; }
+    .siraj-login-subline { font-size: .72rem; letter-spacing: .12em; }
+}
+
+@include media-breakpoint-down(md) {
+    body.pagelayout-login #page-wrapper.siraj-login { flex-direction: column; }
+    .siraj-login-brand { flex: 0 0 auto; padding: 2rem 1.5rem; min-height: 200px; }
+    .siraj-login-tagline { font-size: 1.6rem; }
+    .siraj-login-brand-logo { max-width: 140px; margin-bottom: 1rem; }
+}
