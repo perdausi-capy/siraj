@@ -248,3 +248,24 @@ in normal case, readable highlights and restriction notes, dark-safe imported de
 course Reports as cards. Moodle multiplies some badges (mix-blend-mode) which turns them black on dark: reset there.
 Sidebar edit button: greyed out (not hidden) for staff on pages with nothing to edit. /course/index.php and course
 search go to Siraj Explore for everyone except in edit mode. Home banner: slides clipped to the rounded corners.
+
+## Short addresses (24 Nov 2026)
+Siraj's pages have short addresses: `/home`, `/learning`, `/explore`, `/courses/12`, `/learn/40`, `/achievements`,
+`/certificates/12`, `/verify/CODE`, `/grades`, `/inbox`, `/messages`, `/profile`, `/team`, `/people/8`, `/teaching`,
+`/studio`, `/reports`, `/matrix`. Any extra parameters stay as `?x=1`. The old `/local/siraj/....php` addresses keep
+working (bookmarks, links in old emails, issued certificates).
+Some of Moodle's own pages too: `/calendar/month` (`/day`, `/upcoming`), `/quiz/35` (any activity: `/assign/9`,
+`/page/12` ...; list in `clean_urls::ACTIVITIES`), `/user/8`, `/admin/search`, and a settings page by its name
+(`/admin/logos`, unless the name is a real file or folder in `/admin`).
+- Links: `local_siraj\clean_urls` (Moodle's `$CFG->urlrewriteclass`) prints the short form for every Siraj link.
+- Web server: `server/clean-urls.apache.conf` (local docker, mounted by `moodle-docker/local.yml`; a copy is kept as `server/moodle-docker-local.yml`) and
+  `server/clean-urls.nginx.conf` (staging and real servers, inside the `server {}` block) map them back to the pages.
+  Keep both files in step with `clean_urls::PAGES`, `ACTIVITIES` and `CALENDAR_VIEWS`.
+- Switch on only where the server rules are in place:
+  `php -r '...require "config.php"; set_config("urlrewriteclass", "\\local_siraj\\clean_urls");'`. Off: `unset_config`.
+- Local status: on. Staging: not yet.
+
+## Local data folder
+Moodle's data folder is `~/siraj-local/moodledata` (mounted into the container by `moodle-docker/local.yml`, kept out
+of git). Before 24 Nov 2026 it lived inside the container and was lost when the container was recreated; files were
+restored from staging, covers re-applied, SCORM packages unpacked again and the logo preset re-run.

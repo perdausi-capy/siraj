@@ -25,7 +25,7 @@ else
 fi
 # Warm: theme CSS/JS and the main pages (anonymous + one logged-in pass).
 jar=$(mktemp)
-tok=$(curl -s -c "$jar" -b "$jar" http://localhost:8000/login/index.php | grep -o 'name="logintoken" value="[^"]*' | cut -d'"' -f4)
+tok=$(curl -s -c "$jar" -b "$jar" http://localhost:8000/login/ | grep -o 'name="logintoken" value="[^"]*' | cut -d'"' -f4)
 curl -s -c "$jar" -b "$jar" -o /dev/null --data-urlencode "username=layla" --data-urlencode "password@$HOME/.config/siraj-local/admin-pass" --data-urlencode "logintoken=$tok" http://localhost:8000/login/index.php
 page=$(curl -s -b "$jar" http://localhost:8000/local/siraj/index.php)
 for u in $(echo "$page" | grep -oE 'http://localhost:8000/(theme/styles\.php|lib/requirejs\.php|lib/javascript\.php)[^"]+' | sort -u); do curl -s -o /dev/null "$u"; done

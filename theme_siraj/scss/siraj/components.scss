@@ -101,10 +101,6 @@ a { color: var(--si-accent-ink); }
 .alert { border-radius: 12px; border: 0; }
 .badge { border-radius: 999px; font-weight: 600; }
 
-// Quiz
-.que .info { border-radius: 12px; background: var(--si-surface-2); border-color: var(--si-line); }
-.que .content .formulation { border-radius: 14px; background: var(--si-surface); border: 1px solid var(--si-line); color: var(--si-ink); }
-#mod_quiz_navblock .qnbutton { border-radius: 8px; }
 
 // Dark mode: Moodle pieces that hard-code white.
 [data-bs-theme="dark"] {

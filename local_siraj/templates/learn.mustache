@@ -43,14 +43,18 @@
             {{/body.reading}}
 
             {{#body.link}}
-            <div class="siraj-launch">
-                <span class="siraj-launch-icon">{{{icon_external}}}</span>
-                <div class="siraj-launch-text">
-                    <b>{{body.link.host}}</b>
-                    {{#body.link.intro}}<div class="siraj-prose">{{{body.link.intro}}}</div>{{/body.link.intro}}
-                    <p class="siraj-sub">{{#str}}link_hint, local_siraj{{/str}}</p>
+            {{! Link preview: where it goes (address bar with copy), what it is, one big button to open it. }}
+            <div class="siraj-linkcard">
+                <div class="siraj-linkcard-bar">
+                    <span class="siraj-linkcard-fav" aria-hidden="true">{{body.link.initial}}</span>
+                    <span class="siraj-linkcard-addr" dir="ltr" title="{{body.link.external}}"><b>{{body.link.host}}</b><span>{{body.link.rest}}</span></span>
+                    <button type="button" class="siraj-linkcard-copy" data-siraj-copy="{{body.link.external}}" data-done="{{#str}}linkcopied, local_siraj{{/str}}">{{{icon_copy}}}<span>{{#str}}copylink, local_siraj{{/str}}</span></button>
                 </div>
-                <a class="btn siraj-btn-flame" href="{{body.link.url}}" target="_blank" rel="noopener">{{#str}}openlink, local_siraj{{/str}} {{{icon_external}}}</a>
+                <div class="siraj-linkcard-body">
+                    {{#body.link.intro}}<div class="siraj-prose">{{{body.link.intro}}}</div>{{/body.link.intro}}
+                    <a class="btn siraj-btn-flame siraj-linkcard-open" href="{{body.link.url}}" target="_blank" rel="noopener">{{#str}}openhost, local_siraj, {{body.link.host}}{{/str}} {{{icon_external}}}</a>
+                    <p class="siraj-linkcard-hint">{{#str}}link_hint, local_siraj{{/str}}</p>
+                </div>
             </div>
             {{/body.link}}
 
@@ -217,6 +221,36 @@
     if (!player) {
         return;
     }
+    // Link step: copy the address.
+    player.querySelectorAll('[data-siraj-copy]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var label = btn.querySelector('span');
+            var before = label.textContent;
+            var done = function() {
+                label.textContent = btn.getAttribute('data-done');
+                btn.classList.add('done');
+                setTimeout(function() {
+                    label.textContent = before;
+                    btn.classList.remove('done');
+                }, 1800);
+            };
+            var text = btn.getAttribute('data-siraj-copy');
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(done);
+            } else {
+                var area = document.createElement('textarea');
+                area.value = text;
+                area.style.position = 'fixed';
+                area.style.opacity = '0';
+                document.body.appendChild(area);
+                area.select();
+                if (document.execCommand('copy')) {
+                    done();
+                }
+                area.remove();
+            }
+        });
+    });
     // Siraj AI and course progress: a drawer, so the lesson gets the full width.
     var aibtn = player.querySelector('[data-action="siraj-side"]');
     // With Siraj AI connected the button opens the Siraj AI panel instead (theme_siraj/ai).

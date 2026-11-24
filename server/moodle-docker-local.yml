@@ -1,0 +1,8 @@
+# Siraj local additions:
+# - short addresses (/home, /courses/12 ...) on the local web server;
+# - Moodle's data folder kept on disk (~/siraj-local/moodledata), so recreating the container never loses files.
+services:
+  webserver:
+    volumes:
+      - "${MOODLE_DOCKER_WWWROOT}/../server/clean-urls.apache.conf:/etc/apache2/conf-enabled/siraj-clean-urls.conf:ro"
+      - "${MOODLE_DOCKER_WWWROOT}/../moodledata:/var/www/moodledata"

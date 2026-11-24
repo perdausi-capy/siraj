@@ -124,7 +124,7 @@ $templatecontext = [
     'sirajback' => $sirajlearner && $sirajback ? ['url' => $sirajback['url']->out(false), 'label' => $sirajback['label']] : null,
 ];
 
-$PAGE->requires->strings_for_js(['palette_searchfor'], 'theme_siraj');
+$PAGE->requires->strings_for_js(['palette_searchfor', 'palette_searchsettings'], 'theme_siraj');
 $templatecontext['shell'] = \theme_siraj\output\shell::context($PAGE);
 
 echo $OUTPUT->render_from_template('theme_siraj/drawers', $templatecontext);

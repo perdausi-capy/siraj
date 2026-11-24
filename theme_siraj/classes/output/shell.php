@@ -320,6 +320,9 @@ class shell {
             'flame' => icons::flame('si-brand-flame'),
             'topflame' => icons::flame('si-brand-flame'),
             'searchurl' => (new \moodle_url('/course/search.php'))->out(false),
+            // Admins also get "Search settings for …" (Moodle's admin search), first on admin pages.
+            'adminsearchurl' => $loggedin && has_capability('moodle/site:config', \context_system::instance()) ?
+                (new \moodle_url('/admin/search.php'))->out(false) : null,
             'icon_search' => icons::svg('search'),
             'icon_globe' => icons::svg('globe'),
             'icon_moonplain' => icons::svg('moon'),

@@ -42,7 +42,7 @@
     .form-autocomplete-suggestions, .form-autocomplete-suggestions li, .sticky-footer, #sticky-footer, .stickyfooter,
     .bulkedit-toolbar, [data-region="bulk-edit-toolbar"], .gradereport-grader-table, .gradeparent table,
     .user-grade, .reportbuilder-table thead th, .reportbuilder-wrapper .card, .path-mod-quiz .mod-quiz-edit-content,
-    .path-mod-quiz #mod_quiz_navblock .card, .box.py-3, .alert-secondary, .editor_atto_toolbar,
+    .box.py-3, .alert-secondary, .editor_atto_toolbar,
     .core_contentbank_viewcontent, .tertiary-navigation, .breadcrumb {
         background-color: var(--si-surface) !important;
         color: var(--si-ink);
@@ -68,11 +68,14 @@
     a:not(.btn):not(.dropdown-item):not(.nav-link):not(.siraj-act):not(.siraj-tile):not(.siraj-item-title):not(.siraj-course-row):not(.siraj-pcourse):not(.siraj-next-row) {
         color: var(--si-accent-ink);
     }
-    .alert a, .alert .alert-link { color: inherit !important; text-decoration: underline; }
-    .alert-info { background: color-mix(in srgb, #2B8BC6 16%, var(--si-surface)); color: #CFE6F7; }
-    .alert-warning { background: color-mix(in srgb, #E9A23B 16%, var(--si-surface)); color: #F6D9A8; }
-    .alert-danger { background: color-mix(in srgb, #C2412F 18%, var(--si-surface)); color: #F6C1B8; }
-    .alert-success { background: color-mix(in srgb, #00C98C 16%, var(--si-surface)); color: #B9F0DD; }
+    // Sign-in page only; notices elsewhere use the icon-tile design in moodlepages.scss.
+    .pagelayout-login {
+        .alert a, .alert .alert-link { color: inherit !important; text-decoration: underline; }
+        .alert-info { background: color-mix(in srgb, #2B8BC6 16%, var(--si-surface)); color: #CFE6F7; }
+        .alert-warning { background: color-mix(in srgb, #E9A23B 16%, var(--si-surface)); color: #F6D9A8; }
+        .alert-danger { background: color-mix(in srgb, #C2412F 18%, var(--si-surface)); color: #F6C1B8; }
+        .alert-success { background: color-mix(in srgb, #00C98C 16%, var(--si-surface)); color: #B9F0DD; }
+    }
 
     // Buttons Moodle draws light.
     .btn-secondary, .btn-light, .btn-outline-secondary, .btn-subtle-body, .btn-icon, .btn.icon-no-margin, .fp-vb-icons .btn,
@@ -118,7 +121,6 @@
     .filemanager .fp-iconview .fp-file:hover, .fp-iconview .fp-file:hover { background-color: var(--si-surface-2) !important; }
     .dndupload-message, .filemanager .dndupload-message { color: var(--si-muted) !important; }
     .moodle-dialogue-base .moodle-dialogue-wrap { border: 1px solid var(--si-line) !important; box-shadow: var(--si-shadow); }
-    .moodle-dialogue-base .closebutton, .yui3-button.closebutton { filter: invert(1); }
     .fp-select-loading, .fp-tableview tr { background: var(--si-surface) !important; color: var(--si-ink) !important; }
     .fp-setlicense select, .fp-path-folder select { background-color: var(--si-surface-2) !important; }
     .modal-backdrop.show { opacity: .7; }
@@ -171,10 +173,6 @@
     .block .block-controls .btn, .block .card-title { color: var(--si-ink) !important; }
     .calendar_event_course .calendar-circle, .calendarwrapper .day-number { color: var(--si-ink); }
     .maincalendar td.today .day-number, .maincalendar td.today .day-number-circle { color: #062C40 !important; }
-    .que .info, .que .formulation, .que .outcome, .que .comment { color: var(--si-ink) !important; }
-    .que .formulation { background-color: var(--si-surface) !important; }
-    .que .outcome, .que .comment { background-color: var(--si-surface-2) !important; }
-    .que .info { background-color: var(--si-surface-2) !important; }
     pre, code { background: var(--si-surface-2); color: #CFE6F7; }
     .nav-tabs .nav-link.active { background: transparent; color: var(--si-accent-ink); }
 

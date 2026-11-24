@@ -1,0 +1,104 @@
+// ---------- Quiz attempt, summary and review pages (24 Nov 2026) ----------
+// Each question is one plain panel: a header row (number, state, mark, flag, edit), the question and answers, and the
+// feedback as the panel's last section, all inside the same frame (no boxes in boxes). Right or wrong shows on the
+// state label, the chosen answer and the feedback, not on the panel frame. The navigation panel sits flat in the
+// right drawer with square number buttons.
+
+$siraj-quiz-red: #D2503D;
+$siraj-quiz-amber: #C98A1B;
+
+body.path-mod-quiz {
+    .que {
+        display: block; float: none; margin: 0 0 16px !important; padding: 0; overflow: hidden;
+        background: var(--si-surface); border: 1px solid var(--si-line) !important; border-radius: 12px !important; box-shadow: none !important;
+
+        .info {
+            float: none; width: auto; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0 !important;
+            padding: 14px 24px !important; border: 0 !important; border-bottom: 1px solid var(--si-line) !important; border-radius: 0 !important;
+            background: transparent !important; color: var(--si-ink);
+            h3.no { margin: 0; font: 400 1.35rem var(--si-serif) !important; color: var(--si-ink); }
+            .qno { font-size: inherit; }
+            .state, .grade { margin: 0; font-size: 13px; color: var(--si-muted); }
+            .questionflag { margin: 0 0 0 auto; }
+            .questionflag a, .editquestion a { font-size: 13px; font-weight: 600; color: var(--si-link) !important; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+            .questionflag img { width: 14px; height: 14px; margin: 0; }
+            .editquestion .icon { margin: 0; font-size: 12px; }
+            .badge { background: var(--si-surface-2) !important; color: var(--si-muted) !important; border: 1px solid var(--si-line); font-size: 11px; font-weight: 600; padding: 3px 8px; }
+        }
+        &.correct .info .state { color: var(--si-mint); font-weight: 600; }
+        &.incorrect .info .state { color: $siraj-quiz-red; font-weight: 600; }
+        &.partiallycorrect .info .state { color: $siraj-quiz-amber; font-weight: 600; }
+
+        .content { margin: 0 !important; padding: 0; }
+        .formulation {
+            margin: 0 !important; padding: 22px 24px 24px !important; border: 0 !important; border-radius: 0 !important;
+            background: transparent !important; color: var(--si-ink) !important;
+            .qtext { font: 600 1.05rem/1.5 var(--si-head) !important; margin: 0 0 16px; p:last-child { margin-bottom: 0; } }
+        }
+        .ablock { margin: 0; }
+        .ablock .prompt { font-size: 13px; color: var(--si-muted); margin-bottom: 8px; }
+        .answer { display: grid; gap: 8px; }
+        .answer > div {
+            position: relative; display: flex; align-items: center; gap: 12px; margin: 0; padding: 12px 16px; min-height: 50px;
+            border: 1px solid var(--si-line) !important; border-radius: 10px !important; background: transparent !important; transition: border-color .15s, background .15s;
+            input[type="radio"], input[type="checkbox"] { width: 18px; height: 18px; accent-color: #00A879; margin: 0; flex: none; }
+            .d-flex, label { flex: 1; margin: 0; font-size: 15px; }
+            p { margin: 0; }
+            .answernumber { color: var(--si-muted); min-width: 1.4em; }
+            > .ms-1 { margin-left: auto !important; }
+        }
+        .answer > div:not(:has(input:disabled)):hover { border-color: color-mix(in srgb, var(--si-link) 45%, var(--si-line)) !important; cursor: pointer; }
+        .answer > div:has(input:checked:not(:disabled)) { border-color: var(--si-link) !important; background: color-mix(in srgb, var(--si-link) 7%, transparent) !important; }
+        .answer > div.correct { border-color: color-mix(in srgb, var(--si-mint) 70%, var(--si-line)) !important; background: color-mix(in srgb, var(--si-mint) 9%, transparent) !important; }
+        .answer > div.incorrect { border-color: color-mix(in srgb, #{$siraj-quiz-red} 60%, var(--si-line)) !important; background: color-mix(in srgb, #{$siraj-quiz-red} 8%, transparent) !important; }
+        .answer > div.partiallycorrect { border-color: color-mix(in srgb, #{$siraj-quiz-amber} 60%, var(--si-line)) !important; }
+        input.form-control, .answer input[type="text"] { min-height: 44px; font-size: 15px; border-radius: 10px; }
+        input.form-control.incorrect { border-color: color-mix(in srgb, #{$siraj-quiz-red} 60%, var(--si-line)) !important; }
+        input.form-control.correct { border-color: color-mix(in srgb, var(--si-mint) 70%, var(--si-line)) !important; }
+
+        // Feedback: the panel's last section, on a light tint, under a hairline.
+        .outcome, .comment {
+            margin: 0 !important; padding: 16px 24px !important; border: 0 !important; border-top: 1px solid var(--si-line) !important;
+            border-radius: 0 !important; background: var(--si-surface-2) !important; color: var(--si-ink) !important; box-shadow: none !important;
+            .feedback > div + div { margin-top: 6px; }
+            .rightanswer { font-weight: 600; }
+        }
+        .im-controls { padding: 0 24px 20px; }
+        .validationerror { margin-top: 10px; }
+    }
+    .submitbtns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px;
+        .btn, input[type="submit"] { min-height: 44px; padding: 0 22px; border-radius: 999px !important; } }
+    .submitbtns .mod_quiz-next-nav, [role="main"] > div > .mod_quiz-next-nav { font-weight: 600; text-decoration: none; }
+
+    // Navigation panel in the right drawer: flat (the drawer is the panel), number squares, actions underneath.
+    #mod_quiz_navblock {
+        background: transparent !important; border: 0 !important; box-shadow: none !important; border-radius: 0; margin: 0 !important;
+        > .card-body { padding: 4px 4px 0 !important; }
+        .card-title { display: block !important; font: 600 15px var(--si-head) !important; margin: 0 0 14px; }
+        .content { margin-top: 0 !important; }
+        .qn_buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 18px; }
+        .qnbutton {
+            position: relative; width: 40px; height: 40px; min-height: 0; margin: 0 !important; padding: 0; display: inline-grid; place-items: center;
+            border: 1px solid var(--si-line) !important; border-radius: 10px !important; background: var(--si-surface-2) !important;
+            color: var(--si-ink) !important; font: 600 14px var(--si-head); text-decoration: none !important; box-shadow: none !important;
+            .thispageholder, .trafficlight { display: none !important; }
+            &:hover { border-color: color-mix(in srgb, var(--si-link) 50%, var(--si-line)) !important; }
+        }
+        .qnbutton.answersaved, .qnbutton.complete { background: color-mix(in srgb, var(--si-link) 16%, var(--si-surface)) !important; }
+        .qnbutton.correct { background: color-mix(in srgb, var(--si-mint) 18%, var(--si-surface)) !important; border-color: color-mix(in srgb, var(--si-mint) 60%, var(--si-line)) !important; color: var(--si-mint) !important; }
+        .qnbutton.incorrect { background: color-mix(in srgb, #{$siraj-quiz-red} 14%, var(--si-surface)) !important; border-color: color-mix(in srgb, #{$siraj-quiz-red} 55%, var(--si-line)) !important; color: $siraj-quiz-red !important; }
+        .qnbutton.partiallycorrect { background: color-mix(in srgb, #{$siraj-quiz-amber} 16%, var(--si-surface)) !important; border-color: color-mix(in srgb, #{$siraj-quiz-amber} 55%, var(--si-line)) !important; color: $siraj-quiz-amber !important; }
+        // The question on screen (one page at a time): a ring.
+        .qn_buttons:not(.allquestionsononepage) .qnbutton.thispage { box-shadow: 0 0 0 2px var(--si-surface), 0 0 0 4px var(--si-link) !important; }
+        .qnbutton.flagged::after { content: ""; position: absolute; top: 3px; right: 3px; width: 7px; height: 7px; border-radius: 50%; background: $siraj-quiz-amber; }
+        .othernav { display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin: 0; padding-top: 16px; border-top: 1px solid var(--si-line);
+            > a { float: none !important; display: block; margin: 0 !important; font-size: 14px; font-weight: 600; color: var(--si-link) !important; text-decoration: none !important; text-align: start; }
+            > a.endtestlink { display: grid; place-items: center; min-height: 40px; border-radius: 10px; background: var(--si-ink); color: var(--si-surface) !important; }
+            .singlebutton, form { margin: 0; }
+            .btn { width: 100%; min-height: 40px; border-radius: 10px !important; } }
+        .footer:empty { display: none; }
+    }
+}
+[dir="rtl"] body.path-mod-quiz #mod_quiz_navblock .qnbutton.flagged::after { right: auto; left: 3px; }
+body.path-mod-quiz .que .qtype_multichoice_clearchoice { padding: 0; margin: 4px 0 0 !important; a, .btn-link { padding-inline: 0 !important; font-size: 14px; } }
+[data-bs-theme="dark"] body.path-mod-quiz .que .questionflag img.questionflagimage { filter: invert(1) brightness(1.4); }

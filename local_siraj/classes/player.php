@@ -132,9 +132,14 @@ class player {
         }
         if ($cm->modname === 'url') {
             require_once($CFG->dirroot . '/mod/url/locallib.php');
+            $host = (string)parse_url($instance->externalurl, PHP_URL_HOST);
+            $rest = preg_replace('~^[a-z][a-z0-9+.-]*://[^/?#]*~i', '', $instance->externalurl);
             return ['link' => [
                 'url' => url_get_full_url($instance, $cm, $this->p->course),
-                'host' => parse_url($instance->externalurl, PHP_URL_HOST),
+                'external' => $instance->externalurl,
+                'host' => preg_replace('/^www\./', '', $host),
+                'rest' => $rest === '/' ? '' : $rest,
+                'initial' => \core_text::strtoupper(\core_text::substr(preg_replace('/^www\./', '', $host) ?: '?', 0, 1)),
                 'intro' => $intro,
             ]];
         }
@@ -429,6 +434,7 @@ class player {
             'icon_back' => icons::svg('arrow-left'),
             'icon_check' => icons::svg('check'),
             'icon_external' => icons::svg('external'),
+            'icon_copy' => icons::svg('copy'),
             'icon_download' => icons::svg('download'),
             'icon_x' => icons::svg('x'),
             'icon_sparkles' => icons::svg('sparkles'), 'aiready' => ai::available(),

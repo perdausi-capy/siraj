@@ -617,36 +617,7 @@ body.siraj-learn:has(.siraj-player.is-stage) {
     .siraj-pagehead .siraj-seg { width: 100%; button { flex: 1; justify-content: center; } }
 }
 
-// ---------- Quiz (Moodle's attempt pages, restyled) ----------
-body.path-mod-quiz {
-    .que {
-        display: block; margin-bottom: 22px;
-        .info {
-            float: none; width: auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 12px 16px;
-            margin: 0 0 -1px; border-radius: 16px 16px 0 0; border: 1px solid var(--si-line); background: var(--si-surface-2);
-            h3 { margin: 0; font-size: .9rem; } .state, .grade { font-size: 13px; color: var(--si-muted); margin: 0; }
-            .questionflag { margin: 0 0 0 auto; }
-        }
-        .content { margin: 0; }
-        .formulation {
-            padding: 26px 28px; border-radius: 0 0 16px 16px; background: var(--si-surface); border: 1px solid var(--si-line); color: var(--si-ink);
-            .qtext { font: 600 1.2rem/1.5 var(--si-head); margin-bottom: 18px; }
-        }
-        .answer { display: grid; gap: 10px; }
-        .answer > div, .answer .r0, .answer .r1 {
-            position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 16px; min-height: 56px;
-            border: 1px solid var(--si-line); border-radius: 12px; background: var(--si-surface); cursor: pointer; transition: border-color .15s, background .15s;
-            &:hover { border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)); }
-            &:has(input:checked) { border-color: var(--si-mint); background: var(--si-mint-soft); }
-            input[type="radio"], input[type="checkbox"] { width: 20px; height: 20px; accent-color: #00A879; margin: 0; flex: none; }
-            label, .d-flex { flex: 1; margin: 0; cursor: pointer; font-size: 1rem; }
-        }
-        .ablock .prompt { font-size: 13px; color: var(--si-muted); margin-bottom: 8px; }
-        input.form-control, .answer input[type="text"] { min-height: 48px; font-size: 1rem; }
-    }
-    .submitbtns { display: flex; justify-content: space-between; gap: 12px; .btn { min-height: 46px; padding: 0 22px; } }
-    #mod_quiz_navblock .qnbutton { width: 38px; height: 38px; border-radius: 10px; }
-}
+// Quiz questions, answers and the navigation panel: see quiz.scss.
 
 // ---------- Achievements ----------
 .siraj-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 30px; }
@@ -677,8 +648,8 @@ body.path-mod-quiz {
     small { color: #C8E1E6; font-size: 13px; position: relative; }
 }
 .siraj-cert-foot {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; font-size: 13.5px; color: var(--si-muted);
-    .btn { display: inline-flex; align-items: center; gap: 6px; .si-icon { width: 15px; height: 15px; } }
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; > span { min-width: 0; line-height: 1.35; } padding: 14px 18px; font-size: 13.5px; color: var(--si-muted);
+    .btn { display: inline-flex; align-items: center; gap: 6px; flex: none; white-space: nowrap; padding-inline: 16px; .si-icon { width: 15px; height: 15px; } }
 }
 .siraj-cert-next {
     padding: 22px; gap: 10px; background: linear-gradient(140deg, var(--si-mint-soft), var(--si-surface));
@@ -776,13 +747,6 @@ body.path-mod-quiz {
         th { color: var(--si-muted); font-weight: 600; width: 32%; text-transform: none; letter-spacing: 0; }
     }
     table.quizreviewsummary tr:has(th:only-of-type):nth-last-child(-n+2) td { font: 700 1.15rem var(--si-head); color: var(--si-ink); }
-    .que.correct .formulation { border-color: color-mix(in srgb, var(--si-mint) 55%, var(--si-line)); }
-    .que.incorrect .formulation { border-color: color-mix(in srgb, #C2412F 45%, var(--si-line)); }
-    .que .outcome, .que .comment {
-        margin-top: 12px; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--si-line); background: var(--si-surface-2); color: var(--si-ink);
-    }
-    .que .answer .correct { border-color: var(--si-mint) !important; background: var(--si-mint-soft) !important; }
-    .que .answer .incorrect { border-color: color-mix(in srgb, #C2412F 55%, var(--si-line)) !important; background: color-mix(in srgb, #C2412F 7%, var(--si-surface)) !important; }
     .quizsummaryofattempt, .generaltable.quizattemptsummary { border-radius: var(--si-radius); }
     .box.quizattempt, .quizinfo { text-align: left; }
     .continuebutton .btn, .quizattempt .btn { min-height: 46px; padding: 0 22px; }
@@ -1204,4 +1168,42 @@ body.path-calendar {
     .siraj-fb-q { padding: 16px; }
     .siraj-files small { display: none; }
     .siraj-act-search { max-width: none; }
+}
+
+// Calendar month: "today" is one centred circle (the number inside it carries no box of its own).
+.maincalendar td.today .day-number-circle { display: inline-grid !important; place-items: center; width: 30px; height: 30px; padding: 0 !important; line-height: 1; }
+.maincalendar td.today .day-number { background: none !important; padding: 0 !important; margin: 0 !important; line-height: 1; width: auto; height: auto; }
+// Loading a month: a light veil in the page's own colour with the spinner, not a grey slab.
+.maincalendar .overlay-icon-container, .block_calendar_upcoming .overlay-icon-container, .calendarwrapper .overlay-icon-container {
+    background: color-mix(in srgb, var(--si-bg) 45%, transparent) !important; border-radius: 12px; backdrop-filter: blur(1.5px);
+    .loading-icon .icon { color: var(--si-link); font-size: 22px; width: auto; height: auto; } }
+
+// Drop-downs and fields: a thin, calm focus ring; native option lists follow the colour mode.
+.form-select:focus, .form-control:focus, select.custom-select:focus {
+    border-color: color-mix(in srgb, var(--si-link) 65%, var(--si-line)) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-link) 18%, transparent) !important; outline: 0; }
+[data-bs-theme="dark"] select { color-scheme: dark; }
+
+// ---------- Learning mode: link step (24 Nov 2026) ----------
+// A link preview: an address bar that shows where it goes (with Copy), the description, one big Open button.
+.siraj-linkcard { max-width: 760px; margin: 6px 0 0; border: 1px solid var(--si-line); border-radius: 16px; background: var(--si-surface); overflow: hidden; }
+.siraj-linkcard-bar { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--si-surface-2); border-bottom: 1px solid var(--si-line); }
+.siraj-linkcard-fav { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center;
+    background: var(--si-mint-soft); color: var(--si-mint-ink, var(--si-mint)); font: 700 13px var(--si-head); }
+.siraj-linkcard-addr { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; color: var(--si-muted);
+    b { color: var(--si-ink); font-weight: 600; } }
+.siraj-linkcard-copy { flex: none; display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 8px;
+    border: 1px solid var(--si-line); background: var(--si-surface); color: var(--si-muted); font: 600 12.5px var(--si-head); cursor: pointer;
+    svg { width: 14px; height: 14px; }
+    &:hover { color: var(--si-ink); }
+    &.done { color: var(--si-mint-ink, var(--si-mint)); border-color: color-mix(in srgb, var(--si-mint) 50%, var(--si-line)); } }
+.siraj-linkcard-body { padding: 32px 28px 26px; text-align: center;
+    .siraj-prose { max-width: 56ch; margin: 0 auto 22px; color: var(--si-ink); font-size: 15.5px; p:last-child { margin-bottom: 0; } } }
+.siraj-linkcard-open { min-height: 52px; padding: 0 28px !important; font-size: 16px !important; display: inline-flex !important; align-items: center; gap: 10px;
+    svg { width: 17px; height: 17px; } }
+.siraj-linkcard-hint { margin: 14px 0 0; font-size: 12.5px; color: var(--si-faint); }
+@include media-breakpoint-down(md) {
+    .siraj-linkcard-copy span { display: none; }
+    .siraj-linkcard-body { padding: 24px 18px 20px; }
+    .siraj-linkcard-open { width: 100%; justify-content: center; }
 }

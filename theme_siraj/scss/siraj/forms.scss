@@ -1,0 +1,32 @@
+// ---------- Moodle forms across the site (24 Nov 2026) ----------
+// A form with sections (activity and course settings, assignment, profile, enrolment ...) is one plain panel: the
+// sections are parts of it divided by hairlines, not cards inside a card. The Save buttons sit in the panel's sticky
+// footer. Same look as the admin settings pages (admin.scss).
+
+body:not(.pagelayout-login) #region-main form.mform:has(> fieldset.collapsible) {
+    background: var(--si-surface); border: 1px solid var(--si-line) !important; border-radius: 12px; box-shadow: none !important;
+    padding: 0 24px; margin-bottom: 16px;
+
+    > .collapsible-actions { display: flex; justify-content: flex-end; margin: 0; padding: 14px 0 0;
+        a { font-size: 13.5px; font-weight: 600; color: var(--si-link) !important; } }
+    > .collapsible-actions + fieldset.collapsible { border-top: 0 !important; }
+    > fieldset.collapsible {
+        margin: 0 !important; padding: 14px 0 !important; background: transparent !important; box-shadow: none !important;
+        border: 0 !important; border-radius: 0 !important; border-top: 1px solid var(--si-line) !important;
+        .ftoggler h3, legend.ftoggler { font: 600 1.05rem var(--si-head) !important; }
+        .fcontainer { padding: 10px 0 0 !important; }
+    }
+    > fieldset.collapsible:first-of-type { border-top: 0 !important; }
+    // Fields that sit after the sections (e.g. "Send content change notification") and the required note.
+    > .fitem:not([id^="fgroup_id_buttonar"]) { margin: 0 !important; padding: 14px 0; border-top: 1px solid var(--si-line); }
+    > .fdescription.required { margin: 0; padding: 12px 0 16px; font-size: 12.5px; color: var(--si-faint); }
+
+    // Save bar: the panel's footer, kept in view while scrolling.
+    #fgroup_id_buttonar, [id^="fgroup_id_buttonar"] {
+        position: sticky; bottom: 0; z-index: 5; margin: 0 -24px !important; padding: 14px 24px !important;
+        background: var(--si-surface) !important; border-top: 1px solid var(--si-line); backdrop-filter: none; box-shadow: none;
+        > .col-form-label:empty, > .col-md-3:not(:has(*:not(.form-label-addon:empty))) { display: none; }
+        > .felement, > .col-md-9 { flex: 1 1 100%; max-width: 100%; display: flex; flex-wrap: wrap; gap: 10px; padding: 0; }
+        .btn { min-height: 44px; padding: 0 22px; border-radius: 999px !important; margin: 0 !important; }
+    }
+}

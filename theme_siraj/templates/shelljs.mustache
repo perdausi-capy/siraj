@@ -160,20 +160,44 @@
         back.querySelectorAll('.siraj-palette-list a:not(.siraj-palette-searchrow)').forEach(function(a) {
             a.hidden = q !== '' && a.textContent.toLowerCase().indexOf(q) === -1;
         });
-        var row = back.querySelector('.siraj-palette-searchrow');
+        var row = back.querySelector('.siraj-palette-searchrow:not(.siraj-palette-adminrow)');
         row.hidden = q === '';
         row.querySelector('span').textContent = M.util.get_string('palette_searchfor', 'theme_siraj', q);
+        var adminrow = back.querySelector('.siraj-palette-adminrow');
+        if (adminrow) {
+            adminrow.hidden = q === '';
+            adminrow.querySelector('span').textContent = M.util.get_string('palette_searchsettings', 'theme_siraj', q);
+        }
+    }
+    // Settings search (admins): Moodle's admin search with the typed words.
+    function searchSettings() {
+        var adminrow = back.querySelector('.siraj-palette-adminrow');
+        window.location.href = adminrow.getAttribute('href') + '?query=' + encodeURIComponent(back.querySelector('input').value.trim());
     }
     if (back) {
         back.addEventListener('click', function(e) {
             if (e.target === back) {
                 closePalette();
             }
-            if (e.target.closest('.siraj-palette-searchrow')) {
+            if (e.target.closest('.siraj-palette-adminrow')) {
+                e.preventDefault();
+                searchSettings();
+            } else if (e.target.closest('.siraj-palette-searchrow')) {
                 e.preventDefault();
                 back.querySelector('form').submit();
             }
         });
+        // On admin pages the settings search comes first, and Enter runs it.
+        var adminrow = back.querySelector('.siraj-palette-adminrow');
+        if (adminrow && document.body.classList.contains('pagelayout-admin')) {
+            adminrow.parentNode.insertBefore(adminrow, back.querySelector('.siraj-palette-searchrow'));
+            back.querySelector('form').addEventListener('submit', function(e) {
+                if (back.querySelector('input').value.trim() !== '') {
+                    e.preventDefault();
+                    searchSettings();
+                }
+            });
+        }
         back.querySelector('input').addEventListener('input', function(e) {
             filter(e.target.value);
         });

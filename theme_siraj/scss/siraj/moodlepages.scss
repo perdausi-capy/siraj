@@ -1,6 +1,32 @@
 // ---------- Moodle's own teacher and admin pages, in the Siraj look (20 Nov 2026) ----------
 // Course pages in edit mode, activity settings and reports, participants, grader, quiz/SCORM reports, Site
 // administration. Siraj's own pages (body.siraj-page) and sign-in are left alone.
+// Notice icons (masks): info, check, warning.
+$siraj-i-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9.5'/%3E%3Cpath d='M12 11v6M12 7.5v.01'/%3E%3C/svg%3E");
+$siraj-i-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+$siraj-i-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5l9.5 16.5h-19z'/%3E%3Cpath d='M12 10v4.5M12 17.5v.01'/%3E%3C/svg%3E");
+
+// Notices on every page except sign-in (Siraj pages and Moodle pages alike).
+body:not(.pagelayout-login) {
+    // Messages: a calm card with a small tinted icon tile at the start (no coloured stripe).
+    .alert { --siraj-alert: var(--si-link); --siraj-alert-icon: #{$siraj-i-info};
+        position: relative; background: color-mix(in srgb, var(--siraj-alert) 5%, var(--si-surface)) !important; color: var(--si-ink) !important;
+        border: 1px solid color-mix(in srgb, var(--siraj-alert) 16%, var(--si-line)) !important; border-radius: 16px; box-shadow: none;
+        padding: 17px 52px 17px 62px; min-height: 58px; line-height: 1.5;
+        &::before { content: ""; position: absolute; left: 14px; top: 50%; width: 32px; height: 32px; margin-top: -16px; border-radius: 10px;
+            background: color-mix(in srgb, var(--siraj-alert) 14%, transparent); }
+        &::after { content: ""; position: absolute; left: 22px; top: 50%; width: 16px; height: 16px; margin-top: -8px; background: var(--siraj-alert);
+            -webkit-mask: var(--siraj-alert-icon) center / contain no-repeat; mask: var(--siraj-alert-icon) center / contain no-repeat; }
+        a { color: var(--si-link) !important; font-weight: 600; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .btn-close { position: absolute; top: 50%; right: 14px; margin-top: -14px; width: 28px; height: 28px; padding: 0; border-radius: 8px; opacity: .5; background-size: 10px; }
+        .btn-close:hover { opacity: .9; background-color: var(--si-surface-2); } }
+    .alert-success { --siraj-alert: #12A877; --siraj-alert-icon: #{$siraj-i-check}; }
+    .alert-warning { --siraj-alert: #D58A12; --siraj-alert-icon: #{$siraj-i-warn}; }
+    .alert-danger, .alert-error { --siraj-alert: #D93F3F; --siraj-alert-icon: #{$siraj-i-warn}; }
+    .alert-secondary { --siraj-alert: var(--si-faint); }
+}
+
 body:not(.siraj-page):not(.pagelayout-login) {
     // Page header: always on the left (Moodle centres it on some pages), breadcrumb as a quiet trail, not a box.
     #page-header.header-maxwidth { max-width: none; padding-left: 0; padding-right: 0; }
@@ -14,18 +40,13 @@ body:not(.siraj-page):not(.pagelayout-login) {
     // The page's own toolbar (report picker, filters): a plain row, not a grey slab.
     .tertiary-navigation { background: transparent !important; border: 0 !important; padding: 0 !important; margin: 0 0 18px !important;
         .row, .d-flex { gap: 10px; align-items: center; }
-        .tertiary-navigation-selector .dropdown-toggle, .navitem > h2, .navitem .dropdown-toggle.btn {
-            font: 600 1.15rem var(--si-head) !important; color: var(--si-ink) !important; }
-        .tertiary-navigation-selector .dropdown-toggle { padding: 8px 14px; border-radius: 12px; border: 1px solid var(--si-line); background: var(--si-surface); } }
-    // Messages: a calm card with a coloured edge instead of solid red or blue slabs.
-    .alert { --siraj-alert: var(--si-link); background: var(--si-surface) !important; color: var(--si-ink) !important;
-        border: 1px solid var(--si-line) !important; border-inline-start: 4px solid var(--siraj-alert) !important; border-radius: 14px;
-        box-shadow: none; padding: 14px 18px;
-        a { color: var(--si-link) !important; } .btn-close { opacity: .6; } }
-    .alert-success { --siraj-alert: #12A877; }
-    .alert-warning { --siraj-alert: #E0A030; }
-    .alert-danger, .alert-error { --siraj-alert: #D93F3F; }
-    .alert-secondary { --siraj-alert: var(--si-faint); }
+        .navitem > h2 { font: 600 1.05rem var(--si-head) !important; color: var(--si-ink) !important; }
+        // Filters, pickers and Actions: one control size (40px, 14px text), see frames.scss.
+        .tertiary-navigation-selector .dropdown-toggle, .navitem .dropdown-toggle.btn {
+            min-height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px !important; border-radius: 10px !important;
+            border: 1px solid var(--si-line) !important; background: var(--si-surface) !important;
+            font: 600 14px var(--si-head) !important; color: var(--si-ink) !important;
+            * { font-size: 14px !important; } } }
     // A-Z name filters: small, quiet pills.
     .initialbar { align-items: center; gap: 6px 10px; margin: 0 0 6px;
         .initialbarlabel { flex: none; min-width: 84px; font-size: 12.5px; color: var(--si-faint); }
@@ -45,7 +66,20 @@ body:not(.siraj-page):not(.pagelayout-login) {
     .automatic-completion-conditions .badge, .completion-info .badge {
         background: var(--si-surface-2) !important; color: var(--si-ink) !important; border: 1px solid var(--si-line); font-weight: 500; padding: 6px 10px;
         mix-blend-mode: normal !important; }
-    .activity-header { background: transparent !important; padding: 0 !important; margin-bottom: 18px; }
+    // Activity header (teacher view of a quiz, assignment ...): one calm panel. Completion and dates on one line,
+    // the description under a hairline; no light rules between them.
+    .activity-header { background: var(--si-surface) !important; border: 1px solid var(--si-line) !important; border-radius: 12px !important;
+        padding: 14px 20px !important; margin: 0 0 18px !important; box-shadow: none !important;
+        .activity-information { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; border: 0 !important; margin: 0 !important; padding: 0 !important; }
+        .completion-info, .activity-dates, [data-region="activity-dates"] { border: 0 !important; margin: 0 !important; padding: 0 !important; background: none !important; border-radius: 0 !important; }
+        .activity-dates { font-size: 13.5px; color: var(--si-muted); strong { color: var(--si-ink); font-weight: 600; } }
+        .activity-description { margin: 12px 0 0 !important; padding: 12px 0 0 !important; border-top: 1px solid var(--si-line) !important; color: var(--si-muted); p:last-child { margin: 0; } } }
+    .activity-header:not(:has(.activity-information *)) .activity-description { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+    .activity-header:not(:has(> *:not(.visually-hidden) *)) { display: none; }
+    // Quiz facts (grading method, grade to pass): a row of small facts, not a grey slab.
+    .box.quizinfo { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 16px 0 0; padding: 14px 20px !important; border-radius: 12px; background: var(--si-surface) !important;
+        border: 1px solid var(--si-line); color: var(--si-muted); font-size: 14px; p { margin: 0; } }
+    .box.quizattempt:empty { display: none; }
     // Empty boxes Moodle prints anyway (an activity without a description).
     #intro:empty, .box.py-3:empty, .activity-description:empty { display: none !important; }
     // Pinned button rows (forms, grader "Save changes", bulk edit): page-coloured glass, never a light slab.
@@ -118,4 +152,41 @@ body:not(.siraj-page) [role="main"] > .errorboxcontent:not(.alert) {
     &::before { content: ""; position: absolute; left: 26px; top: 30px; width: 22px; height: 22px; border-radius: 50%;
         border: 2px solid var(--si-faint); background: radial-gradient(circle, var(--si-faint) 0 2px, transparent 2.5px) 50% 70% / 100% 100% no-repeat,
         linear-gradient(var(--si-faint), var(--si-faint)) 50% 30% / 2px 7px no-repeat; }
+}
+
+// Site administration (home and each tab): pill tabs, the untitled first group as quick links, then one card per
+// category in two columns, links as rows with a chevron. Empty categories (a heading with no links) are hidden.
+#page-admin-search, #page-admin-category {
+    .nav-tabs { gap: 4px; border: 0 !important; background: transparent !important; margin: 4px 0 22px; flex-wrap: wrap;
+        .nav-item { display: flex; align-items: center; }
+        .nav-link { height: auto !important; min-height: 0; line-height: 1.3; border: 0 !important; border-radius: 999px; padding: 8px 16px; font-weight: 600; font-size: 14px; color: var(--si-muted) !important; background: transparent !important; }
+        .nav-link:hover { color: var(--si-ink) !important; background: var(--si-surface-2) !important; }
+        .nav-link.active { color: var(--si-surface) !important; background: var(--si-ink) !important; }
+        .nav-link.active::after, .nav-link::after { display: none; } }
+    .secondary-navigation, .tertiary-navigation { background: transparent !important; border: 0 !important; }
+    #region-main .tab-pane > .container-fluid, #region-main [role="main"] > .container-fluid { columns: 2 440px; column-gap: 16px; padding: 0; }
+    #region-main .container-fluid > hr { display: none; }
+    #region-main .container-fluid > .row {
+        display: block; break-inside: avoid; margin: 0 0 16px; padding: 20px 22px 12px; border-radius: 18px;
+        background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
+        > [class*="col"] { width: auto; max-width: none; flex: none; padding: 0; }
+        h4, h5 { font: 400 1.35rem/1.15 var(--si-serif); margin: 0 0 8px; a { color: var(--si-ink) !important; text-decoration: none; } a:hover { color: var(--si-link) !important; } }
+        ul { columns: auto; display: block; margin: 0; padding: 0; }
+        li { padding: 0; border-top: 1px solid var(--si-line); &:first-child { border-top: 0; } }
+        li a { position: relative; display: block; padding: 10px 26px 10px 0; color: var(--si-ink) !important; font-weight: 500; font-size: 14.5px; text-decoration: none; border: 0; background: none;
+            &::after { content: ""; position: absolute; right: 6px; top: 50%; width: 7px; height: 7px; margin-top: -4px;
+                border-top: 1.8px solid var(--si-faint); border-right: 1.8px solid var(--si-faint); transform: rotate(45deg); transition: right .15s; }
+            &:hover { color: var(--si-link) !important; &::after { right: 2px; border-color: var(--si-link); } } }
+        // A sub-group inside a category (Plugins, Appearance ...): its own small heading.
+        .row { display: block; margin: 8px 0 0; > [class*="col"] { padding: 0; width: auto; max-width: none; } }
+    }
+    #region-main .container-fluid > .row:not(:has(li)) { display: none; }
+    // The untitled first group on the General tab: quick links as chips across the top.
+    #region-main .container-fluid > .row:not(:has(> .col-sm-3 > *)) {
+        column-span: all; padding: 0; background: transparent; border: 0; box-shadow: none; margin: 0 0 20px;
+        ul { display: flex; flex-wrap: wrap; gap: 8px; }
+        li { border: 0; }
+        li a { padding: 9px 16px; border-radius: 999px; background: var(--si-surface); border: 1px solid var(--si-line); font-weight: 600; font-size: 13.5px;
+            &::after { display: none; } &:hover { border-color: var(--si-link); } }
+    }
 }

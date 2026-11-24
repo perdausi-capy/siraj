@@ -100,6 +100,14 @@ class hook_callbacks {
         if (!get_config('local_siraj', 'courseoverview') || (strpos($pagetype, 'course-view-') !== 0 && $pagetype !== 'enrol-index')) {
             return;
         }
+        if (strpos($pagetype, 'course-view-') === 0 && isloggedin() && !isguestuser() && $PAGE->course->id != SITEID
+                && has_capability('moodle/course:update', \context_course::instance($PAGE->course->id))) {
+            // Staff work on Moodle's course page; a button in its header goes back to the Siraj course page.
+            $PAGE->add_header_action(\html_writer::link(new \moodle_url('/local/siraj/course.php', ['id' => $PAGE->course->id]),
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
+                . 'aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>' . s(get_string('coursepagebtn', 'local_siraj')),
+                ['class' => 'siraj-coursepage-btn']));
+        }
         if (!isloggedin() || isguestuser() || $PAGE->user_is_editing() || optional_param('siraj', '', PARAM_ALPHA) === 'classic'
                 || $PAGE->course->id == SITEID || has_capability('moodle/course:update', \context_course::instance($PAGE->course->id))) {
             return;

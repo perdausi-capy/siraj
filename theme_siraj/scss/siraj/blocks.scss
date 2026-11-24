@@ -159,23 +159,24 @@
         .userinitials { width: 30px; height: 30px; font-size: 11px; background: var(--si-mint-soft); color: var(--si-accent-ink); }
         .uservisibility .icon { color: var(--si-muted); }
     }
-    // Upcoming events: each event a row with its activity icon on a light chip (visible in dark mode too).
+    // Upcoming events: each event a row: activity icon in one small tile, the name, then the date in a quiet line
+    // (red when due today or overdue, with no icon tile of its own).
     .block_calendar_upcoming {
-        .event {
-            display: flex; align-items: flex-start; gap: 12px; padding: 11px 4px; border-bottom: 1px solid var(--si-line);
-            &:last-of-type { border-bottom: 0; }
-            img.icon, .activityiconcontainer {
-                flex: none; width: 34px !important; height: 34px !important; padding: 7px; margin: 0 !important;
-                border-radius: 10px; background: #EAF3F8;
-            }
-            a { color: var(--si-ink) !important; font-weight: 700; }
-            .date { color: var(--si-muted); font-size: 12px; margin-top: 2px; }
-        }
+        .event { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--si-line) !important;
+            &:last-of-type { border-bottom: 0 !important; }
+            .activityiconcontainer { flex: none; display: grid; place-items: center; width: 36px !important; height: 36px !important; padding: 0; margin: 0 !important;
+                border-radius: 10px; background: var(--siraj-icontile, #EAF1F7) !important;
+                img.icon { width: 18px !important; height: 18px !important; padding: 0 !important; margin: 0 !important; background: none !important; } }
+            > .overflow-auto { min-width: 0; }
+            h4 { margin: 0 0 2px !important; a { color: var(--si-ink) !important; font: 600 14.5px var(--si-head) !important; } }
+            .date { font-size: 12.5px; margin: 0; a { font: inherit !important; color: inherit !important; } .text-danger { color: #D93F3F !important; font-weight: 600; }
+                img.icon { width: 13px !important; height: 13px !important; padding: 0 !important; margin: 0 4px 0 0 !important; background: none !important; vertical-align: -1px; } } }
     }
-    // Timeline: activity icons on the same light chip, so they show in dark mode.
-    .block_timeline .activityiconcontainer {
-        flex: none; width: 34px !important; height: 34px !important; padding: 7px; border-radius: 10px; background: #EAF3F8 !important;
-        img, .activityicon { width: 20px; height: 20px; filter: none !important; }
+    // Timeline: the filter row sits straight on the block (no divider under it); activity icons in the same tile.
+    .block_timeline {
+        .border-bottom { border-bottom: 0 !important; }
+        .activityiconcontainer { flex: none; width: 36px !important; height: 36px !important; padding: 9px; border-radius: 10px; background: var(--siraj-icontile, #EAF1F7) !important;
+            img, .activityicon { width: 18px; height: 18px; filter: none !important; } }
     }
     // Latest announcements: headline first, then a quiet "date · author" line.
     .block_news_items {
@@ -273,8 +274,10 @@
 .siraj-myblocks .block_calendar_upcoming .content > div:not(.event):not(.footer):not(.overlay-icon-container) { color: var(--si-muted); }
 
 // Dark mode: chips and surfaces follow the tokens; the event icon chip stays light so the activity icons read.
+// Dark: the activity icons are dark artwork, so their tile is drawn in its inverse colour and inverted as a whole
+// (light icon on a dark tile, like the calendar page). The warning icon by a date stays as it is.
 [data-bs-theme="dark"] .siraj-myblocks {
-    .block_calendar_upcoming .event img.icon { background: #DCE8F0; }
+    .block_calendar_upcoming .activityiconcontainer, .block_timeline .activityiconcontainer { --siraj-icontile: #E1D5C3; filter: invert(1); }
     .dashboard-card .categoryname { color: var(--si-muted) !important; }
 }
 

@@ -235,5 +235,7 @@ foreach ($arabic as [$short, $name, $catid, $img, $mandatory, $minutes, $summary
     }
     echo "arabic course: $short\n";
 }
+// Real feedback on the quiz questions (the generator's test text out).
+require(__DIR__ . '/quizfeedback.php');
 purge_all_caches();
 echo "demo content done\n";

@@ -1,0 +1,210 @@
+// ---------- Site administration pages (24 Nov 2026) ----------
+// Settings pages and admin search results share one layout: each setting is a row with what it is on the left (name,
+// description, technical name) and the control on the right; on/off settings are switches; the save bar sits at the
+// bottom of the card. Also the web services checklist and the file box.
+
+$siraj-switch-knob: radial-gradient(circle, #fff 0 8px, transparent 8.5px);
+
+#adminsettings {
+    // One plain panel per page (or per search result), no shadow, small corners; the page title sits above it.
+    .settingsform { background: transparent; border: 0; padding: 0; box-shadow: none; }
+    .settingsform > h2 { font: 400 clamp(1.8rem, 2.6vw, 2.3rem)/1.1 var(--si-serif) !important; margin: 4px 0 18px; }
+    .settingsform > fieldset, .settingsform > .tab-content > .tab-pane > fieldset, fieldset.adminsettings {
+        padding: 0 24px; margin: 0 0 12px; border-radius: 12px; background: var(--si-surface); border: 1px solid var(--si-line) !important; box-shadow: none; }
+    fieldset > h3:not(.adminpagetitle), .settingsform h3:not(.adminpagetitle) {
+        font: 600 13px var(--si-head) !important; letter-spacing: .06em; text-transform: uppercase; color: var(--si-faint);
+        margin: 0 -24px; padding: 22px 24px 8px; border: 0 !important; border-top: 1px solid var(--si-line) !important; }
+    fieldset > h3:first-child, fieldset > .clearer:first-child + h3 { border-top: 0 !important; }
+    .settingsform > fieldset > p, fieldset > .box { color: var(--si-muted); }
+
+    // One setting: name, description and technical name on the left; the control and its default on the right.
+    .form-item {
+        display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: 40px; row-gap: 2px; align-items: start;
+        padding: 20px 0; margin: 0; border: 0;
+        > .form-label { grid-column: 1; grid-row: 1; width: auto; max-width: none; padding: 0; text-align: start !important; font-weight: 600; font-size: 15px; color: var(--si-ink);
+            label { font-weight: 600; font-size: 15px; color: var(--si-ink); margin: 0; }
+            .form-shortname { margin-top: 3px; color: var(--si-faint) !important; font: 500 11.5px ui-monospace, SFMono-Regular, Menlo, monospace;
+                .highlight { background: color-mix(in srgb, var(--si-link) 18%, transparent) !important; color: var(--si-ink) !important; border-radius: 3px; } } }
+        > .form-setting { display: contents; }
+        > .form-setting > * { grid-column: 2; }
+        // The control spans the first rows, so the description sits right under the name even next to a tall control.
+        > .form-setting > :first-child { grid-row: 1 / span 3; }
+        // Description ("form-text" alone; a text box's wrapper is also "form-text" but with "defaultsnext").
+        > .form-setting > .form-text:not(.defaultsnext), > .form-setting > .form-description { grid-column: 1; grid-row: 2 / span 6; margin-top: 6px !important;
+            color: var(--si-muted); font-size: 13.5px; line-height: 1.6; p:last-child { margin-bottom: 0; } }
+        > .form-setting > .form-defaultinfo { margin-top: 6px; font-size: 12px; color: var(--si-faint) !important; }
+        .form-select, .form-control { max-width: 100%; border-radius: 10px; }
+        .form-select { min-width: 220px; }
+    }
+    .form-item + .form-item, h3 + .form-item ~ .form-item { border-top: 1px solid var(--si-line); }
+
+    // On/off settings: a switch instead of a checkbox.
+    .form-checkbox input[type="checkbox"], .form-item .defaultsnext > input[type="checkbox"] {
+        appearance: none; -webkit-appearance: none; width: 44px; height: 24px; margin: 0; border-radius: 999px; cursor: pointer; vertical-align: middle;
+        background: $siraj-switch-knob 2px 50% / 20px 20px no-repeat, color-mix(in srgb, var(--si-faint) 45%, var(--si-line));
+        transition: background-position .18s ease, background-color .18s ease; border: 0;
+        &:checked { background: $siraj-switch-knob calc(100% - 2px) 50% / 20px 20px no-repeat, var(--si-mint, #12A877); }
+        &:focus-visible { outline: 2px solid var(--si-link); outline-offset: 2px; }
+        // Arabic: the knob travels the other way (background positions are not mirrored automatically).
+        [dir="rtl"] & { background-position: calc(100% - 2px) 50%, 0 0; &:checked { background-position: 2px 50%, 0 0; } }
+        &:disabled { opacity: .45; cursor: not-allowed; }
+    }
+
+    // Save: a plain row under the panel that stays in reach while scrolling; no box of its own.
+    > div > .row:last-child, .row:has(> .offset-sm-3 > .btn-primary) {
+        position: sticky; bottom: 0; z-index: 5; display: flex; justify-content: flex-end; margin: 0; padding: 14px 0 18px; border: 0;
+        background: linear-gradient(to bottom, transparent, var(--si-bg) 40%);
+        > [class*="col"] { width: auto; max-width: none; flex: none; margin: 0; padding: 0; }
+        .btn-primary { min-height: 44px; padding: 0 28px; border-radius: 10px; font-weight: 600; }
+    }
+}
+
+// Admin search results: a title, then each matching page as a small heading with its settings in a panel.
+#page-admin-search #region-main {
+    [role="main"] > hr { display: none; }
+    #adminsettings > fieldset { border: 0 !important; padding: 0; margin: 0; background: none; }
+    h2.main { font: 400 clamp(1.8rem, 2.6vw, 2.3rem)/1.1 var(--si-serif); margin: 4px 0 18px; }
+    h3.adminpagetitle { font: 600 1.05rem var(--si-head); margin: 22px 0 2px; a { color: var(--si-ink) !important; text-decoration: none; } a:hover { color: var(--si-link) !important; } }
+    ul.adminpagepath { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; padding: 0; margin: 0 0 10px;
+        li { font-size: 12.5px; color: var(--si-faint) !important; }
+        li + li::before { content: "/"; margin-inline-end: 6px; opacity: .6; } }
+}
+
+// Web services overview: one list; each step is a row you can click (arrow at the end), with its number and status.
+#page-admin-setting-webservicesoverview #adminsettings {
+    h3 { font: 600 1.1rem var(--si-head) !important; letter-spacing: 0; text-transform: none; color: var(--si-ink); margin: 26px 0 6px; padding: 0; border: 0 !important; }
+    h3 ~ p, .box { color: var(--si-muted); font-size: 14px; }
+    hr { display: none; }
+}
+table.wsoverview {
+    counter-reset: siraj-step; display: block; margin: 12px 0 8px; border: 1px solid var(--si-line) !important; border-radius: 12px; overflow: hidden;
+    background: var(--si-surface) !important; box-shadow: none !important;
+    thead { display: none; }
+    tbody { display: block; }
+    tr { counter-increment: siraj-step; position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto 28px;
+        grid-template-areas: "num step status go" "num desc status go"; column-gap: 16px; row-gap: 2px; align-items: center;
+        padding: 14px 18px; background: transparent !important; border: 0; transition: background .12s;
+        & + tr { border-top: 1px solid var(--si-line); }
+        &::before { content: counter(siraj-step); grid-area: num; align-self: start; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%;
+            font: 700 12.5px var(--si-head); color: var(--si-muted); background: var(--si-surface-2); }
+        &::after { content: ""; grid-area: go; justify-self: end; width: 8px; height: 8px; border-top: 2px solid var(--si-faint); border-right: 2px solid var(--si-faint); transform: rotate(45deg); }
+        &:hover { background: var(--si-surface-2) !important; &::after { border-color: var(--si-link); } } }
+    &.generaltable tbody tr:hover > td { background: transparent !important; }
+    td { display: block; padding: 0 !important; border: 0 !important; background: transparent !important; box-shadow: none !important; }
+    // The step name's link covers the whole row.
+    td.step { grid-area: step; font-size: 0; a { font: 600 15px var(--si-head); color: var(--si-ink) !important; text-decoration: none;
+        &::after { content: ""; position: absolute; inset: 0; } } }
+    tr:hover td.step a { color: var(--si-link) !important; }
+    td.description { grid-area: desc; font-size: 13.5px; line-height: 1.55; color: var(--si-muted); }
+    td.status { grid-area: status; font-size: 12.5px; font-weight: 600; color: var(--si-muted); white-space: nowrap; }
+    td.status:not(:empty) { padding: 4px 10px !important; border-radius: 999px; background: var(--si-surface-2) !important; }
+    td.status:has(.badge) { padding: 0 !important; background: transparent !important; }
+    td.status .badge { padding: 5px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 600; }
+    td.status .bg-danger { background: color-mix(in srgb, #D93F3F 14%, var(--si-surface)) !important; color: #D93F3F !important; }
+    td.status .bg-success { background: color-mix(in srgb, #12A877 14%, var(--si-surface)) !important; color: #12A877 !important; }
+}
+[dir="rtl"] table.wsoverview tr::after { transform: rotate(-135deg); }
+
+// File box (logos, uploads): a quiet toolbar, the files on a soft panel, drop area dashed and rounded.
+.filemanager {
+    .fp-restrictions { font-size: 12.5px; color: var(--si-faint); margin-bottom: 8px !important; }
+    .fp-navbar { background: transparent !important; border: 1px solid var(--si-line) !important; border-bottom: 0 !important; border-radius: 16px 16px 0 0; padding: 8px 10px; }
+    .fp-navbar .btn, .fp-viewbar .btn { width: 34px; height: 34px; padding: 0; display: inline-grid; place-items: center; border-radius: 10px !important;
+        background: transparent !important; border: 0 !important; color: var(--si-muted) !important; box-shadow: none !important; }
+    .fp-navbar .btn:hover, .fp-viewbar .btn.checked { background: var(--si-surface-2) !important; color: var(--si-ink) !important; }
+    .fp-pathbar { font-size: 12.5px; color: var(--si-faint); a { color: var(--si-muted) !important; } .icon { display: none; } }
+    .filemanager-container { border: 1px solid var(--si-line) !important; border-radius: 0 0 16px 16px; background: var(--si-surface-2) !important; min-height: 140px; }
+    .fp-iconview .fp-file { border-radius: 12px; }
+    // Checkerboard behind previews, so dark and white logos both show.
+    .fp-iconview .fp-thumbnail { border-radius: 12px; border: 1px solid var(--si-line) !important;
+        background: repeating-conic-gradient(#d9dee6 0 25%, #f4f6f9 0 50%) 50% / 14px 14px !important;
+        img { background: transparent !important; border: 0 !important; box-shadow: none !important; } }
+    .fp-iconview .fp-filename-field { font-size: 12.5px; color: var(--si-ink); }
+    // Empty file box: one dashed frame (Moodle's own), rounded, text centred inside it.
+    .fm-empty-container { border: 2px dashed color-mix(in srgb, var(--si-link) 35%, var(--si-line)) !important; border-radius: 12px; inset: 8px; }
+    .dndupload-message { border: 0 !important; background: transparent !important; color: var(--si-muted); }
+}
+// File dialogs (edit file, choose a file): a proper close button, the × centred in a 34px square, theme colours in
+// both modes (no colour filters).
+.moodle-dialogue-base .moodle-dialogue-hd .closebutton, .moodle-dialogue-base .closebutton {
+    width: 34px; height: 34px; padding: 0 !important; margin: 0; display: grid; place-items: center; border-radius: 10px; opacity: 1;
+    background-color: transparent !important; border: 0; box-shadow: none !important; filter: none !important; color: var(--si-muted);
+    &::after { font-size: 22px; line-height: 1; margin-top: -2px; }
+    &:hover { background-color: var(--si-surface-2) !important; color: var(--si-ink); } }
+.fp-select, .file-picker .fp-select { .fp-thumbnail img, .fp-hr + div img { border-radius: 10px; } }
+
+// Phones and narrow windows: one column, control under the text.
+@media (max-width: 900px) {
+    #adminsettings .form-item { display: block; > .form-setting { display: block; margin-top: 10px; } }
+    #adminsettings .settingsform > fieldset, #adminsettings fieldset.adminsettings { padding: 0 16px; }
+    table.wsoverview tr { grid-template-columns: 28px minmax(0, 1fr) 20px; grid-template-areas: "num step go" "num desc go" "num status go"; td.status { justify-self: start; margin-top: 6px; } }
+}
+// Edit-file dialog: same checkerboard behind the preview; fields one width.
+.fp-select {
+    .fp-thumbnail { border-radius: 12px; overflow: hidden; background: repeating-conic-gradient(#d9dee6 0 25%, #f4f6f9 0 50%) 50% / 14px 14px !important;
+        img { background: transparent !important; border: 0 !important; } }
+    .fp-saveas input, .fp-author input, .fp-license select, .fp-path select { width: 100%; max-width: 280px; }
+}
+// Settings pages with their own tabs (theme settings): the tabs as pills above the panel; a single tab is not shown.
+#adminsettings .settingsform > .nav-tabs { gap: 4px; border: 0 !important; margin: 0 0 4px;
+    .nav-link { border: 0 !important; border-radius: 999px; padding: 7px 14px; font-weight: 600; font-size: 13.5px; color: var(--si-muted) !important; background: transparent !important; }
+    .nav-link.active { color: var(--si-surface) !important; background: var(--si-ink) !important; } }
+#adminsettings .settingsform > .nav-tabs:not(:has(.nav-item + .nav-item)) { display: none; }
+#adminsettings .settingsform > .tab-content { margin-top: 0 !important; }
+
+// Plugin installer: one plain panel with the ZIP upload only. The Moodle Marketplace button is hidden, since plugins
+// for a client site come from us, not the public catalogue.
+#page-admin-tool-installaddon-index {
+    [role="main"] > h2 { font: 400 clamp(1.8rem, 2.6vw, 2.3rem)/1.1 var(--si-serif) !important; margin: 4px 0 18px; }
+    #installfromrepobox { display: none !important; }
+    #installfromzipbox { max-width: none; background: var(--si-surface); border: 1px solid var(--si-line) !important; border-radius: 12px; padding: 22px 24px 18px !important;
+        box-shadow: none; }
+    #installfromzipbox fieldset.collapsible { border: 0; margin: 0; padding: 0; }
+    // Not collapsible: the chevron goes, the heading stays.
+    .ftoggler .icons-collapse-expand { display: none !important; }
+    .ftoggler h3 { font: 600 1.05rem var(--si-head) !important; color: var(--si-ink); }
+    .ftoggler + .btn-link { margin-inline-start: 4px; }
+    #id_generalcontainer { display: block !important; padding: 0; }
+    // Label above the field, full width.
+    .fitem.row:not(.advanced), .fitem.row.advanced.show { display: block; margin: 16px 0 0 !important; }
+    .fitem.row { margin: 16px 0 0 !important; > [class*="col-md-"] { width: 100%; max-width: 100%; padding: 0; } }
+    .fitem.femptylabel > .col-form-label { display: none !important; }
+    .col-form-label { font-weight: 600; margin-bottom: 8px; padding-top: 0; gap: 4px; justify-content: flex-start !important; align-items: center; }
+    .col-form-label .form-label-addon { margin: 0 !important; }
+    .filepicker-filelist { border: 0 !important; background: transparent !important; margin-top: 10px; width: 100%; }
+    .filepicker-container { width: 100%; }
+    .filepicker-filelist .filepicker-container { border: 2px dashed color-mix(in srgb, var(--si-link) 35%, var(--si-line)) !important; border-radius: 12px;
+        background: var(--si-surface-2) !important; inset: 0; padding: 74px 16px 0; margin: 0; }
+    .filepicker-filelist .dndupload-target { inset: 0; border-radius: 12px; box-shadow: none; }
+    .filepicker-filelist .dndupload-message { border: 0 !important; background: transparent !important; padding: 0; margin: 0; position: static;
+        color: var(--si-muted); font-size: 13.5px; text-align: center; .dndupload-arrow { top: 16px; height: auto; color: var(--si-faint); } }
+    .filetypes-descriptions-intro { margin-top: 10px !important; }
+    .form-filetypes-descriptions { width: auto !important; }
+    .filetypes-descriptions-intro, .form-filetypes-descriptions { display: inline-block; font-size: 12.5px; color: var(--si-faint); }
+    .form-filetypes-descriptions ul, .form-filetypes-descriptions li { display: inline; margin: 0 0 0 4px; small { color: inherit !important; } }
+    .moreless-actions { margin: 14px 0 0; .moreless-toggler { font-size: 13.5px; font-weight: 600; } }
+    #form-advanced-div .form-control-static { font-size: 13px; color: var(--si-muted); }
+    #fitem_id_submitbutton { border-top: 1px solid var(--si-line); margin: 20px -24px 0 !important; padding: 16px 24px 0; }
+    #id_submitbutton { border-radius: 10px; }
+    .fdescription.required { font-size: 12px; margin-top: 10px; color: var(--si-faint); }
+}
+
+// Admin pages: no separate "Search" box in the page header (the top bar search is the one search).
+#page-header .header-action:has(form[action$="/admin/search.php"], form[action$="/admin/search"]) { display: none !important; }
+
+// Developer tools page (local/siraj/devtools.php): one plain list, each row opens a tool.
+#page-admin-local-siraj-devtools {
+    .siraj-devtools-intro { color: var(--si-muted); max-width: 70ch; margin: 0 0 16px; }
+    .siraj-devtools { max-width: 760px; margin: 0; background: var(--si-surface); border: 1px solid var(--si-line); border-radius: 12px; overflow: hidden;
+        li + li { border-top: 1px solid var(--si-line); }
+        a { display: flex; align-items: center; justify-content: space-between; padding: 13px 20px; color: var(--si-ink) !important;
+            font-weight: 600; text-decoration: none;
+            &::after { content: ""; width: 8px; height: 8px; border: solid var(--si-faint); border-width: 2px 2px 0 0; transform: rotate(45deg); } }
+        a:hover { background: var(--si-surface-2); }
+        li.sub a { padding-inline-start: 40px; font-weight: 500; color: var(--si-muted) !important; }
+    }
+}
+[dir="rtl"] #page-admin-local-siraj-devtools .siraj-devtools a::after { transform: rotate(-135deg); }
+
+// Admin pages use the whole window on large screens (the rest of Siraj stops at 1480px).
+body.pagelayout-admin #topofscroll.main-inner { max-width: none; padding-inline: clamp(0px, 1.5vw, 32px); }

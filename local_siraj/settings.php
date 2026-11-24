@@ -25,3 +25,15 @@ if ($hassiteconfig) {
         get_string('dashboardblocks_desc', 'local_siraj'), array_fill_keys(\local_siraj\setup::DASHBOARD_BLOCKS, 1), $blocks));
     $ADMIN->add('localplugins', $settings);
 }
+
+if ($hassiteconfig) {
+    // Developer-only screens move off Site administration > Development into one "Developer tools" page there
+    // (they keep their own addresses). Debugging and Purge caches stay in the tab.
+    foreach (\local_siraj\devtools::PAGES as $devpage) {
+        if ($node = $ADMIN->locate($devpage)) {
+            $node->hidden = true;
+        }
+    }
+    $ADMIN->add('development', new admin_externalpage('local_siraj_devtools', get_string('devtools', 'local_siraj'),
+        new moodle_url('/local/siraj/devtools.php')));
+}

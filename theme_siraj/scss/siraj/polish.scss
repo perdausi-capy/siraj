@@ -76,8 +76,10 @@ a:focus-visible { outline: 2px solid var(--si-cyan) !important; outline-offset: 
     .fp-repo-area { border-right: 1px solid var(--si-line) !important; padding: 10px !important; }
     .fp-repo a { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--si-ink) !important; }
     .fp-repo.active a, .fp-repo a:hover { background: var(--si-mint-soft) !important; color: var(--si-accent-ink) !important; }
-    .fp-navbar { border-bottom: 1px solid var(--si-line) !important; padding: 8px 10px !important; }
-    .fp-content { padding: 14px 18px !important; }
+    // The content side is part of the dialog, not a card inside it: one divider (the list's right edge), no frame.
+    .fp-repo-items { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; }
+    .fp-navbar { border: 0 !important; background: transparent !important; padding: 8px 18px 0 !important; }
+    .fp-content { padding: 6px 18px 14px !important; }
     .fp-upload-form .fp-formset > * { margin-bottom: 12px; }
     label { font-weight: 600; font-size: 13.5px; color: var(--si-muted); }
 }
@@ -184,7 +186,7 @@ body.siraj-page #page.drawers.show-drawer-right { margin-right: 0 !important; }
 .form-check-input[type="checkbox"].notification_enabled, .form-switch .form-check-input { width: 2.4em; height: 1.3em; cursor: pointer; }
 
 // ---------- Admin category / settings lists ----------
-#page-admin-category #region-main .row, .admin_settingspage, #adminsettings { max-width: 1100px; }
+#page-admin-category #region-main .row { max-width: 1100px; }
 #page-admin-category #region-main ul, #page-admin-search .adminpagelist ul {
     list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px;
     li a { display: block; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--si-line); background: var(--si-surface);
@@ -390,7 +392,6 @@ body.siraj-ownuser #region-main > div > h2:first-child, body.siraj-ownuser #regi
     }
     .submissionaction, .submissionlinks { display: inline-flex; gap: 10px; margin: 0 10px 0 0; }
     .submissionaction .btn, .submissionlinks .btn { min-height: 42px; border-radius: 11px; }
-    form.mform { background: var(--si-surface); border: 1px solid var(--si-line); border-radius: var(--si-radius); padding: 22px 24px 8px; box-shadow: var(--si-soft); }
     .mform .fitem .col-md-3 { flex: 0 0 100%; max-width: 100%; padding-bottom: 6px; }
     .mform .fitem .col-md-9 { flex: 0 0 100%; max-width: 100%; }
     .mform fieldset.collapsible legend .fheader, .mform legend { font: 700 1.05rem var(--si-head); }
@@ -398,17 +399,22 @@ body.siraj-ownuser #region-main > div > h2:first-child, body.siraj-ownuser #regi
     .filemanager .filemanager-container { border: 2px dashed color-mix(in srgb, var(--si-mint) 45%, var(--si-line)) !important; background: var(--si-mint-soft) !important; min-height: 140px; }
 }
 
-// Calendar: event cards with a coloured edge, not coloured headers.
-.path-calendar .event .card, .path-calendar .eventlist .event {
-    border: 1px solid var(--si-line) !important; border-left: 4px solid var(--si-blue) !important; border-radius: 14px !important;
-    overflow: hidden; box-shadow: var(--si-soft);
-    .card-header { background: var(--si-surface) !important; border-bottom: 1px solid var(--si-line) !important; padding: 14px 18px !important;
-        h3, .name { font: 700 1.05rem var(--si-head) !important; color: var(--si-ink) !important; } }
-    .card-body { padding: 14px 18px !important; font-size: 14px; }
-    .card-footer { background: transparent !important; border-top: 1px solid var(--si-line) !important; }
+// Calendar: event cards are plain panels (no coloured edge); the event's icon sits in a small tile.
+.path-calendar .event .card, .path-calendar .eventlist .event .card {
+    border: 1px solid var(--si-line) !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; background: var(--si-surface) !important;
+    .card-header { display: flex; align-items: center; gap: 12px; background: transparent !important; border: 0 !important; padding: 16px 18px 4px !important;
+        > .d-inline-block { margin: 0 !important; }
+        img.icon { width: 32px !important; height: 32px !important; padding: 7px; margin: 0 !important; border-radius: 10px; background: var(--si-surface-2); }
+        h3, .name { font: 600 1.05rem var(--si-head) !important; color: var(--si-ink) !important; margin: 0 !important; }
+        .commands { order: 9; margin-inline-start: auto; } }
+    .card-body { padding: 8px 18px 16px !important; font-size: 14px; color: var(--si-muted); .row { align-items: center; } .icon { color: var(--si-faint); } }
+    .card-footer { background: transparent !important; border-top: 1px solid var(--si-line) !important; padding: 12px 18px !important; }
 }
-.path-calendar .eventlist .event.calendar_event_course, .path-calendar .event[data-event-eventtype="due"] .card { border-left-color: var(--si-red) !important; }
-.path-calendar .eventlist .event[data-event-eventtype="close"] .card { border-left-color: #E9A23B !important; }
+// Dark: the icons are dark artwork, so the tile is drawn in its inverse colour and the whole tile inverted (light icon on a dark tile).
+[data-bs-theme="dark"] .path-calendar .event .card-header img.icon { background: #E1D5C3 !important; filter: invert(1); }
+.path-calendar .eventlist .event { border: 0 !important; }
+// The view's own title ("Upcoming events", the month) reads with the page, not centred between the controls.
+.path-calendar .calendarwrapper > h2.current { text-align: start !important; font: 600 1.15rem var(--si-head) !important; margin: 8px 0 4px; }
 body.siraj-ownuser #page-header .page-context-header { display: none !important; }
 body.siraj-moodlepage:not(.siraj-ownuser) .secondary-navigation { display: none; }
 

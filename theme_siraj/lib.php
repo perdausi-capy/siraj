@@ -57,7 +57,7 @@ function theme_siraj_get_pre_scss($theme) {
 function theme_siraj_get_main_scss_content($theme) {
     global $CFG;
     $scss = file_get_contents($CFG->dirroot . '/theme/boost/scss/preset/default.scss');
-    foreach (['tokens', 'shell', 'components', 'login', 'pages', 'dashboards', 'dark', 'polish', 'blocks', 'concepta', 'moodlepages'] as $part) {
+    foreach (['tokens', 'shell', 'components', 'login', 'pages', 'dashboards', 'dark', 'polish', 'blocks', 'concepta', 'moodlepages', 'admin', 'quiz', 'forms', 'frames'] as $part) {
         $scss .= file_get_contents($CFG->dirroot . "/theme/siraj/scss/siraj/{$part}.scss");
     }
     $scss .= \theme_siraj\icons::block_icon_css();

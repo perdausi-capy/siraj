@@ -1,0 +1,110 @@
+// ---------- One frame per thing, across the LMS (24 Nov 2026) ----------
+// Moodle wraps tables and summaries in its own shaded "box", and older theme rules gave the table a rounded frame
+// too, so many pages showed a frame inside a frame. Here the box is the one frame and what's inside it is plain.
+
+// A box holding a table: the box is the frame; the table inside has row lines only.
+#region-main .box:has(> .table-responsive > table.generaltable, > table.generaltable) {
+    background: var(--si-surface) !important; border: 1px solid var(--si-line) !important; border-radius: 12px !important;
+    box-shadow: none !important; padding: 0 !important; margin: 0 0 20px !important; overflow: hidden;
+    > .table-responsive { margin: 0; border: 0 !important; border-radius: 0 !important; }
+    table.generaltable { margin: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important; }
+    table.generaltable > * > tr > th, table.generaltable > * > tr > td {
+        border-width: 0 0 1px !important; border-style: solid !important; border-color: var(--si-line) !important; }
+    table.generaltable > tbody > tr:last-child > th, table.generaltable > tbody > tr:last-child > td { border-bottom: 0 !important; }
+}
+// Boxes inside a table cell (e.g. Submission comments) sit in the cell, no frame or fill of their own.
+#region-main td .box, #region-main td .plugincontentsummary { background: transparent !important; border: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
+#region-main .comment-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; text-decoration: none; }
+[data-bs-theme="dark"] #region-main .comment-link img.icon { filter: invert(1) brightness(1.4); }
+
+// Assignment: the sections around the tables are plain (heading + table), not frames of their own.
+body.path-mod-assign {
+    .submissionstatustable, .gradingsummary, .feedback, .submissionstatustable > .box, .gradingsummary > .box:not(:has(table)) {
+        background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 0 !important; }
+    .submissionstatustable h3, .gradingsummary h3, .feedback h3 { font: 600 1.05rem var(--si-head) !important; margin: 24px 0 10px !important; }
+    // Status words: coloured text, never Moodle's light filled boxes.
+    :is(td, div, a).submissionstatus, :is(td, div, a).submissionstatusdraft, :is(td, div, a).submissionstatussubmitted,
+    :is(td, div).submissionlocked, :is(td, div).submissionreopened, :is(td, div).submissiongraded, :is(td, div).submissionnotgraded,
+    :is(td, div, a).latesubmission, :is(td, div, a).earlysubmission {
+        background-color: transparent !important; color: var(--si-ink) !important; font-weight: 600; }
+    :is(td, div, a).submissionstatussubmitted, :is(td, div).submissiongraded, :is(td, div, a).earlysubmission { color: var(--si-mint-ink, var(--si-mint)) !important; }
+    :is(td, div, a).submissionstatusdraft, :is(td, div).submissionnotgraded, :is(td, div).submissionlocked { color: var(--si-amber) !important; }
+    :is(td, div, a).latesubmission, .overduesubmission { color: var(--si-red) !important; }
+    .gradingtable .submissioninfo .overduesubmission { font-size: 12.5px; font-weight: 500; }
+    // Submissions table: one frame that scrolls sideways when wide; the header row stays put (it was pinned inside the
+    // scroll box and slid down over the first row).
+    .box.gradingtable { overflow-x: auto !important; overflow-y: visible; }
+    .gradingtable table thead tr { position: static !important; top: auto !important; }
+    .gradingtable thead th { background: var(--si-surface-2) !important; }
+    .gradingtable tr.unselectedrow td { background-color: transparent !important; }
+    .gradingtable tr.selectedrow td { background-color: color-mix(in srgb, var(--si-link) 9%, transparent) !important; }
+}
+
+// Toolbars above lists (submissions, participants, gradebook): every filter is the same small control on one line.
+.tertiary-navigation {
+    > .d-flex, > div > .d-flex { flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+    .navitem { margin: 0 !important; padding: 0 !important; display: flex; align-items: center; }
+    .navitem-divider { display: none !important; }
+    .navitem > h2 { font: 600 1.05rem var(--si-head) !important; margin: 0 8px 0 0; }
+    .initialswidget, .select-menu > .dropdown-toggle, [data-for="dropdowndialog_button"], .dropdown > .btn.dropdown-toggle:not(.btn-primary) {
+        min-height: 40px; padding: 0 14px !important; display: inline-flex !important; align-items: center; gap: 8px;
+        border: 1px solid var(--si-line) !important; border-radius: 10px !important; background: var(--si-surface) !important;
+        font: 600 14px var(--si-head) !important; color: var(--si-ink) !important;
+        * { font-size: 14px !important; } }
+    .select-menu > .dropdown-toggle > div { display: flex; align-items: baseline; gap: 6px; padding: 0 !important; }
+    .select-menu > .dropdown-toggle > div > .small { display: inline !important; font-size: 14px; font-weight: 500; color: var(--si-muted); }
+    [data-for="dropdowndialog_button"] > div { padding: 0 !important; }
+    .user-search .form-control, .comboboxsearch input.form-control { min-height: 40px; border-radius: 10px !important; }
+    .navitem:has(> a.btn-primary), .navitem:has(> .btn-primary) { margin-inline-start: auto !important; }
+}
+
+// Pinned bar under long lists ("Show 10", pages): its content lines up with the page column.
+#sticky-footer .sticky-footer-content { max-width: 1480px; margin: 0 auto; padding-inline: 24px !important; gap: 16px; }
+#sticky-footer label { display: inline-flex; align-items: center; gap: 8px; margin: 0; color: var(--si-muted); font-size: 13.5px; }
+#sticky-footer .form-select { margin: 0 !important; min-height: 36px; border-radius: 10px; }
+
+// Activity title with its type above it ("ASSIGNMENT" in edit mode): icon centred on the whole title block.
+.page-context-header { flex-wrap: nowrap !important; align-items: center !important; gap: 14px; }
+.page-context-header .page-header-image { margin: 0 !important; align-self: center; flex: none; }
+.page-context-header .page-header-headings > .text-uppercase { font: 600 11px var(--si-head) !important; letter-spacing: .08em; color: var(--si-faint) !important; margin: 0 0 4px; }
+
+// Block drawer handle (edit mode): a quiet square inside the page edge, like the sidebar's controls.
+.drawer-toggles .drawer-right-toggle { right: 16px !important; }
+.drawer-toggles .drawer-right-toggle .btn {
+    width: 36px !important; height: 36px !important; border-radius: 10px !important; background: var(--si-surface) !important;
+    border: 1px solid var(--si-line) !important; box-shadow: none !important; color: var(--si-muted) !important; }
+.drawer-toggles .drawer-right-toggle .btn:hover { color: var(--si-ink) !important; background: var(--si-surface-2) !important; }
+// Tooltips in dark mode: the page's own dark surface, not a light pill.
+[data-bs-theme="dark"] .tooltip { --bs-tooltip-bg: #1C2A3D; --bs-tooltip-color: #E8EEF5; }
+[data-bs-theme="dark"] .tooltip-inner { border: 1px solid var(--si-line); }
+
+// "Course page" button in the course header (staff on Moodle's course page): back to the Siraj course page.
+#page-header .header-action .siraj-coursepage-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 16px;
+    border-radius: 999px; border: 1px solid var(--si-line); background: var(--si-surface); color: var(--si-ink) !important; font-weight: 600; font-size: 14px; text-decoration: none;
+    svg { width: 16px; height: 16px; }
+    &:hover { background: var(--si-surface-2); } }
+[dir="rtl"] #page-header .siraj-coursepage-btn svg { transform: scaleX(-1); }
+// Header actions (Bulk actions, Course page ...): one row.
+#page-header .header-actions-container { display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; }
+#page-header .header-actions-container > .header-action { margin: 0 !important; }
+#page-header .siraj-coursepage-btn { white-space: nowrap; svg { flex: none; } }
+// Keep clear of the block drawer handle (shown in edit mode) at the top right.
+body.editing #page-header .header-actions-container { margin-inline-end: 48px; }
+
+// A table inside a card (quiz "Your attempts" and similar): the card is the frame.
+#region-main .card > table.generaltable, #region-main .card > .table-responsive > table.generaltable {
+    margin: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: transparent !important;
+    > * > tr > th, > * > tr > td { border-width: 1px 0 0 !important; border-style: solid !important; border-color: var(--si-line) !important; background: transparent !important; } }
+#region-main .card:has(> table.generaltable) { border: 1px solid var(--si-line) !important; border-radius: 12px !important; box-shadow: none !important; overflow: hidden; }
+// Quiz page: the best grade is a line of text, not a shaded box.
+#page-mod-quiz-view #feedback { background: transparent !important; border: 0 !important; padding: 8px 0 0 !important; box-shadow: none !important;
+    h3 { font: 600 1.1rem var(--si-head) !important; margin: 0; } }
+#page-mod-quiz-view [role="main"] > h3, #page-mod-quiz-view [role="main"] h3:has(+ ul) { font: 600 1.05rem var(--si-head) !important; margin: 20px 0 10px; }
+
+// Settings and form pages (Moodle's admin layout: activity and course settings, gradebook setup ...) with no blocks:
+// no block panel and no handle; the empty panel only offered "Add a block". Course pages and the dashboard keep it.
+body.pagelayout-admin.empty-region-side-pre {
+    .drawer.drawer-right, .drawer-toggles .drawer-right-toggle { display: none !important; }
+    #page.drawers.show-drawer-right { margin-right: 0 !important; margin-inline-end: 0 !important; }
+    #page-header .header-actions-container { margin-inline-end: 0; }
+}

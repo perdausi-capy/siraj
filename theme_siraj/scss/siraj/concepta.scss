@@ -700,12 +700,6 @@ body.path-calendar {
     .quizreviewsummary, table.generaltable.quizreviewsummary { border-radius: 18px !important; overflow: hidden; border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
         th { width: 180px; background: var(--si-surface-2) !important; color: var(--si-muted) !important; font: 600 12.5px var(--si-head) !important; text-transform: none !important; letter-spacing: 0 !important; }
         td { font-size: 14.5px; } tr:last-child td { font-weight: 600; } }
-    .que { border-radius: 20px !important; overflow: hidden; box-shadow: var(--si-soft); border: 1px solid var(--si-line) !important; margin-bottom: 20px !important;
-        .info { border-radius: 0 !important; background: var(--si-surface) !important; border: 0 !important; border-bottom: 1px solid var(--si-line) !important; }
-        .info .no { font: 400 1.4rem var(--si-serif) !important; }
-        .qtext { font: 600 1.05rem/1.4 var(--si-head); }
-        .answer > div { border-radius: 14px !important; }
-        .outcome, .comment { border-radius: 14px !important; } }
     .submitbtns, .mod_quiz-next-nav { display: flex; justify-content: flex-end; }
 }
 
@@ -757,14 +751,8 @@ body.siraj-moodlepage {
     #page-header h1, .page-header-headings h1 { font: 400 clamp(2rem, 3vw, 2.8rem)/1.05 var(--si-serif) !important; letter-spacing: -.01em; }
 }
 #page-mod-quiz-attempt, #page-mod-quiz-summary {
-    .que { border-radius: 20px !important; overflow: hidden; box-shadow: var(--si-soft); border: 1px solid var(--si-line) !important; margin-bottom: 20px !important;
-        .info { border-radius: 0 !important; background: var(--si-surface) !important; border: 0 !important; border-bottom: 1px solid var(--si-line) !important; }
-        .info .no { font: 400 1.4rem var(--si-serif) !important; }
-        .qtext { font: 600 1.05rem/1.45 var(--si-head); }
-        .answer > div { border-radius: 14px !important; } }
     .submitbtns { display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px;
         .btn, input[type="submit"] { min-height: 46px; padding: 0 24px; border-radius: 999px !important; } }
-    .qn_buttons .qnbutton { border-radius: 10px !important; }
 }
 #page-mod-quiz-summary {
     #region-main > div > h2:first-of-type, [role="main"] > h2:first-child { display: none; }
@@ -778,7 +766,7 @@ body.siraj-moodlepage {
 }
 #page-mod-assign-view.siraj-moodlepage {
     .submissionstatustable, .editsubmissionform, [data-region="activity-dates"], .activity-header { border-radius: 20px !important; }
-    #region-main .card, #region-main form.mform > fieldset { border-radius: 20px !important; box-shadow: var(--si-soft); }
+    #region-main .card { border-radius: 20px !important; box-shadow: var(--si-soft); }
     .mform .fitem .col-form-label { font-weight: 600; }
     #id_submitbutton, #id_cancel { min-height: 46px; padding: 0 24px; border-radius: 999px !important; }
 }
@@ -804,30 +792,8 @@ body.path-course-view, body.path-course:not(.siraj-page), body.path-mod:not(.sir
 }
 body.path-course-view, body.path-course:not(.siraj-page), body.path-mod:not(.siraj-page) { #page-header { > div, .w-100, .d-flex { width: 100%; justify-content: flex-start !important; } .page-context-header { flex: 1; } .me-auto { margin-right: auto !important; } } }
 body[id^="page-admin-setting-"] #region-main h2:first-of-type, #page-admin-category #region-main h2:first-of-type { font: 400 clamp(1.9rem, 2.8vw, 2.6rem)/1.08 var(--si-serif) !important; }
-// Site administration search/home: each category is a card with its links in columns.
-#page-admin-search #region-main .container-fluid > .row, #page-admin-category #region-main .container-fluid > .row {
-    margin: 0 0 14px; padding: 18px 22px; border-radius: 18px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
-    > .col-sm-3 h4, > .col-sm-3 h5 { font: 400 1.45rem/1.1 var(--si-serif); margin: 0; a { color: var(--si-ink); text-decoration: none; } }
-    ul { columns: 2 220px; column-gap: 28px; margin: 0; li { break-inside: avoid; padding: 3px 0; } a { font-weight: 500; } }
-}
-#page-admin-search .container-fluid > .row hr, #page-admin-category .container-fluid > .row hr { display: none; }
-// Settings pages: one card, a hairline between settings, save bar stays in reach.
-#adminsettings .settingsform {
-    padding: 8px 26px 0; border-radius: 22px; background: var(--si-surface); border: 1px solid var(--si-line); box-shadow: var(--si-soft);
-    > h2 { margin: 22px 0 10px; }
-    .form-item { padding: 18px 0; margin: 0; border-top: 1px solid var(--si-line); &:first-of-type { border-top: 0; } }
-    .form-label label, .form-item .form-label { font-weight: 600; }
-    .form-shortname { color: var(--si-faint) !important; font-size: 11.5px; }
-    .form-description { color: var(--si-muted); font-size: 13.5px; }
-}
-#adminsettings > div > .row:last-child, #adminsettings .row:has(> .offset-sm-3 > .btn-primary) {
-    position: sticky; bottom: 0; z-index: 5; margin: 0 -1px; padding: 14px 0; background: color-mix(in srgb, var(--si-bg) 92%, transparent); backdrop-filter: blur(8px);
-    .btn-primary { min-height: 46px; padding: 0 28px; border-radius: 999px; }
-}
-// Activity and course settings forms: each section a card; Save buttons in a bar that stays visible.
+// Activity and course settings forms: Save buttons in a bar that stays visible (sections: forms.scss).
 body#page-course-modedit, body#page-course-edit, body[id^="page-mod-"][id$="-mod"] {
-    form.mform fieldset.collapsible { margin: 0 0 16px; padding: 6px 22px 10px; border-radius: 20px; background: var(--si-surface); border: 1px solid var(--si-line) !important; box-shadow: var(--si-soft);
-        legend, .ftoggler { font: 600 1.05rem var(--si-head); } }
     form.mform .fitem .col-form-label, form.mform .fitem label { font-weight: 600; }
     #fgroup_id_buttonar, [id^="fgroup_id_buttonar"] {
         position: sticky; bottom: 0; z-index: 5; margin: 0; padding: 14px 0; background: color-mix(in srgb, var(--si-bg) 92%, transparent); backdrop-filter: blur(8px);
