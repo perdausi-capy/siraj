@@ -73,7 +73,8 @@ class home {
         $completed = array_values(array_filter($mine, fn($c) => $c['progress'] >= 100));
         usort($completed, fn($a, $b) => $b['completedon'] <=> $a['completedon']);
 
-        $overdue = count(array_filter($mine, fn($c) => $c['progress'] < 100 && $c['due'] && $c['due'] < $this->now));
+        $overdueitems = $this->overdue_items();
+        $overdue = count($overdueitems);
         $hour = (int)userdate($this->now, '%H', \core_date::get_user_timezone($this->user));
         $greet = $hour < 12 ? 'greet_morning' : ($hour < 17 ? 'greet_afternoon' : 'greet_evening');
 
@@ -152,6 +153,8 @@ class home {
             'status' => $overdue ? get_string('status_overdue', 'local_siraj', $overdue) : get_string('status_ontrack', 'local_siraj'),
             'statusclass' => $overdue ? 'amber' : 'green',
             'overdue' => $overdue > 0,
+            'overdueitems' => $overdueitems,
+            'icon_chevron' => icons::svg('chevron-right'),
             'hero' => $hero ? $this->hero($hero) : null,
             'noactive' => !$hero,
             'duestrip' => $duestrip ? [
@@ -325,6 +328,36 @@ class home {
                 'coursemoduleid, completionstate, timemodified');
         }
         return $this->states[$cm->id] ?? (object)['completionstate' => COMPLETION_INCOMPLETE, 'timemodified' => 0];
+    }
+
+    /**
+     * What is overdue for the user, the same list as Moodle's Timeline ("All": overdue items from the last 14 days,
+     * needing action), so the "n overdue" chip and the Timeline always agree. Oldest first.
+     *
+     * @return array[] name, course, when (overdue by ...), url (opens it in Learning mode), icon
+     */
+    protected function overdue_items(): array {
+        $from = usergetmidnight($this->now, \core_date::get_user_timezone($this->user)) - 14 * DAYSECS;
+        try {
+            $events = \core_calendar\local\api::get_action_events_by_timesort($from, $this->now - 1, null, 50, true, $this->user);
+        } catch (\Throwable $e) {
+            return [];
+        }
+        $out = [];
+        foreach ($events as $e) {
+            if (!$e->get_action() || !$e->get_action()->is_actionable() || !$e->get_course_module()) {
+                continue;
+            }
+            $cm = get_fast_modinfo($e->get_course()->get('id'), $this->user->id)->get_cm($e->get_course_module()->get('id'));
+            $out[] = [
+                'name' => $cm->get_formatted_name(['escape' => false]),
+                'course' => format_string($cm->get_course()->fullname, true, ['context' => $cm->context->get_course_context(), 'escape' => false]),
+                'when' => get_string('duewhen', 'local_siraj', $this->relative($e->get_times()->get_sort_time()->getTimestamp())),
+                'url' => progress::open_url($cm),
+                'icon' => icons::svg(progress::icon($cm->modname)),
+            ];
+        }
+        return $out;
     }
 
     /**

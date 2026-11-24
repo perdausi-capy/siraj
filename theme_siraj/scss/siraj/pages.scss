@@ -520,6 +520,9 @@ body.siraj-learn:has(.siraj-player.is-stage) {
     display: flex; align-items: center; gap: 8px; margin: 0 0 0 auto; min-height: 42px; padding: 0 12px; min-width: 240px;
     border: 1px solid var(--si-line); border-radius: 11px; background: var(--si-surface); color: var(--si-muted);
     input { border: 0; outline: none; background: transparent; color: var(--si-ink); flex: 1; min-width: 0; font-size: 14px; }
+    // The box shows focus; the field inside draws no ring of its own.
+    input:focus, input:focus-visible { outline: none !important; box-shadow: none !important; }
+    input::-webkit-search-cancel-button { cursor: pointer; }
     &:focus-within { border-color: var(--si-mint); box-shadow: 0 0 0 3px color-mix(in srgb, var(--si-mint) 20%, transparent); }
     .si-icon { width: 17px; height: 17px; }
 }
@@ -1207,3 +1210,60 @@ body.path-calendar {
     .siraj-linkcard-body { padding: 24px 18px 20px; }
     .siraj-linkcard-open { width: 100%; justify-content: center; }
 }
+
+// Home: the "n overdue" chip opens the list of overdue items.
+.siraj-overdue { position: relative; align-self: center;
+    > .siraj-chip { cursor: pointer; border: 0; display: inline-flex; align-items: center; gap: 6px;
+        svg { width: 14px; height: 14px; transition: transform .2s ease; } }
+    > .siraj-chip[aria-expanded="true"] svg { transform: rotate(90deg); }
+}
+.siraj-overdue-menu { width: min(380px, calc(100vw - 32px)); padding: 6px !important; margin-top: 8px !important; border-radius: 14px !important;
+    border: 1px solid var(--si-line) !important; background: var(--si-surface) !important; box-shadow: var(--si-shadow) !important; }
+.siraj-overdue-head { padding: 8px 10px 6px; font: 600 11.5px var(--si-head); letter-spacing: .06em; text-transform: uppercase; color: var(--si-faint); }
+.siraj-overdue-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 10px; color: var(--si-ink) !important; text-decoration: none !important;
+    &:hover, &:focus-visible { background: var(--si-surface-2); } }
+.siraj-overdue-icon { flex: none; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+    background: color-mix(in srgb, var(--si-amber) 14%, var(--si-surface)); color: var(--si-amber); svg { width: 17px; height: 17px; } }
+.siraj-overdue-text { min-width: 0; display: flex; flex-direction: column; gap: 2px;
+    b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    small { font-size: 12.5px; color: var(--si-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+[dir="rtl"] .siraj-overdue > .siraj-chip[aria-expanded="true"] svg { transform: rotate(-90deg); }
+// Phones: the list spans the screen (with the usual 16px gutters) instead of hanging off the chip.
+@include media-breakpoint-down(sm) {
+    .siraj-home > .siraj-pagehead { position: relative; }
+    .siraj-overdue { position: static; }
+    .siraj-overdue-menu { top: 100% !important; left: 0 !important; right: 0 !important; width: auto; inset-inline: 0 !important; }
+}
+
+// ---------- Siraj AI's mascot: a capybara genie rising from the Siraj lamp (24 Nov 2026) ----------
+// pix/capy-genie.png (the whole genie and lamp) for the welcome; pix/capy.png (its head) for the small avatars, on a
+// deep navy tile in both modes so the glow reads.
+$siraj-genie-tile: #0D2740;
+.siraj-ai-orb {
+    background: $siraj-genie-tile url([[pix:theme|capy]]) center / cover no-repeat !important;
+    box-shadow: 0 0 0 1px color-mix(in srgb, #33CCFF 30%, transparent), 0 4px 14px rgba(51, 204, 255, .18) !important; border: 0;
+}
+.siraj-aipanel-mark {
+    width: 150px !important; height: 150px !important; border-radius: 0 !important; box-shadow: none !important;
+    background: transparent url([[pix:theme|capy-genie]]) center / contain no-repeat !important;
+    filter: drop-shadow(0 8px 24px rgba(51, 204, 255, .25));
+    animation: siraj-genie-float 4s ease-in-out infinite;
+    svg { display: none; }
+}
+@keyframes siraj-genie-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.siraj-aimsg.theirs.is-thinking { display: flex; align-items: center; gap: 10px; }
+.siraj-aimsg.theirs.is-thinking::before {
+    content: ""; flex: none; width: 34px; height: 34px; border-radius: 11px;
+    background: $siraj-genie-tile url([[pix:theme|capy]]) center / cover no-repeat;
+    animation: siraj-genie-glow 1.6s ease-in-out infinite;
+}
+// Thinking: the genie's glow breathes.
+@keyframes siraj-genie-glow { 0%, 100% { box-shadow: 0 0 0 0 rgba(51, 204, 255, .0); } 50% { box-shadow: 0 0 14px 2px rgba(51, 204, 255, .45); } }
+@media (prefers-reduced-motion: reduce) { .siraj-aimsg.theirs.is-thinking::before, .siraj-aipanel-mark { animation: none; } }
+// The genie's face on the Siraj AI buttons (top bar, Learning mode).
+.siraj-aiface { display: inline-block; flex: none; width: 28px; height: 28px; border-radius: 50%;
+    background: $siraj-genie-tile url([[pix:theme|capy]]) center / cover no-repeat;
+    box-shadow: 0 0 0 1px color-mix(in srgb, #33CCFF 35%, transparent); transition: box-shadow .2s ease, transform .2s ease; }
+.siraj-aibtn:hover .siraj-aiface, .siraj-aibtn[aria-expanded="true"] .siraj-aiface,
+.siraj-player-aibtn:hover .siraj-aiface { box-shadow: 0 0 0 2px #33CCFF, 0 0 12px rgba(51, 204, 255, .45); transform: scale(1.05); }
+.siraj-player-aibtn .siraj-aiface { width: 24px; height: 24px; margin-inline-start: -6px; }

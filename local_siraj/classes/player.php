@@ -407,7 +407,32 @@ class player {
         $courseurl = (new \moodle_url('/local/siraj/course.php', ['id' => $this->p->course->id]))->out(false);
         $formurl = (new \moodle_url('/local/siraj/learn.php', ['cmid' => $cm->id]))->out(false);
 
+        // Course outline beside the lesson: every step by section, with where you are and what is done.
+        $outline = [];
+        foreach ($steps as $s) {
+            $key = $s->sectionnum;
+            if (!isset($outline[$key])) {
+                $outline[$key] = ['name' => get_section_name($this->p->course, $this->p->modinfo->get_section_info($key)),
+                    'items' => [], 'done' => 0, 'total' => 0, 'current' => false];
+            }
+            $tracked = $this->p->completion->is_enabled($s);
+            $sdone = $tracked && $this->p->is_done($s);
+            $outline[$key]['items'][] = ['name' => $s->get_formatted_name(['escape' => false]), 'url' => progress::open_url($s),
+                'type' => get_string('modulename', $s->modname), 'done' => $sdone, 'current' => $s->id == $cm->id,
+                'icon' => icons::svg(progress::icon($s->modname))];
+            $outline[$key]['total'] += $tracked ? 1 : 0;
+            $outline[$key]['done'] += $sdone ? 1 : 0;
+            $outline[$key]['current'] = $outline[$key]['current'] || $s->id == $cm->id;
+        }
+        // Reading time for text steps (pages and book chapters), about 200 words a minute.
+        $body = $this->body();
+        $text = $body['reading'] ?? ($body['book']['content'] ?? '');
+        $minutes = $text !== '' ? max(1, (int)round(count(preg_split('/\s+/u', trim(strip_tags($text)))) / 200)) : 0;
+
         return [
+            'outline' => array_values($outline),
+            'readtime' => $minutes ? get_string('minread', 'local_siraj', $minutes) : '',
+            'icon_list' => icons::svg('list'),
             'cmid' => $cm->id,
             'name' => $cm->get_formatted_name(['escape' => false]),
             'coursename' => format_string($this->p->course->fullname, true,
@@ -418,7 +443,7 @@ class player {
             'steppct' => count($steps) ? (int)round(($index + 1) / count($steps) * 100) : 0,
             'progress' => $pct,
             'progresstext' => get_string('doneoftotal', 'local_siraj', (object)['done' => $done, 'total' => $total]),
-            'body' => $this->body(),
+            'body' => $body,
             'manual' => $tracking && $cm->completion == COMPLETION_TRACKING_MANUAL,
             'manualquiet' => in_array($cm->modname, ['assign', 'quiz'], true),
             'automatic' => $tracking && $cm->completion == COMPLETION_TRACKING_AUTOMATIC,

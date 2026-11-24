@@ -89,13 +89,34 @@ class explore_page {
             ];
         }
         // The featured collection is one people can see: not a category of hidden (staff-only) courses.
-        $open = array_filter($rows, fn($r) => array_filter($r['tiles'], fn($t) => !$t['hidden']));
-        $featured = reset($open) ?: ($rows[0] ?? null);
+        // Which one: Siraj settings > Featured collection (automatic = the first; weekly = a different one each week;
+        // or a chosen collection). A chosen collection with nothing visible falls back to automatic.
+        $open = array_values(array_filter($rows, fn($r) => array_filter($r['tiles'], fn($t) => !$t['hidden'])));
+        $pick = (int)get_config('local_siraj', 'featuredcat');
+        $featured = null;
+        if ($pick > 0) {
+            $featured = current(array_filter($open, fn($r) => $r['id'] == $pick)) ?: null;
+        } else if ($pick === -1 && $open) {
+            $featured = $open[(int)date('oW') % count($open)];
+        }
+        $featured = $featured ?: ($open[0] ?? ($rows[0] ?? null));
+        // The banner's own image, headline and text when set; otherwise the collection's.
+        $syscontext = \context_system::instance();
+        $image = null;
+        $files = get_file_storage()->get_area_files($syscontext->id, 'local_siraj', 'featuredimage', 0, 'id', false);
+        if ($file = reset($files)) {
+            $image = \moodle_url::make_pluginfile_url($syscontext->id, 'local_siraj', 'featuredimage', $file->get_timemodified(),
+                $file->get_filepath(), $file->get_filename())->out(false);
+        }
+        $title = trim((string)get_config('local_siraj', 'featuredtitle'));
+        $text = trim((string)get_config('local_siraj', 'featuredtext'));
         return [
             'featured' => $featured ? [
-                'name' => $featured['name'], 'description' => $featured['description'], 'anchor' => '#siraj-cat-' . $featured['id'],
+                'name' => $title !== '' ? format_string($title, true, ['context' => $syscontext]) : $featured['name'],
+                'description' => $text !== '' ? format_string($text, true, ['context' => $syscontext]) : $featured['description'],
+                'anchor' => '#siraj-cat-' . $featured['id'],
                 'count' => get_string('ncourses', 'local_siraj', $featured['count']),
-                'photo' => current(array_filter(array_column($featured['tiles'], 'cover'))) ?: null,
+                'photo' => $image ?: (current(array_filter(array_column($featured['tiles'], 'cover'))) ?: null),
             ] : null,
             'rows' => $rows, 'hasrows' => !empty($rows), 'total' => $total,
             'icon_search' => icons::svg('search'), 'icon_clock' => icons::svg('clock'), 'icon_layers' => icons::svg('layers'),

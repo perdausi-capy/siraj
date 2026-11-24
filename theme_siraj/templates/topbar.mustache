@@ -29,7 +29,7 @@
         {{/haslanguages}}
         {{^haslanguages}}{{#langmenu}}<div class="siraj-lang">{{> theme_boost/language_menu }}</div>{{/langmenu}}{{/haslanguages}}
         <div class="siraj-plugins{{#chat}} has-siraj-chat{{/chat}}">{{{ output.navbar_plugin_output }}}</div>
-        {{#ai}}<button type="button" class="siraj-iconbtn siraj-aibtn" data-siraj-ai="" aria-controls="siraj-ai" aria-label="{{#str}}ai_name, theme_siraj{{/str}}" title="{{#str}}ai_name, theme_siraj{{/str}}">{{{icon_sparkles}}}</button>{{/ai}}{{#chat}}<button type="button" class="siraj-iconbtn siraj-chatbtn" data-siraj-action="chat" aria-controls="siraj-chat" aria-label="{{#str}}chat_title, theme_siraj{{/str}}" title="{{#str}}chat_title, theme_siraj{{/str}}">{{{icon_message}}}<span class="siraj-chatbadge" data-chat-badge {{^hasunread}}hidden{{/hasunread}}>{{unread}}</span></button>{{/chat}}
+        {{#ai}}<button type="button" class="siraj-iconbtn siraj-aibtn" data-siraj-ai="" aria-controls="siraj-ai" aria-label="{{#str}}ai_name, theme_siraj{{/str}}" title="{{#str}}ai_name, theme_siraj{{/str}}"><span class="siraj-aiface" aria-hidden="true"></span></button>{{/ai}}{{#chat}}<button type="button" class="siraj-iconbtn siraj-chatbtn" data-siraj-action="chat" aria-controls="siraj-chat" aria-label="{{#str}}chat_title, theme_siraj{{/str}}" title="{{#str}}chat_title, theme_siraj{{/str}}">{{{icon_message}}}<span class="siraj-chatbadge" data-chat-badge {{^hasunread}}hidden{{/hasunread}}>{{unread}}</span></button>{{/chat}}
         {{#user}}
         <div class="dropdown siraj-me">
             <button type="button" class="siraj-me-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{fullname}}">

@@ -1,0 +1,190 @@
+// ---------- Learning mode: focus reader (24 Nov 2026) ----------
+// While learning, the app's sidebar, top bar and footer step aside. A thin strip on top (back to the course, one dot
+// per step, contents and Siraj AI), the lesson as a large article in the middle, and a floating pill at the bottom
+// (previous, mark as done, next). The course outline opens as an overlay from the side.
+
+// No app chrome on the learning page.
+body.siraj-learn {
+    --si-side-w: 0px; --si-top-h: 0px;
+    .siraj-sidebar, .siraj-collapse, .navbar.fixed-top.siraj-topbar, .siraj-footer, #page-footer, .siraj-mobilebar { display: none !important; }
+    .siraj-main { margin-left: 0 !important; margin-inline-start: 0 !important; }
+    #page.drawers { padding: 0 !important; margin-top: 0 !important; min-height: 100dvh; }
+    #page.drawers .main-inner { max-width: none !important; padding: 0 !important; }
+    #page-header, .secondary-navigation, .siraj-back { display: none !important; }
+}
+body.siraj-learn #topofscroll, body.siraj-learn #page { padding-top: 0 !important; }
+
+.siraj-player.has-outline { display: block; background: transparent; border: 0; border-radius: 0; box-shadow: none; min-height: 100dvh; }
+.siraj-player.has-outline > .siraj-player-main {
+    min-height: 100dvh; display: flex; flex-direction: column; overflow: visible !important;
+    background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+
+// Top strip.
+.siraj-player.has-outline .siraj-player-top {
+    position: sticky; top: 0; z-index: 20; height: 60px; padding: 0 clamp(12px, 2.4vw, 28px); gap: 14px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center;
+    background: color-mix(in srgb, var(--si-bg) 82%, transparent); backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--si-line);
+    .siraj-exit { justify-self: start; min-width: 0; max-width: 100%; padding: 0 12px 0 8px; height: 40px; gap: 10px;
+        span { font: 600 14px var(--si-head); color: var(--si-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } }
+    .siraj-player-where, .siraj-player-ring, [data-region="siraj-state"] { display: none !important; }
+    .siraj-player-tools { justify-self: end; gap: 8px; }
+    .siraj-player-iconbtn { width: 40px; height: 40px; border-radius: 10px; background: transparent; border-color: transparent; color: var(--si-muted);
+        &:hover, &[aria-expanded="true"] { background: var(--si-surface-2); color: var(--si-ink); } }
+    .siraj-player-aibtn { min-height: 38px; }
+}
+.siraj-player.has-outline > .siraj-player-main > .siraj-player-rail { display: none; }
+
+// Step dots.
+.siraj-dots { display: flex; align-items: center; gap: 6px;
+    > a { width: 8px; height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--si-faint) 45%, var(--si-line)); transition: width .2s ease, background .2s;
+        &:hover { background: var(--si-muted); }
+        &.is-done { background: var(--si-mint); }
+        &.is-current { width: 26px; background: var(--si-link); } }
+}
+.siraj-dots-label { margin-inline-start: 10px; font: 600 12.5px var(--si-head); color: var(--si-muted); white-space: nowrap; }
+
+// The lesson as an article.
+.siraj-player.has-outline:not(.is-stage) .siraj-player-body {
+    flex: 1; width: 100%; max-width: 760px; margin: 0 auto; padding: clamp(40px, 7vh, 88px) 24px 150px;
+    .siraj-eyebrow { font: 600 12px var(--si-head); letter-spacing: .09em; color: var(--si-faint); }
+    .siraj-player-title h1 { font: 400 clamp(2.3rem, 4vw, 3.4rem)/1.06 var(--si-serif) !important; letter-spacing: -.015em; margin: 14px 0 34px; }
+    .siraj-reading { font-size: 1.14rem; line-height: 1.85;
+        h2, h3, h4 { font-family: var(--si-head); letter-spacing: -.01em; }
+        p { color: color-mix(in srgb, var(--si-ink) 86%, var(--si-muted)); } }
+}
+
+// Floating pill: previous | completion | next.
+.siraj-player.has-outline:not(.is-stage) .siraj-player-footer {
+    position: fixed; z-index: 30; left: 50%; bottom: 22px; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 6px; width: max-content; max-width: calc(100vw - 24px);
+    padding: 6px; border-radius: 999px; border: 1px solid var(--si-line); background: color-mix(in srgb, var(--si-surface) 94%, transparent);
+    backdrop-filter: blur(14px); box-shadow: 0 14px 40px rgba(8, 32, 52, .22);
+}
+[data-bs-theme="dark"] .siraj-player.has-outline:not(.is-stage) .siraj-player-footer { box-shadow: 0 14px 40px rgba(0, 0, 0, .45); }
+.siraj-player.has-outline .siraj-pn {
+    display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 18px; border-radius: 999px; border: 0;
+    background: transparent; color: var(--si-ink) !important; text-decoration: none !important; max-width: 300px;
+    > span { min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+    small { font: 600 10.5px var(--si-head); letter-spacing: .07em; text-transform: uppercase; color: var(--si-faint); }
+    b { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    svg, .si-icon { flex: none; width: 18px; height: 18px; }
+    &:hover { background: var(--si-surface-2); }
+}
+// Previous: a round icon button (the step name stays for screen readers).
+.siraj-player.has-outline .siraj-pn.siraj-prev { width: 46px; padding: 0; justify-content: center;
+    > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+.siraj-player.has-outline .siraj-pn.is-primary { background: var(--si-ink); color: var(--si-surface) !important; padding: 0 16px 0 22px;
+    small { color: color-mix(in srgb, var(--si-surface) 65%, transparent); }
+    &:hover { background: color-mix(in srgb, var(--si-ink) 86%, var(--si-surface)); } }
+.siraj-pn-gap { display: none; }
+.siraj-player.has-outline .siraj-complete {
+    display: flex; align-items: center; padding: 0 4px;
+    form { display: flex; align-items: center; gap: 4px; margin: 0; }
+    > .siraj-sub { margin: 0 10px; max-width: 220px; font-size: 12px; line-height: 1.3; color: var(--si-muted); }
+}
+.siraj-player.has-outline .siraj-complete:not(:has(*)) { display: none; }
+.siraj-player.has-outline .siraj-markdone {
+    display: inline-flex !important; align-items: center; gap: 8px; min-height: 46px; padding: 0 20px !important; border-radius: 999px !important;
+    border: 0 !important; background: var(--si-mint-soft) !important; color: var(--si-mint-ink, var(--si-mint)) !important; font-weight: 600 !important; font-size: 14px !important;
+    svg, .si-icon { width: 16px; height: 16px; }
+    &:hover { background: color-mix(in srgb, var(--si-mint) 24%, var(--si-surface)) !important; }
+}
+.siraj-player.has-outline .siraj-donestate { display: inline-flex; align-items: center; gap: 6px; padding: 0 6px 0 14px; font-weight: 600; font-size: 14px;
+    color: var(--si-mint-ink, var(--si-mint)); svg, .si-icon { width: 16px; height: 16px; } }
+.siraj-player.has-outline .siraj-undo { border: 0; background: none; padding: 6px 10px; border-radius: 99px; font-size: 12.5px; color: var(--si-faint) !important; cursor: pointer;
+    &:hover { color: var(--si-ink) !important; background: var(--si-surface-2); } }
+
+// Stage steps (SCORM, H5P, PDF): the stage fills the window under the strip; the controls are a plain bar below it.
+.siraj-player.has-outline.is-stage { height: 100dvh; min-height: 0;
+    > .siraj-player-main { height: 100dvh; min-height: 0; }
+    .siraj-player-footer { position: static; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 14px;
+        border-top: 1px solid var(--si-line); background: var(--si-surface); transform: none; }
+    .siraj-pn.siraj-prev { width: auto; padding: 0 14px; > span { position: static; width: auto; height: auto; clip: auto; } }
+}
+
+// Outline overlay.
+.siraj-player.has-outline > .siraj-outline {
+    position: fixed; z-index: 1046; top: 0; bottom: 0; inset-inline-start: 0; width: min(360px, 90vw); display: flex; flex-direction: column;
+    background: var(--si-surface); border-inline-end: 1px solid var(--si-line); box-shadow: 0 0 70px rgba(8, 32, 52, .3);
+    transition: transform .25s ease, visibility 0s;
+}
+.siraj-player.has-outline.outline-closed > .siraj-outline { transform: translateX(-105%); visibility: hidden; transition: transform .25s ease, visibility 0s linear .25s; }
+[dir="rtl"] .siraj-player.has-outline.outline-closed > .siraj-outline { transform: translateX(105%); }
+.siraj-player.has-outline > .siraj-outline-backdrop { display: block; position: fixed; inset: 0; z-index: 1045; background: rgba(8, 32, 52, .42); backdrop-filter: blur(2px);
+    opacity: 1; transition: opacity .25s ease; }
+.siraj-player.has-outline.outline-closed > .siraj-outline-backdrop { opacity: 0; pointer-events: none; }
+.siraj-outline-head { padding: 22px 20px 18px; border-bottom: 1px solid var(--si-line);
+    small { display: block; margin-top: 8px; font-size: 12px; color: var(--si-muted); } }
+.siraj-outline-course { display: block; font: 400 1.5rem/1.15 var(--si-serif); color: var(--si-ink) !important; text-decoration: none !important; }
+.siraj-outline-bar { display: block; height: 4px; margin-top: 14px; border-radius: 99px; background: var(--si-line); overflow: hidden;
+    i { display: block; height: 100%; border-radius: inherit; background: var(--si-mint); } }
+.siraj-outline-list { position: relative; flex: 1; overflow-y: auto; padding: 6px 0 18px; scrollbar-width: thin; }
+.siraj-outline-sec {
+    h2 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin: 0; padding: 18px 20px 6px;
+        font: 600 11.5px var(--si-head) !important; letter-spacing: .07em; text-transform: uppercase; color: var(--si-faint);
+        small { font-size: 11.5px; letter-spacing: 0; } }
+    ol { list-style: none; margin: 0; padding: 0 10px; }
+    li a { display: flex; align-items: flex-start; gap: 12px; padding: 9px 10px; border-radius: 10px; text-decoration: none !important; color: var(--si-ink) !important;
+        &:hover { background: var(--si-surface-2); }
+        &.is-current { background: color-mix(in srgb, var(--si-link) 12%, transparent); b { font-weight: 600; } } }
+}
+.siraj-outline-text { min-width: 0; display: flex; flex-direction: column; gap: 1px;
+    b { font-size: 14px; font-weight: 500; line-height: 1.35; overflow-wrap: anywhere; } small { font-size: 12px; color: var(--si-faint); } }
+.siraj-outline-dot { flex: none; width: 20px; height: 20px; margin-top: 1px; border-radius: 50%; display: grid; place-items: center;
+    border: 1.5px solid color-mix(in srgb, var(--si-faint) 60%, var(--si-line));
+    svg { width: 12px; height: 12px; display: none; }
+    .is-current > & { border: 2px solid var(--si-link); box-shadow: inset 0 0 0 3px var(--si-surface); background: var(--si-link); }
+    .is-done > & { border-color: var(--si-mint); background: var(--si-mint); box-shadow: none; color: #fff; svg { display: block; } } }
+
+// Phones: dots give way to the step count; the pill spans the width.
+@include media-breakpoint-down(md) {
+    .siraj-player.has-outline .siraj-player-top { grid-template-columns: auto minmax(0, 1fr) auto; height: 56px; }
+    .siraj-dots { justify-content: center; > a { display: none; } }
+    .siraj-dots-label { margin: 0; }
+    .siraj-player.has-outline .siraj-exit span { display: none; }
+    .siraj-player.has-outline .siraj-player-aibtn span { display: none; }
+    .siraj-player.has-outline:not(.is-stage) .siraj-player-footer { left: 12px; right: 12px; transform: none; width: auto; bottom: 14px; justify-content: space-between; }
+    .siraj-player.has-outline:not(.is-stage) .siraj-player-footer { flex-wrap: nowrap;
+        .siraj-complete { order: 0; width: auto; flex: none; } }
+    // Next: just "Next" and the arrow; the step name is in the outline.
+    .siraj-player.has-outline .siraj-pn.is-primary { flex: 1; justify-content: center; max-width: none; padding: 0 16px;
+        small { font-size: 14px; letter-spacing: 0; text-transform: none; color: inherit; } b { display: none; } }
+    .siraj-player.has-outline .siraj-markdone { padding: 0 14px !important; }
+    .siraj-player.has-outline .siraj-undo { padding: 6px 8px; }
+    .siraj-player.has-outline .siraj-complete > .siraj-sub { display: none; }
+    .siraj-player.has-outline .siraj-donestate { padding-inline-start: 8px; }
+    .siraj-player.has-outline:not(.is-stage) .siraj-player-body { padding: 32px 20px 130px; }
+}
+[dir="rtl"] .siraj-player.has-outline .siraj-pn svg { transform: scaleX(-1); }
+
+// Moodle's content wrapper adds 16px under the player; on the learning page nothing sits there.
+body.siraj-learn #page-content { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+// Full-screen steps: the page itself never scrolls (the course content scrolls inside its own frame), so there is
+// only one scroll bar and no strip under the controls.
+html:has(body.siraj-learn .siraj-player.is-stage), body.siraj-learn:has(.siraj-player.is-stage) { overflow: hidden; height: 100dvh; }
+
+// H5P in the player: the activity centred with breathing room, not edge to edge; the preview note as a small line.
+.siraj-player.has-outline.is-stage .siraj-h5p { padding: clamp(16px, 3vw, 36px); overflow: auto;
+    > .h5p-placeholder, > div, > iframe { max-width: 980px; margin: 0 auto; }
+    iframe.h5p-player { display: block; width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px var(--si-line); }
+    .text-right, .text-end { max-width: 980px; margin: 0 auto 10px; } }
+.siraj-player.has-outline.is-stage .siraj-player-body > p.siraj-sub { margin: 0; padding: 12px clamp(16px, 3vw, 36px) 0; font-size: 12.5px; color: var(--si-muted); }
+
+// Moodle pages inside the player (lesson, wiki, workshop, database, content package) in dark mode: dark scroll bars
+// and dark versions of the modules' own light panels.
+html.siraj-inframe[data-bs-theme="dark"] { color-scheme: dark; }
+[data-bs-theme="dark"] .path-mod-workshop {
+    .userplan dt, .userplan dd { background-color: var(--si-surface) !important; color: var(--si-ink); border-color: var(--si-line) !important; }
+    .userplan dt.active, .userplan dd.active { background: color-mix(in srgb, var(--si-mint) 16%, var(--si-surface)) !important; }
+    .submission-full { border-color: var(--si-line); } .submission-full .header { background-color: var(--si-surface-2); }
+    .message.ok, .allocation-init-results .ok { background-color: color-mix(in srgb, var(--si-mint) 14%, var(--si-surface)); color: var(--si-mint); }
+    .message.error, .allocation-init-results .error { background-color: color-mix(in srgb, #D2503D 14%, var(--si-surface)); color: #F08A78; }
+    .message.info, .allocation-init-results .info { background-color: color-mix(in srgb, var(--si-link) 14%, var(--si-surface)); color: var(--si-link); }
+}
+[data-bs-theme="dark"] #page-mod-imscp-view {
+    .yui-layout-hd { background-color: var(--si-surface-2) !important; h2 { color: var(--si-ink) !important; } }
+    .yui-layout-unit, .yui-layout-bd, #imscp_toc { background-color: var(--si-surface) !important; color: var(--si-ink); border-color: var(--si-line) !important; }
+    #imscp_toc a { color: var(--si-link); }
+}

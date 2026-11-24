@@ -20,7 +20,16 @@
             <h1>{{greeting}}.</h1>
             <p class="siraj-sub">{{subline}}</p>
         </div>
-        {{#overdue}}<span class="siraj-chip siraj-chip-status {{statusclass}}"><i></i>{{status}}</span>{{/overdue}}
+        {{#overdue}}
+        {{! The overdue chip opens the list of what is overdue (the same items as the Timeline). }}
+        <div class="dropdown siraj-overdue">
+            <button type="button" class="siraj-chip siraj-chip-status {{statusclass}}" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" aria-haspopup="true"><i></i>{{status}}{{{icon_chevron}}}</button>
+            <div class="dropdown-menu dropdown-menu-end siraj-overdue-menu">
+                <div class="siraj-overdue-head">{{#str}}overdue_head, local_siraj{{/str}}</div>
+                {{#overdueitems}}<a class="siraj-overdue-item" href="{{url}}"><span class="siraj-overdue-icon">{{{icon}}}</span><span class="siraj-overdue-text"><b dir="auto">{{name}}</b><small><span dir="auto">{{course}}</span> · {{when}}</small></span></a>{{/overdueitems}}
+            </div>
+        </div>
+        {{/overdue}}
     </header>
 
     <div class="siraj-a">

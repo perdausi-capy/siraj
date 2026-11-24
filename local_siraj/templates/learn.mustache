@@ -11,21 +11,51 @@
         "prevurl": "#", "prevname": "Welcome", "nexturl": "#", "nextname": "Policy", "courseurl": "#"
     }
 }}
-<div class="siraj-player{{#body.embed}} is-stage{{/body.embed}}{{#body.h5p}} is-stage{{/body.h5p}}{{#body.file.pdf}} is-stage{{/body.file.pdf}}" data-region="siraj-player" data-cmid="{{cmid}}" data-done="{{#isdone}}1{{/isdone}}">
+<div class="siraj-player{{#body.embed}} is-stage{{/body.embed}}{{#body.h5p}} is-stage{{/body.h5p}}{{#body.file.pdf}} is-stage{{/body.file.pdf}} has-outline" data-region="siraj-player" data-cmid="{{cmid}}" data-done="{{#isdone}}1{{/isdone}}">
+    {{! Course outline: every step by section, where you are, what is done. Collapsible; a drawer on small screens. }}
+    <nav class="siraj-outline" id="siraj-outline" aria-label="{{#str}}coursecontents, local_siraj{{/str}}">
+        <div class="siraj-outline-head">
+            <a class="siraj-outline-course" href="{{courseurl}}">{{coursename}}</a>
+            <span class="siraj-outline-bar"><i style="width: {{progress}}%"></i></span>
+            <small><span data-region="siraj-progresstext">{{progresstext}}</span> · {{progress}}%</small>
+        </div>
+        <div class="siraj-outline-list">
+            {{#outline}}
+            <section class="siraj-outline-sec{{#current}} is-current{{/current}}">
+                <h2><span dir="auto">{{name}}</span>{{#total}}<small>{{done}}/{{total}}</small>{{/total}}</h2>
+                <ol>
+                    {{#items}}
+                    <li><a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}"{{#current}} aria-current="step"{{/current}}>
+                        <span class="siraj-outline-dot" aria-hidden="true">{{{icon_check}}}</span>
+                        <span class="siraj-outline-text"><b dir="auto">{{name}}</b><small>{{type}}</small></span>
+                    </a></li>
+                    {{/items}}
+                </ol>
+            </section>
+            {{/outline}}
+        </div>
+    </nav>
+    <div class="siraj-outline-backdrop" data-action="siraj-outline"></div>
     <article class="siraj-player-main">
         <header class="siraj-player-top">
-            <a class="siraj-exit" href="{{courseurl}}" title="{{#str}}exitlearning, local_siraj{{/str}}">{{{icon_back}}}<span>{{#str}}exitlearning, local_siraj{{/str}}</span></a>
+            <a class="siraj-exit" href="{{courseurl}}" title="{{#str}}backtocourse, local_siraj{{/str}}">{{{icon_back}}}<span>{{coursename}}</span></a>
             <div class="siraj-player-where">
                 <b class="siraj-where-course">{{coursename}}</b>
                 <b class="siraj-where-lesson">{{name}}</b>
                 <small><span class="siraj-where-lesson">{{coursename}} · </span>{{position}} · <span data-region="siraj-progresstext">{{progresstext}}</span><span data-region="siraj-lessonpct"></span></small>
+            </div>
+            {{! Step dots: one per step, done / current / to do; each opens that step. }}
+            <div class="siraj-dots" aria-label="{{position}}">
+                {{#outline}}{{#items}}<a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}" title="{{name}}"{{#current}} aria-current="step"{{/current}}><span class="visually-hidden">{{name}}</span></a>{{/items}}{{/outline}}
+                <span class="siraj-dots-label">{{position}}</span>
             </div>
             <div class="siraj-player-tools">
                 {{#isdone}}<span class="siraj-chip green" data-region="siraj-state">{{{icon_check}}} {{#str}}done, local_siraj{{/str}}</span>{{/isdone}}
                 {{^isdone}}<span class="siraj-chip" data-region="siraj-state" data-donehtml="{{#str}}done, local_siraj{{/str}}">{{type}}</span>{{/isdone}}
                 {{#body.embed}}<button type="button" class="siraj-player-iconbtn" data-action="siraj-fullscreen" title="{{#str}}fullscreen, local_siraj{{/str}}" aria-label="{{#str}}fullscreen, local_siraj{{/str}}">{{{icon_expand}}}</button>{{/body.embed}}
                 <span class="siraj-player-ring" title="{{#str}}courseprogress, local_siraj{{/str}}: {{progress}}%" style="--p: {{progress}}"><b>{{progress}}%</b></span>
-                <button type="button" class="siraj-player-aibtn" {{#aiready}}data-siraj-ai="" aria-controls="siraj-ai"{{/aiready}}{{^aiready}}data-action="siraj-side" aria-expanded="false" aria-controls="siraj-player-side"{{/aiready}}>{{{icon_sparkles}}}<span>Siraj AI</span></button>
+                <button type="button" class="siraj-player-iconbtn siraj-outline-toggle" data-action="siraj-outline" aria-controls="siraj-outline" aria-expanded="false" data-show="{{#str}}showcontents, local_siraj{{/str}}" data-hide="{{#str}}hidecontents, local_siraj{{/str}}" title="{{#str}}showcontents, local_siraj{{/str}}" aria-label="{{#str}}showcontents, local_siraj{{/str}}">{{{icon_list}}}</button>
+                <button type="button" class="siraj-player-aibtn" {{#aiready}}data-siraj-ai="" aria-controls="siraj-ai"{{/aiready}}{{^aiready}}data-action="siraj-side" aria-expanded="false" aria-controls="siraj-player-side"{{/aiready}}><span class="siraj-aiface" aria-hidden="true"></span><span>{{#str}}ai_name, theme_siraj{{/str}}</span></button>
             </div>
         </header>
         <div class="siraj-player-rail" role="progressbar" aria-valuenow="{{steppct}}" aria-valuemin="0" aria-valuemax="100" aria-label="{{position}}"><i style="width: {{steppct}}%"></i></div>
@@ -33,7 +63,7 @@
         <div class="siraj-player-body">
             <div class="siraj-player-title">
                 <div>
-                    <div class="siraj-eyebrow">{{sectionname}} · {{type}}</div>
+                    <div class="siraj-eyebrow">{{sectionname}} · {{type}}{{#readtime}} · {{readtime}}{{/readtime}}</div>
                     <h1>{{name}}</h1>
                 </div>
             </div>
@@ -171,8 +201,8 @@
         </div>
 
         <footer class="siraj-player-footer">
-            {{#prevurl}}<a class="btn btn-secondary siraj-prev" href="{{prevurl}}" title="{{prevname}}">{{{icon_back}}} <span>{{#str}}previous, local_siraj{{/str}}</span></a>{{/prevurl}}
-            {{^prevurl}}<span></span>{{/prevurl}}
+            {{#prevurl}}<a class="siraj-pn siraj-prev" href="{{prevurl}}">{{{icon_back}}}<span><small>{{#str}}previous, local_siraj{{/str}}</small><b dir="auto">{{prevname}}</b></span></a>{{/prevurl}}
+            {{^prevurl}}<span class="siraj-pn-gap"></span>{{/prevurl}}
             <div class="siraj-complete">
                 {{#manual}}
                 <form method="post" action="{{formurl}}">
@@ -180,25 +210,27 @@
                     {{^isdone}}
                     <input type="hidden" name="action" value="done">
                     {{#nexturl}}<input type="hidden" name="goto" value="{{nexturl}}">{{/nexturl}}
-                    {{^manualquiet}}<button class="btn siraj-btn-flame" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}{{#nexturl}} · {{#str}}andcontinue, local_siraj{{/str}}{{/nexturl}}</button>{{/manualquiet}}
-                    {{#manualquiet}}<button class="btn btn-link siraj-undo" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}</button>{{/manualquiet}}
+                    {{^manualquiet}}<button class="btn siraj-markdone" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}</button>{{/manualquiet}}
+                    {{#manualquiet}}<button class="btn siraj-markdone is-quiet" type="submit">{{{icon_check}}} {{#str}}markdone, local_siraj{{/str}}</button>{{/manualquiet}}
                     {{/isdone}}
                     {{#isdone}}
                     <input type="hidden" name="action" value="undone">
-                    <button class="btn btn-link siraj-undo" type="submit">{{#str}}markundone, local_siraj{{/str}}</button>
+                    <span class="siraj-donestate">{{{icon_check}}} {{#str}}completed, local_siraj{{/str}}</span>
+                    <button class="siraj-undo" type="submit" title="{{#str}}markundone, local_siraj{{/str}}">{{#str}}undo, local_siraj{{/str}}</button>
                     {{/isdone}}
                 </form>
                 {{/manual}}
+                {{^manual}}{{#isdone}}<span class="siraj-donestate">{{{icon_check}}} {{#str}}completed, local_siraj{{/str}}</span>{{/isdone}}{{/manual}}
                 {{#automatic}}{{^isdone}}<span class="siraj-sub">{{#str}}autocomplete, local_siraj{{/str}}</span>{{/isdone}}{{/automatic}}
                 {{^manual}}{{^automatic}}<span class="siraj-sub">{{#str}}autosave, local_siraj{{/str}}</span>{{/automatic}}{{/manual}}
             </div>
-            {{#nexturl}}<a class="btn {{#isdone}}siraj-btn-flame{{/isdone}}{{^isdone}}btn-secondary{{/isdone}} siraj-next" href="{{nexturl}}" title="{{nextname}}"><span>{{#str}}next, local_siraj, {{nextname}}{{/str}}</span> {{{icon_arrow}}}</a>{{/nexturl}}
-            {{^nexturl}}<a class="btn btn-secondary siraj-next" href="{{courseurl}}"><span>{{#str}}backtocourse, local_siraj{{/str}}</span> {{{icon_arrow}}}</a>{{/nexturl}}
+            {{#nexturl}}<a class="siraj-pn siraj-next is-primary" href="{{nexturl}}"><span><small>{{#str}}nextlabel, local_siraj{{/str}}</small><b dir="auto">{{nextname}}</b></span>{{{icon_arrow}}}</a>{{/nexturl}}
+            {{^nexturl}}<a class="siraj-pn siraj-next is-primary" href="{{courseurl}}"><span><small>{{#str}}finishcourse, local_siraj{{/str}}</small><b>{{#str}}backtocourse, local_siraj{{/str}}</b></span>{{{icon_arrow}}}</a>{{/nexturl}}
         </footer>
     </article>
 
     <div class="siraj-side-backdrop" data-action="siraj-side-close"></div>
-    <aside class="siraj-player-side" id="siraj-player-side" aria-label="Siraj AI">
+    <aside class="siraj-player-side" id="siraj-player-side" aria-label="{{#str}}ai_name, theme_siraj{{/str}}">
         <button type="button" class="siraj-side-close" data-action="siraj-side-close" aria-label="{{#str}}closebuttontitle{{/str}}">{{{icon_x}}}</button>
         <div class="siraj-panel siraj-ai">
             <div class="siraj-ai-head"><span class="siraj-ai-orb"></span><div><b>{{#str}}ai_name, theme_siraj{{/str}}</b><small>{{#str}}ai_companion, local_siraj{{/str}}{{^aiready}} · {{#str}}ai_soon, local_siraj{{/str}}{{/aiready}}</small></div></div>
@@ -220,6 +252,36 @@
     var player = document.querySelector('[data-region="siraj-player"]');
     if (!player) {
         return;
+    }
+    // Course outline: an overlay from the side, opened from the contents button; Esc or the backdrop closes it.
+    var otoggle = player.querySelector('.siraj-outline-toggle');
+    var setOutline = function(open) {
+        player.classList.toggle('outline-closed', !open);
+        if (otoggle) {
+            var label = otoggle.getAttribute(open ? 'data-hide' : 'data-show');
+            otoggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            otoggle.setAttribute('title', label);
+            otoggle.setAttribute('aria-label', label);
+        }
+    };
+    setOutline(false);
+    player.querySelectorAll('[data-action="siraj-outline"]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            setOutline(player.classList.contains('outline-closed'));
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !player.classList.contains('outline-closed')) {
+            setOutline(false);
+            if (otoggle) {
+                otoggle.focus();
+            }
+        }
+    });
+    var current = player.querySelector('.siraj-outline a.is-current');
+    if (current && current.parentNode) {
+        var list = player.querySelector('.siraj-outline-list');
+        list.scrollTop = current.offsetTop - list.clientHeight / 2;
     }
     // Link step: copy the address.
     player.querySelectorAll('[data-siraj-copy]').forEach(function(btn) {
@@ -352,7 +414,13 @@
             .then(function(d) {
                 ring.style.setProperty('--p', d.pct);
                 ring.querySelector('b').textContent = d.pct + '%';
-                player.querySelector('[data-region="siraj-progresstext"]').textContent = d.text;
+                player.querySelectorAll('[data-region="siraj-progresstext"]').forEach(function(el) {
+                    el.textContent = d.text;
+                });
+                var dot = player.querySelector('.siraj-outline a.is-current');
+                if (d.isdone && dot) {
+                    dot.classList.add('is-done');
+                }
                 var state = player.querySelector('[data-region="siraj-state"]');
                 if (d.isdone && !player.dataset.done) {
                     player.dataset.done = '1';
@@ -379,7 +447,9 @@
         css.textContent = '#scorm_toc_toggle,#scorm_toc,#scorm_navpanel,.scorm-right #scormtop,#page-header,' +
             '#page-footer,.skip-links{display:none!important}' +
             'html,body,#page,#page-wrapper,#page-content,#region-main,#maincontent{margin:0!important;padding:0!important;' +
-            'background:#fff!important;border:0!important;max-width:none!important;width:100%!important}' +
+            // SCORM packages are made for a white page; Moodle's own pages (lesson, wiki ...) keep the theme's colours.
+            (box.dataset.kind === 'scorm' ? 'background:#fff!important;' : '') +
+            'border:0!important;max-width:none!important;width:100%!important}' +
             '#scorm_layout,#scorm_content,#scorm_object,.yui3-u-1{width:100%!important;left:0!important;margin:0!important}' +
             '#scorm_object{height:100vh!important}';
         (doc.head || doc.documentElement).appendChild(css);
@@ -401,7 +471,10 @@
             // SCORM's own "exit" or a finished package can navigate the frame to a course page: take the whole
             // window there instead of showing Moodle inside the player.
             var allow = box.dataset.allow || '/mod/scorm/';
-            var inside = here.pathname.indexOf(allow) !== -1 || here.pathname.indexOf('/pluginfile.php') !== -1;
+            // Short addresses: /mod/wiki/view.php?id=5 also shows as /wiki/5.
+            var short = allow.replace(/^\/mod\//, '/');
+            var inside = here.pathname.indexOf(allow) !== -1 || here.pathname.indexOf(short) === 0 ||
+                here.pathname.indexOf('/pluginfile.php') !== -1;
             if (here.pathname !== start && !inside && here.href !== 'about:blank') {
                 window.location.href = here.href;
                 return;

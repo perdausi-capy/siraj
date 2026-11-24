@@ -23,6 +23,22 @@ if ($hassiteconfig) {
     core_collator::asort($blocks);
     $settings->add(new admin_setting_configmulticheckbox('local_siraj/dashboardblocks', get_string('dashboardblocks', 'local_siraj'),
         get_string('dashboardblocks_desc', 'local_siraj'), array_fill_keys(\local_siraj\setup::DASHBOARD_BLOCKS, 1), $blocks));
+    // Explore: the featured collection banner.
+    $settings->add(new admin_setting_heading('local_siraj/featuredheading', get_string('featuredcollection', 'local_siraj'),
+        get_string('featured_desc', 'local_siraj')));
+    $collections = [0 => get_string('featured_auto', 'local_siraj'), -1 => get_string('featured_weekly', 'local_siraj')];
+    foreach (core_course_category::top()->get_children() as $cat) {
+        $collections[$cat->id] = $cat->get_formatted_name();
+    }
+    $settings->add(new admin_setting_configselect('local_siraj/featuredcat', get_string('featuredcat', 'local_siraj'),
+        get_string('featuredcat_desc', 'local_siraj'), 0, $collections));
+    $settings->add(new admin_setting_configstoredfile('local_siraj/featuredimage', get_string('featuredimage', 'local_siraj'),
+        get_string('featuredimage_desc', 'local_siraj'), 'featuredimage', 0,
+        ['maxfiles' => 1, 'accepted_types' => ['.jpg', '.jpeg', '.png', '.webp']]));
+    $settings->add(new admin_setting_configtext('local_siraj/featuredtitle', get_string('featuredtitle', 'local_siraj'),
+        get_string('featuredtitle_desc', 'local_siraj'), '', PARAM_TEXT));
+    $settings->add(new admin_setting_configtextarea('local_siraj/featuredtext', get_string('featuredtext', 'local_siraj'),
+        get_string('featuredtext_desc', 'local_siraj'), '', PARAM_TEXT, 60, 3));
     $ADMIN->add('localplugins', $settings);
 }
 

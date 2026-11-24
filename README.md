@@ -263,7 +263,7 @@ Some of Moodle's own pages too: `/calendar/month` (`/day`, `/upcoming`), `/quiz/
   Keep both files in step with `clean_urls::PAGES`, `ACTIVITIES` and `CALENDAR_VIEWS`.
 - Switch on only where the server rules are in place:
   `php -r '...require "config.php"; set_config("urlrewriteclass", "\\local_siraj\\clean_urls");'`. Off: `unset_config`.
-- Local status: on. Staging: not yet.
+- Local status: on. Staging: on since 24 Nov 2026 (nginx snippet included in the HTTPS server block).
 
 ## Local data folder
 Moodle's data folder is `~/siraj-local/moodledata` (mounted into the container by `moodle-docker/local.yml`, kept out
