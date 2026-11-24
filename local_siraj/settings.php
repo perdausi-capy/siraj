@@ -50,6 +50,10 @@ if ($hassiteconfig) {
             $node->hidden = true;
         }
     }
+    // MoodleNet (Moodle's public sharing network) is not used by company sites: its settings stay out of the menu.
+    if ($node = $ADMIN->locate('moodlenet')) {
+        $node->hidden = true;
+    }
     $ADMIN->add('development', new admin_externalpage('local_siraj_devtools', get_string('devtools', 'local_siraj'),
         new moodle_url('/local/siraj/devtools.php')));
 }
