@@ -35,6 +35,16 @@ class hook_callbacks {
         if (defined('READ_ONLY_SESSION') && READ_ONLY_SESSION && !empty($SESSION->notifications)) {
             \core\session\manager::restart_with_write_lock(false);
         }
+        // Back from an assignment's submission form that was opened in Learning mode (its link carries siraj=learn):
+        // Moodle shows its assignment page (staff: the grading table); take the person back to the step in the player.
+        if (in_array($PAGE->pagetype, ['mod-assign-view', 'mod-assign-grading'], true) && $PAGE->cm
+                && in_array(optional_param('action', '', PARAM_ALPHA), ['', 'view', 'grading'], true)
+                && ($referer = get_local_referer(false))) {
+            parse_str((string)parse_url($referer, PHP_URL_QUERY), $from);
+            if (($from['siraj'] ?? '') === 'learn' && ($from['action'] ?? '') === 'editsubmission') {
+                redirect(new \moodle_url('/local/siraj/learn.php', ['cmid' => $PAGE->cm->id]));
+            }
+        }
         $pagetype = (string)$PAGE->pagetype;
         // A language picked on the sign-in page is remembered, so it can follow the person in (Moodle drops the
         // session language at login and uses the profile's). See observer::user_loggedin.
@@ -76,6 +86,14 @@ class hook_callbacks {
                 && !has_capability('moodle/grade:viewall', \context_course::instance($gc, IGNORE_MISSING) ?: \context_system::instance())
                 && optional_param('userid', $GLOBALS['USER']->id, PARAM_INT) == $GLOBALS['USER']->id) {
             $replaced[$pagetype] = (new \moodle_url('/local/siraj/grades.php', ['id' => $gc]))->out(false);
+        }
+        // Site announcements (the front page's news forum): the Siraj Announcements pages. Replying, posting and
+        // editing stay on Moodle's forum pages (they carry other parameters); siraj=classic opens Moodle's view.
+        if (in_array($pagetype, ['mod-forum-view', 'mod-forum-discuss'], true) && $PAGE->cm && $PAGE->course->id == SITEID
+                && !array_diff(array_keys($_GET), ['d', 'f', 'id', 'siraj'])
+                && $GLOBALS['DB']->get_field('forum', 'type', ['id' => $PAGE->cm->instance]) === 'news') {
+            $d = $pagetype === 'mod-forum-discuss' ? optional_param('d', 0, PARAM_INT) : 0;
+            $replaced[$pagetype] = (new \moodle_url('/local/siraj/announcements.php', $d ? ['id' => $d] : null))->out(false);
         }
         if (isset($replaced[$pagetype]) && isloggedin() && !isguestuser() && optional_param('siraj', '', PARAM_ALPHA) !== 'classic') {
             redirect(new \moodle_url($replaced[$pagetype]));

@@ -66,7 +66,7 @@
                             <li>
                                 {{#url}}<a class="siraj-act {{#isnext}}is-next{{/isnext}}" href="{{url}}">{{/url}}{{^url}}<div class="siraj-act is-locked">{{/url}}
                                     <span class="siraj-act-icon mod-{{modname}}">{{{icon}}}</span>
-                                    <span class="siraj-act-text"><b>{{name}}</b><small>{{type}}</small></span>
+                                    <span class="siraj-act-text"><b>{{name}}</b><small>{{#locked}}{{{icon_lock}}} {{lockinfo}}{{/locked}}{{^locked}}{{type}}{{/locked}}</small></span>
                                     {{#done}}<span class="siraj-chip green">{{{icon_check}}} {{#str}}done, local_siraj{{/str}}</span>{{/done}}
                                     {{#isnext}}<span class="siraj-chip siraj-chip-next">{{{icon_play}}} {{#str}}upnext, local_siraj{{/str}}</span>{{/isnext}}
                                 {{#url}}</a>{{/url}}{{^url}}</div>{{/url}}

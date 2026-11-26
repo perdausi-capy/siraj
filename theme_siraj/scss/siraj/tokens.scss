@@ -15,7 +15,23 @@
 .siraj-sidebar { view-transition-name: siraj-sidebar; }
 .siraj-topbar { view-transition-name: siraj-topbar; }
 .siraj-mobilebar { view-transition-name: siraj-mobilebar; }
+.siraj-trail { view-transition-name: siraj-trail; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+// The bar is the same on every page: swap it in place. Cross-fading two copies of the see-through bar made it shimmer.
+::view-transition-old(siraj-topbar), ::view-transition-old(siraj-mobilebar) { display: none; }
+::view-transition-new(siraj-topbar), ::view-transition-new(siraj-mobilebar) { animation: none; }
+// The bar is see-through: without its own backdrop, the page swap behind it shows through for a frame. On the new
+// bar's image, not the group: going to a page without a bar (sign-in), the group would linger as an empty ghost bar.
+::view-transition-new(siraj-topbar), ::view-transition-new(siraj-mobilebar) { background: var(--si-bg); }
+// The page title in the bar: the old one leaves, then the new one comes in, so the two never show on top of each other.
+::view-transition-group(siraj-trail) { animation: none; }
+::view-transition-old(siraj-trail) { animation: siraj-trail-out .1s ease-in both; }
+::view-transition-new(siraj-trail) { animation: siraj-trail-in .18s cubic-bezier(.2, .8, .2, 1) .1s both; }
+@keyframes siraj-trail-out { to { opacity: 0; transform: translateY(-4px); } }
+@keyframes siraj-trail-in { from { opacity: 0; transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
 
 // ---------- Siraj design tokens (runtime, light + dark) ----------
 :root, [data-bs-theme="light"] {

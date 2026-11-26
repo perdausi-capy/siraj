@@ -293,7 +293,8 @@ class player {
         $late = $due && $due < $now && !$submitted;
         $canedit = $assign->can_edit_submission($USER->id, $USER->id) && $assign->submissions_open($USER->id);
         $viewurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->id, 'action' => 'view']);
-        $editurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->id, 'action' => 'editsubmission']);
+        // siraj=learn: after saving (or cancelling) Moodle's submission form, go back to this step in Learning mode.
+        $editurl = new \moodle_url('/mod/assign/view.php', ['id' => $cm->id, 'action' => 'editsubmission', 'siraj' => 'learn']);
         if ($state === 'new' && $canedit) {
             $action = ['text' => get_string('addsubmission', 'local_siraj'), 'url' => $editurl->out(false), 'primary' => true];
         } else if ($state === 'draft' && $canedit) {
@@ -409,7 +410,30 @@ class player {
 
         // Course outline beside the lesson: every step by section, with where you are and what is done.
         $outline = [];
-        foreach ($steps as $s) {
+        // The outline also lists restricted activities (locked, with the reason); Previous / Next skip them.
+        $all = [];
+        foreach ($this->p->modinfo->get_section_info_all() as $sec) {
+            if (!$sec->uservisible || $sec->is_delegated()) {
+                continue;
+            }
+            foreach ($this->p->modinfo->sections[$sec->section] ?? [] as $id) {
+                $x = $this->p->modinfo->cms[$id];
+                if ($x->url && !$x->deletioninprogress && ($x->uservisible || $x->is_visible_on_course_page())) {
+                    $all[] = $x;
+                }
+            }
+        }
+        foreach ($all as $s) {
+            if (!$s->uservisible) {
+                $key = $s->sectionnum;
+                $outline[$key] = $outline[$key] ?? ['name' => get_section_name($this->p->course,
+                    $this->p->modinfo->get_section_info($key)), 'items' => [], 'done' => 0, 'total' => 0, 'current' => false];
+                $outline[$key]['items'][] = ['name' => $s->get_formatted_name(['escape' => false]), 'url' => null,
+                    'type' => progress::lock_reason($s, $this->p->course), 'done' => false, 'current' => false, 'locked' => true,
+                    'icon' => icons::svg(progress::icon($s->modname))];
+                $outline[$key]['total'] += $this->p->completion->is_enabled($s) ? 1 : 0;
+                continue;
+            }
             $key = $s->sectionnum;
             if (!isset($outline[$key])) {
                 $outline[$key] = ['name' => get_section_name($this->p->course, $this->p->modinfo->get_section_info($key)),

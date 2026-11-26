@@ -262,7 +262,8 @@ class home {
             $next = null;
             $completedon = 0;
             foreach ($modinfo->get_cms() as $cm) {
-                if (!$cm->uservisible || $cm->deletioninprogress || !$completion->is_enabled($cm)) {
+                // Locked (restricted) activities still count towards the total, like on the course page.
+                if ($cm->deletioninprogress || !$completion->is_enabled($cm) || (!$cm->uservisible && !$cm->is_visible_on_course_page())) {
                     continue;
                 }
                 $total++;
@@ -270,7 +271,7 @@ class home {
                 if (in_array($data->completionstate, [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS])) {
                     $done++;
                     $completedon = max($completedon, (int)$data->timemodified);
-                } else if (!$next) {
+                } else if (!$next && $cm->uservisible) {
                     $next = $cm;
                 }
             }

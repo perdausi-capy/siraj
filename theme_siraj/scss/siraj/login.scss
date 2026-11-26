@@ -269,3 +269,50 @@ html:has(body.pagelayout-login), body.pagelayout-login { scrollbar-width: none; 
     #notice .buttons { display: flex; flex-direction: row-reverse; gap: 10px; width: 100%; }
     #notice .singlebutton { flex: 1; margin: 0 !important; form { margin: 0; } .btn { width: 100%; min-height: 48px; border-radius: 999px; font-weight: 600; } }
 }
+
+// ---------- Forgotten password: one card, a heading per step ----------
+.siraj-fp {
+    h2 { margin-bottom: 8px; }
+    .siraj-fp-v { display: none; }
+    .siraj-fp-sub { color: var(--si-muted); margin: 0 0 22px; line-height: 1.55; }
+    &:has(form.mform):not(:has([name="password2"])) .v-request,
+    &:has([name="password2"]) .v-set,
+    &.is-posted:has(#notice) .v-sent,
+    &:not(.is-posted):has(#notice) .v-note { display: block; }
+    // Moodle's own instructions: the step heading says it now.
+    [role="main"] > .generalbox:not(#notice) { display: none; }
+    // Form: label above the box, full-width fields and button, no "Search by ..." headings.
+    form.mform {
+        fieldset { border: 0; margin: 0; padding: 0; }
+        .ftoggler, legend, fieldset > .d-flex:has(.ftoggler), fieldset > .d-flex:has(h3) { display: none !important; }
+        .form-label-addon { display: none !important; } // required marks: every field here is needed
+        .fitem[data-groupname="buttonar"] .felement, #fgroup_id_buttonar .felement { display: block; }
+        #fgroup_id_buttonar fieldset > div, #fgroup_id_buttonar .d-flex { display: block !important; }
+        [name="cancel"] { display: none !important; }
+        .fitem_fcheckbox, .fitem:has(input[type="checkbox"]) { .col-form-label { display: none; } }
+        .fstatic { color: var(--si-ink); font-weight: 600; }
+        .fitem.row { display: block; margin: 0 0 14px; > [class*="col-md"] { width: 100%; max-width: none; padding: 0; flex: none; } }
+        .col-form-label { padding: 0 0 6px; label { font-size: 12px; font-weight: 600; color: var(--si-muted); } }
+        .femptylabel > .col-form-label { display: none; }
+        .felement { display: block; }
+        .form-control { width: 100%; }
+        input[type="submit"], button[type="submit"] { width: 100%; height: 52px; border-radius: 999px; font-size: 15px; font-weight: 600; margin-top: 4px; }
+        .fdescription.required, .mform .fdescription.required { display: none; }
+        .form-control-feedback { width: 100%; }
+    }
+    &.is-one #id_searchbyemail { display: none; }
+    // "Check your email": the step says it all; Moodle's message and Continue button go.
+    &.is-posted #notice { display: none !important; }
+    &.is-posted [role="main"] > .generalbox, &.is-posted .continuebutton { display: none; }
+    // Link expired or unknown: Moodle's explanation stays, with its button to ask for a new link.
+    &:not(.is-posted) {
+        #notice { padding: 0 !important; background: transparent !important; border: 0 !important; color: var(--si-muted); margin: 0 0 18px; }
+        .continuebutton .btn { width: 100%; height: 52px; border-radius: 999px; font-weight: 600; }
+    }
+    .siraj-fp-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 18px; margin: 14px 0 6px;
+        background: color-mix(in srgb, var(--si-mint) 16%, transparent); color: var(--si-mint); svg { width: 26px; height: 26px; } }
+    .siraj-fp-back { display: inline-flex; gap: 8px; align-items: center; margin-top: 18px; font-size: 14px; font-weight: 600; color: var(--si-muted); text-decoration: none;
+        &:hover { color: var(--si-ink); } }
+    &.is-posted .siraj-fp-back { margin-top: 4px; }
+}
+[dir="rtl"] .siraj-fp .siraj-fp-back span { transform: scaleX(-1); }

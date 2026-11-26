@@ -13,7 +13,7 @@ swap() {  # $1 = source dir, $2 = target dir inside moodle/
     rm -rf "$old"
 }
 needs_upgrade=0
-for p in theme_siraj:theme/siraj local_siraj:local/siraj; do
+for p in theme_siraj:theme/siraj local_siraj:local/siraj tiny_sirajblocks:lib/editor/tiny/plugins/sirajblocks; do
     src=${p%%:*}; dst=${p##*:}
     if ! cmp -s "$src/version.php" "moodle/$dst/version.php" 2>/dev/null; then needs_upgrade=1; fi
     swap "$src" "$dst"
@@ -23,6 +23,10 @@ if [ $needs_upgrade = 1 ]; then
 else
     docker exec -w /var/www/html siraj-webserver-1 php admin/cli/purge_caches.php
 fi
+docker exec -i -u www-data siraj-webserver-1 php < tools/check_scss.php
+# Build the theme CSS (English and Arabic) here: otherwise the first page after a purge waits ~6 s for it and
+# every click in the meantime hangs.
+docker exec -w /var/www/html -u www-data siraj-webserver-1 php admin/cli/build_theme_css.php --themes=siraj >/dev/null
 # Warm: theme CSS/JS and the main pages (anonymous + one logged-in pass).
 jar=$(mktemp)
 tok=$(curl -s -c "$jar" -b "$jar" http://localhost:8000/login/ | grep -o 'name="logintoken" value="[^"]*' | cut -d'"' -f4)

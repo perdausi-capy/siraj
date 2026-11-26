@@ -2,7 +2,8 @@
 /**
  * Short addresses for Siraj's pages: /home, /courses/12, /learn/40 instead of /local/siraj/index.php and friends,
  * /login/ for the sign-in page, and a few of Moodle's own pages: /calendar/month, /quiz/35 (any activity), /user/8,
- * /admin/logos (a settings page) and /admin/search.
+ * /course/12, /forum/discuss/4, /preferences, /profile/edit, /badges/mine (FIXED), /admin/logos (a settings page) and
+ * /admin/search.
  * Moodle calls url_rewrite() for every link it prints; the web server maps the short address back to the real page
  * (rules in README, "Short addresses"). The old /local/siraj/... addresses keep working.
  *
@@ -39,6 +40,7 @@ class clean_urls implements \core\output\url_rewriter {
         'studio' => ['studio'],
         'reports' => ['reports'],
         'matrix' => ['matrix'],
+        'announcements' => ['announcements', 'id'],
     ];
 
     /** @var string[] Activity types whose view page is /<type>/<cmid>. Keep in step with the server rules. */
@@ -47,6 +49,30 @@ class clean_urls implements \core\output\url_rewriter {
 
     /** @var string[] Calendar views with a short address: /calendar/<view>. */
     const CALENDAR_VIEWS = ['month', 'day', 'upcoming'];
+
+    /** @var array Moodle pages a learner reaches from Siraj's menus => their short address. Keep in step with the server rules. */
+    const FIXED = [
+        '/user/preferences.php' => '/preferences',
+        '/user/language.php' => '/preferences/language',
+        '/user/forum.php' => '/preferences/forum',
+        '/user/editor.php' => '/preferences/editor',
+        '/user/calendar.php' => '/preferences/calendar',
+        '/user/contentbank.php' => '/preferences/contentbank',
+        '/message/edit.php' => '/preferences/messages',
+        '/message/notificationpreferences.php' => '/preferences/notifications',
+        '/badges/preferences.php' => '/preferences/badges',
+        '/blog/preferences.php' => '/preferences/blog',
+        '/user/edit.php' => '/profile/edit',
+        '/login/change_password.php' => '/profile/password',
+        '/badges/mybadges.php' => '/badges/mine',
+        '/badges/mybackpack.php' => '/badges/backpack',
+        '/user/files.php' => '/myfiles',
+        '/message/output/popup/notifications.php' => '/notifications',
+        '/message/index.php' => '/chat',
+        '/grade/report/overview/index.php' => '/grades/overview',
+        '/admin/tool/dataprivacy/summary.php' => '/data-retention',
+        '/login/forgot_password.php' => '/login/forgot',
+    ];
 
     /**
      * The short address for one of Moodle's own pages, or null.
@@ -65,6 +91,24 @@ class clean_urls implements \core\output\url_rewriter {
         }
         if ($path === '/user/profile.php' && $id && count($params) === 1) {
             return ['/user/' . $id, []];
+        }
+        if (isset(self::FIXED[$path])) {
+            // These pages default to the front page as their course: no need to say so in the address.
+            if ((string)($params['course'] ?? '') === (string)SITEID) {
+                unset($params['course']);
+            }
+            return [self::FIXED[$path], $params];
+        }
+        if ($path === '/course/view.php' && $id && !isset($params['section'])) {
+            return ['/course/' . $id, $rest];
+        }
+        if ($path === '/course/section.php' && $id) {
+            return ['/course/section/' . $id, $rest];
+        }
+        $d = $params['d'] ?? null;
+        if ($path === '/mod/forum/discuss.php' && $d !== null && preg_match('/^[0-9]+$/', (string)$d)) {
+            unset($params['d']);
+            return ['/forum/discuss/' . $d, $params];
         }
         if ($path === '/calendar/view.php' && in_array($params['view'] ?? '', self::CALENDAR_VIEWS, true)) {
             $view = $params['view'];

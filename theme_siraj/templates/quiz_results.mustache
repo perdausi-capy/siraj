@@ -23,6 +23,7 @@
     <div class="siraj-results-actions">
         {{#retakeurl}}<a class="btn siraj-btn-flame" href="{{retakeurl}}">{{#str}}results_retake, theme_siraj{{/str}} {{{icon_arrow}}}</a>{{/retakeurl}}
         <a class="btn {{#retakeurl}}btn-secondary{{/retakeurl}}{{^retakeurl}}siraj-btn-flame{{/retakeurl}}" href="{{courseurl}}">{{#str}}results_backtocourse, theme_siraj{{/str}}</a>
-        <a class="btn btn-link siraj-results-review" href="#responseform">{{#str}}results_review, theme_siraj{{/str}} ↓</a>
+        {{#reviewurl}}<a class="btn btn-link siraj-results-review" href="{{reviewurl}}">{{#str}}results_review, theme_siraj{{/str}} →</a>{{/reviewurl}}
+        {{^reviewurl}}<a class="btn btn-link siraj-results-review" href="#responseform">{{#str}}results_review, theme_siraj{{/str}} ↓</a>{{/reviewurl}}
     </div>
 </section>

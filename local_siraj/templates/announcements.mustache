@@ -1,0 +1,95 @@
+{{!
+    @template local_siraj/announcements
+
+    Siraj Announcements: the site announcements as cards, or one announcement to read.
+
+    Example context (json):
+    {"hasitems": true, "count": 1, "canpost": true, "posturl": "#", "listurl": "#",
+     "items": [{"id": 1, "url": "#", "subject": "Welcome", "excerpt": "Your learning space is ready.", "author": "L&D team",
+       "avatar": "", "date": "17 November 2026", "day": "17", "month": "Nov", "iso": "2026-11-17", "isnew": true,
+       "pinned": false, "replies": 0, "hasreplies": false, "attachments": false}]}
+}}
+<div class="siraj-announce" data-region="siraj-announce">
+{{^single}}
+    <header class="siraj-pagehead">
+        <div>
+            <div class="siraj-eyebrow">{{#str}}stayintheloop, local_siraj{{/str}}</div>
+            <h1>{{#str}}announcements, local_siraj{{/str}}</h1>
+            <p class="siraj-sub">{{#str}}announcements_sub, local_siraj{{/str}}</p>
+        </div>
+        {{#canpost}}
+        <div class="siraj-head-actions">
+            <a class="btn siraj-btn-flame" href="{{posturl}}">{{{icon_plus}}} {{#str}}announce_add, local_siraj{{/str}}</a>
+        </div>
+        {{/canpost}}
+    </header>
+    {{#hasitems}}
+    <ol class="siraj-announce-list">
+        {{#items}}
+        <li>
+            <a class="siraj-announce-card{{#isnew}} is-new{{/isnew}}{{#pinned}} is-pinned{{/pinned}}" href="{{url}}">
+                <time class="siraj-announce-date" datetime="{{iso}}"><b>{{day}}</b><span>{{month}}</span></time>
+                <div class="siraj-announce-main">
+                    <div class="siraj-announce-chips">
+                        {{#pinned}}<span class="siraj-chip">{{#str}}announce_pinned, local_siraj{{/str}}</span>{{/pinned}}
+                        {{#isnew}}<span class="siraj-chip green">{{#str}}announce_new, local_siraj{{/str}}</span>{{/isnew}}
+                    </div>
+                    <h2 dir="auto">{{subject}}</h2>
+                    {{#excerpt}}<p dir="auto">{{excerpt}}</p>{{/excerpt}}
+                    <div class="siraj-announce-meta">
+                        {{#avatar}}<img src="{{avatar}}" alt="" class="siraj-announce-avatar">{{/avatar}}
+                        <span>{{author}}</span><span aria-hidden="true">·</span><span>{{date}}</span>
+                        {{#attachments}}<span class="siraj-announce-flag" title="{{#str}}announce_files, local_siraj{{/str}}">{{{icon_file}}}</span>{{/attachments}}
+                        {{#hasreplies}}<span class="siraj-announce-flag">{{{icon_message}}} {{replies}}</span>{{/hasreplies}}
+                    </div>
+                </div>
+                <span class="siraj-announce-go" aria-hidden="true">{{{icon_arrow}}}</span>
+            </a>
+        </li>
+        {{/items}}
+    </ol>
+    {{/hasitems}}
+    {{^hasitems}}
+    <div class="siraj-panel siraj-empty">
+        <span class="siraj-empty-icon">{{{icon_megaphone}}}</span>
+        <b>{{#str}}announce_none, local_siraj{{/str}}</b>
+        <p>{{#str}}announce_none_sub, local_siraj{{/str}}</p>
+    </div>
+    {{/hasitems}}
+{{/single}}
+{{#single}}
+    <article class="siraj-announce-read">
+        <a class="siraj-back" href="{{listurl}}">{{#str}}announce_all, local_siraj{{/str}}</a>
+        <div class="siraj-announce-chips">
+            {{#pinned}}<span class="siraj-chip">{{#str}}announce_pinned, local_siraj{{/str}}</span>{{/pinned}}
+            {{#isnew}}<span class="siraj-chip green">{{#str}}announce_new, local_siraj{{/str}}</span>{{/isnew}}
+        </div>
+        <h1 dir="auto">{{subject}}</h1>
+        <div class="siraj-announce-byline">
+            {{#avatar}}<img src="{{avatar}}" alt="" class="siraj-announce-avatar lg">{{/avatar}}
+            <div><b>{{author}}</b><small><time datetime="{{iso}}">{{date}}</time> · {{#str}}minread, local_siraj, {{readtime}}{{/str}}</small></div>
+            {{#editurl}}<a class="btn btn-secondary btn-sm siraj-announce-edit" href="{{editurl}}">{{{icon_pencil}}} {{#str}}edit{{/str}}</a>{{/editurl}}
+        </div>
+        <div class="siraj-prose siraj-announce-body" dir="auto">{{{body}}}</div>
+        {{#hasfiles}}
+        <div class="siraj-announce-files">
+            <div class="siraj-eyebrow">{{#str}}announce_files, local_siraj{{/str}}</div>
+            {{#files}}<a href="{{url}}" class="siraj-announce-file">{{{icon_file}}}<span><b dir="auto">{{name}}</b><small>{{size}}</small></span>{{{icon_download}}}</a>{{/files}}
+        </div>
+        {{/hasfiles}}
+        {{#hasreplies}}
+        <a class="siraj-link siraj-announce-replies" href="{{forumurl}}">{{{icon_message}}} {{#str}}announce_replies, local_siraj, {{replies}}{{/str}} {{{icon_arrow}}}</a>
+        {{/hasreplies}}
+        {{^hasreplies}}{{#canreply}}
+        <a class="siraj-link siraj-announce-replies" href="{{forumurl}}">{{{icon_message}}} {{#str}}announce_reply, local_siraj{{/str}} {{{icon_arrow}}}</a>
+        {{/canreply}}{{/hasreplies}}
+    </article>
+    {{/single}}
+    {{#single}}
+    <nav class="siraj-announce-pn" aria-label="{{#str}}announcements, local_siraj{{/str}}">
+        {{#prev}}<a class="siraj-announce-pnlink is-prev" href="{{url}}"><small>{{#str}}announce_newer, local_siraj{{/str}}</small><b dir="auto">{{subject}}</b></a>{{/prev}}
+        {{^prev}}<span></span>{{/prev}}
+        {{#next}}<a class="siraj-announce-pnlink is-next" href="{{url}}"><small>{{#str}}announce_older, local_siraj{{/str}}</small><b dir="auto">{{subject}}</b></a>{{/next}}
+    </nav>
+{{/single}}
+</div>

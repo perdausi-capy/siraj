@@ -43,13 +43,65 @@ class mod_quiz_renderer extends \mod_quiz\output\renderer {
     }
 
     /**
+     * Moodle's quiz page (what staff see, and learners outside Learning mode): the results card for the latest
+     * finished attempt at the top, and a button back to the course page next to the attempt button.
+     *
+     * @param \stdClass $course
+     * @param \stdClass $quiz
+     * @param \cm_info|\stdClass $cm
+     * @param \context_module $context
+     * @param \mod_quiz\output\view_page $viewobj
+     * @return string
+     */
+    public function view_page($course, $quiz, $cm, $context, $viewobj) {
+        $card = '';
+        $finished = array_filter($viewobj->attempts ?? [], fn($a) => $a->state === quiz_attempt::FINISHED);
+        if ($finished) {
+            $last = end($finished);
+            $attemptobj = quiz_attempt::create($last->id);
+            $options = $attemptobj->get_display_options(false);
+            if ($options->marks >= \question_display_options::MARK_AND_MAX) {
+                // On the quiz page "Review answers" opens that attempt's review (on the review page it scrolls down).
+                $card = $this->results_card($attemptobj, $options, $attemptobj->review_url()->out(false));
+            }
+        }
+        $html = parent::view_page($course, $quiz, $cm, $context, $viewobj);
+        if ($card === '') {
+            return $html;
+        }
+        // After the tertiary navigation (Quiz / Settings / ...), before the quiz information.
+        $pos = strpos($html, '<div class="box py-3 quizinfo');
+        $pos = $pos === false ? strpos($html, '<div class="activity-header') : $pos;
+        return $pos === false ? $card . $html : substr($html, 0, $pos) . $card . substr($html, $pos);
+    }
+
+    /**
+     * The attempt button, plus a way back to the course page.
+     *
+     * @param \mod_quiz\output\view_page $viewobj
+     * @return string
+     */
+    public function view_page_buttons(\mod_quiz\output\view_page $viewobj) {
+        $html = parent::view_page_buttons($viewobj);
+        // With a finished attempt the results card above already has "Back to course".
+        if (array_filter($viewobj->attempts ?? [], fn($a) => $a->state === quiz_attempt::FINISHED)) {
+            return $html;
+        }
+        $courseid = $this->page->course->id;
+        $courseurl = file_exists($GLOBALS['CFG']->dirroot . '/local/siraj/course.php') ?
+            new \moodle_url('/local/siraj/course.php', ['id' => $courseid]) : new \moodle_url('/course/view.php', ['id' => $courseid]);
+        return '<div class="siraj-quizview-actions">' . $html . \html_writer::link($courseurl,
+            icons::svg('arrow-left') . s(get_string('results_backtocourse', 'theme_siraj')), ['class' => 'btn btn-secondary siraj-backtocourse']) . '</div>';
+    }
+
+    /**
      * The results card.
      *
      * @param quiz_attempt $attemptobj
      * @param display_options $displayoptions
      * @return string
      */
-    protected function results_card(quiz_attempt $attemptobj, display_options $displayoptions): string {
+    protected function results_card(quiz_attempt $attemptobj, display_options $displayoptions, ?string $reviewurl = null): string {
         global $DB;
         $quiz = $attemptobj->get_quiz();
         $marks = (float)$attemptobj->get_sum_marks();
@@ -84,7 +136,7 @@ class mod_quiz_renderer extends \mod_quiz\output\renderer {
             'time' => format_time((int)$attemptobj->get_attempt()->timefinish - (int)$attemptobj->get_attempt()->timestart),
             'attempts' => $allowed ? get_string('results_attempts', 'theme_siraj', (object)['n' => $used, 'total' => $allowed]) : null,
             'retakeurl' => $canretake ? (new \moodle_url('/mod/quiz/view.php', ['id' => $attemptobj->get_cmid()]))->out(false) : null,
-            'courseurl' => $courseurl->out(false),
+            'courseurl' => $courseurl->out(false), 'reviewurl' => $reviewurl,
             'icon_check' => icons::svg('check-circle'), 'icon_clock' => icons::svg('clock'), 'icon_arrow' => icons::svg('arrow-right'),
             'icon_back' => icons::svg('arrow-left'), 'icon_layers' => icons::svg('layers'),
         ]);

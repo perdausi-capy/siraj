@@ -27,6 +27,11 @@ $templatecontext = [
     'icon_award' => \theme_siraj\icons::svg('award'),
     'icon_globe' => \theme_siraj\icons::svg('globe'),
     'icon_check' => \theme_siraj\icons::svg('check'),
+    'icon_mail' => \theme_siraj\icons::svg('mail'),
+    // Forgotten password: the same card, with a heading for each step (see the template).
+    'forgot' => $PAGE->pagetype === 'login-forgot_password',
+    'posted' => ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST',
+    'loginurl' => get_login_url(),
     'langmenu' => $primarymenu['lang'],
     'year' => date('Y'),
     'languages' => theme_siraj_login_languages(),

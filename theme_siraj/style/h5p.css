@@ -1,0 +1,67 @@
+/*
+ * Siraj look for H5P activities (loaded inside H5P's own frame by theme_siraj\output\core_h5p_renderer).
+ * Question as a heading, answers as cards, Siraj buttons and inputs. H5P draws its own light card.
+ */
+.h5p-content {
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #0b1b2b;
+    background: #fff;
+    border: 0 !important;
+}
+.h5p-question.h5p-standalone { padding: 26px 28px 24px !important; }
+.h5p-question-introduction, .h5p-question-introduction p { font-size: 18px; font-weight: 600; line-height: 1.45; color: #0b1b2b; margin: 0 0 16px; }
+
+/* Multiple choice: each answer a card (drawn on H5P's answer box, which also holds the radio). */
+.h5p-multichoice .h5p-answers { margin: 0 0 4px !important; }
+.h5p-multichoice .h5p-answers .h5p-answer { background: transparent !important; border: 0 !important; margin: 0 0 10px !important; box-shadow: none !important; }
+.h5p-multichoice .h5p-answers .h5p-answer .h5p-alternative-container {
+    background: #fff !important;
+    border: 1px solid #d6dfe8 !important;
+    border-radius: 12px !important;
+    padding: 14px 18px 14px 56px !important;
+    font-size: 15.5px;
+    line-height: 1.45;
+    color: #0b1b2b;
+    box-shadow: none !important;
+    transition: border-color .15s, background .15s;
+}
+.h5p-multichoice .h5p-answers .h5p-answer .h5p-alternative-container::before { left: 36px !important; top: 50% !important; transform: translateY(-50%); color: #7a8c9e; }
+.h5p-multichoice .h5p-answers .h5p-answer:hover .h5p-alternative-container { border-color: #1666a9 !important; background: #f5f9fd !important; }
+.h5p-multichoice .h5p-answers .h5p-answer[aria-checked="true"] .h5p-alternative-container { border-color: #1666a9 !important; background: #eaf3fb !important; }
+.h5p-multichoice .h5p-answers .h5p-answer[aria-checked="true"] .h5p-alternative-container::before { color: #1666a9; }
+.h5p-multichoice .h5p-answers .h5p-answer.h5p-correct .h5p-alternative-container { border-color: #00a879 !important; background: #e6f7f1 !important; }
+.h5p-multichoice .h5p-answers .h5p-answer.h5p-wrong .h5p-alternative-container { border-color: #d2503d !important; background: #fcecea !important; }
+.h5p-multichoice .h5p-answers .h5p-answer.h5p-should .h5p-alternative-container { border-style: dashed !important; border-color: #00a879 !important; }
+
+/* Fill in the blanks. */
+.h5p-blanks .h5p-question-content p { font-size: 16px; line-height: 2.3; color: #0b1b2b; margin: 0 0 4px; }
+.h5p-blanks .h5p-text-input {
+    min-width: 130px;
+    padding: 4px 10px !important;
+    border: 1px solid #c3cfdb !important;
+    border-radius: 8px !important;
+    background: #f7f9fb !important;
+    font: inherit;
+    font-size: 15px;
+}
+.h5p-blanks .h5p-text-input:focus { outline: none; border-color: #1666a9 !important; background: #fff !important; box-shadow: 0 0 0 3px rgba(22, 102, 169, .18); }
+.h5p-blanks .h5p-correct .h5p-text-input, .h5p-blanks .h5p-text-input.h5p-correct { border-color: #00a879 !important; background: #e6f7f1 !important; }
+.h5p-blanks .h5p-wrong .h5p-text-input, .h5p-blanks .h5p-text-input.h5p-wrong { border-color: #d2503d !important; background: #fcecea !important; }
+
+/* Buttons. */
+.h5p-joubelui-button, .h5p-question-buttons .h5p-joubelui-button {
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    padding: 11px 24px !important;
+    border-radius: 999px !important;
+    border: 0 !important;
+    background: #0d3555 !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+.h5p-joubelui-button:hover { background: #12507a !important; }
+.h5p-joubelui-button:focus-visible { outline: 3px solid rgba(22, 102, 169, .35); outline-offset: 2px; }
+.h5p-question-buttons { padding: 12px 0 0 !important; }
+.h5p-question-feedback, .h5p-question-feedback-content { font-size: 15px; color: #0b1b2b; }

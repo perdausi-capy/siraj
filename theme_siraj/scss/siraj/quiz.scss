@@ -102,3 +102,10 @@ body.path-mod-quiz {
 [dir="rtl"] body.path-mod-quiz #mod_quiz_navblock .qnbutton.flagged::after { right: auto; left: 3px; }
 body.path-mod-quiz .que .qtype_multichoice_clearchoice { padding: 0; margin: 4px 0 0 !important; a, .btn-link { padding-inline: 0 !important; font-size: 14px; } }
 [data-bs-theme="dark"] body.path-mod-quiz .que .questionflag img.questionflagimage { filter: invert(1) brightness(1.4); }
+
+// Quiz page: the attempt button and "Back to course" side by side.
+.siraj-quizview-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    .singlebutton, form { margin: 0; }
+    .siraj-backtocourse { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; border-radius: 999px; padding: 0 18px;
+        svg { width: 16px; height: 16px; } } }
+#page-mod-quiz-view .siraj-quizresults { margin-bottom: 20px; }

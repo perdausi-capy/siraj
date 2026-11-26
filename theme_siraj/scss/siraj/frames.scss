@@ -72,7 +72,10 @@ body.path-mod-assign {
 .drawer-toggles .drawer-right-toggle { right: 16px !important; }
 .drawer-toggles .drawer-right-toggle .btn {
     width: 36px !important; height: 36px !important; border-radius: 10px !important; background: var(--si-surface) !important;
-    border: 1px solid var(--si-line) !important; box-shadow: none !important; color: var(--si-muted) !important; }
+    border: 1px solid var(--si-line) !important; box-shadow: none !important; color: var(--si-muted) !important;
+    // The chevron sits in a span inside the button: centre it.
+    display: grid !important; place-items: center; padding: 0 !important;
+    .icon { margin: 0 !important; line-height: 1; } }
 .drawer-toggles .drawer-right-toggle .btn:hover { color: var(--si-ink) !important; background: var(--si-surface-2) !important; }
 // Tooltips in dark mode: the page's own dark surface, not a light pill.
 [data-bs-theme="dark"] .tooltip { --bs-tooltip-bg: #1C2A3D; --bs-tooltip-color: #E8EEF5; }
@@ -108,3 +111,10 @@ body.pagelayout-admin.empty-region-side-pre {
     #page.drawers.show-drawer-right { margin-right: 0 !important; margin-inline-end: 0 !important; }
     #page-header .header-actions-container { margin-inline-end: 0; }
 }
+
+// Moodle traces learners don't need: the MoodleNet profile field (MoodleNet is off) and the "More information about
+// this error" link to Moodle's docs under error messages.
+#fitem_id_moodlenetprofile { display: none !important; }
+#page-content p.errorcode, .errorbox p.errorcode { display: none; }
+// "Switch role to...": Moodle's note links to its docs ("See details and alternatives").
+#page-course-switchrole a[href*="moodle.org"] { display: none; }

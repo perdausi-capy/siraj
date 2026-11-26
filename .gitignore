@@ -19,3 +19,5 @@ node_modules/
 # Server details and other-project test scripts
 /STAGING.local.md
 /tools/wm.js
+/backups/
+/seed/siraj5-text/

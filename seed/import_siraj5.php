@@ -10,14 +10,12 @@ require_once($CFG->libdir . '/filelib.php');
 $dir = $argv[1] ?? die("folder arg required\n");
 $admin = get_admin();
 \core\session\manager::set_user($admin);
-$plan = ['Wellness' => [17 => 'Wellness Course', 5 => 'Wellness : Be Well and Thrive Program', 4 => 'Global Wellness'],
-    'Business Essentials' => [12 => 'Presentation Skills', 11 => 'Communication Skills', 10 => 'Emotional Intelligence',
-        9 => 'Information Security', 8 => 'Cyber Security Measures', 7 => 'Introduction to Cyber Security']];
-$blurbs = ['Wellness' => 'Look after your body and mind: sleep, stress, movement and balance at work.',
-    'Business Essentials' => 'Everyday skills for work: communication, presentations, emotional intelligence and staying safe online.'];
-foreach ($plan as $catname => $courses) {
-    $cat = $DB->get_record('course_categories', ['name' => $catname]) ?: core_course_category::create(
-        ['name' => $catname, 'description' => "<p>{$blurbs[$catname]}</p>", 'descriptionformat' => FORMAT_HTML]);
+// Into the catalogue's categories (made by catalogue.php: idnumber siraj-safety, siraj-skills, siraj-digital).
+$plan = ['siraj-safety' => [17 => 'Wellness Course', 5 => 'Wellness : Be Well and Thrive Program', 4 => 'Global Wellness'],
+    'siraj-skills' => [12 => 'Presentation Skills', 11 => 'Communication Skills', 10 => 'Emotional Intelligence'],
+    'siraj-digital' => [9 => 'Information Security', 8 => 'Cyber Security Measures', 7 => 'Introduction to Cyber Security']];
+foreach ($plan as $catidnumber => $courses) {
+    $cat = $DB->get_record('course_categories', ['idnumber' => $catidnumber]) ?: die("Run catalogue.php first (no $catidnumber)\n");
     foreach ($courses as $oldid => $name) {
         if ($DB->record_exists('course', ['fullname' => $name])) {
             echo "$name: already here\n";

@@ -67,7 +67,19 @@ class course_page {
             $sdone = 0;
             foreach ($this->p->modinfo->sections[$section->section] ?? [] as $cmid) {
                 $cm = $this->p->modinfo->cms[$cmid];
-                if (!$cm->uservisible || !$cm->url || $cm->deletioninprogress) {
+                if (!$cm->url || $cm->deletioninprogress || (!$cm->uservisible && !$cm->is_visible_on_course_page())) {
+                    continue;
+                }
+                // Restricted ("available after you complete ..."): shown locked, with the reason, not left out.
+                if (!$cm->uservisible) {
+                    $acts[] = [
+                        'name' => $cm->get_formatted_name(['escape' => false]),
+                        'type' => get_string('modulename', $cm->modname),
+                        'icon' => icons::svg(progress::icon($cm->modname)),
+                        'modname' => $cm->modname, 'url' => null, 'done' => false, 'isnext' => false, 'todo' => true,
+                        'locked' => true, 'lockinfo' => progress::lock_reason($cm, $course),
+                    ];
+                    $tracked += $this->p->completion->is_enabled($cm) ? 1 : 0;
                     continue;
                 }
                 $isdone = $this->p->is_done($cm);
@@ -166,6 +178,7 @@ class course_page {
             'icon_play' => icons::svg('play'),
             'icon_award' => icons::svg('award'),
             'icon_settings' => icons::svg('settings'),
+            'icon_lock' => icons::svg('lock'),
             'icon_sparkles' => icons::svg('sparkles'), 'aiready' => ai::available(),
         ];
     }

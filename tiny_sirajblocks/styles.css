@@ -1,0 +1,143 @@
+/*
+ * Siraj blocks (tiny_sirajblocks): the look of the content blocks, on pages and (editor_styles.css, a link to this
+ * file) inside the editor. Colours come from the Siraj theme (light, dark) with fallbacks for the editor; spacing
+ * uses logical properties so Arabic mirrors.
+ */
+.sb {
+    --sb-ink: var(--si-ink, #0b1b2b);
+    --sb-muted: var(--si-muted, #55697a);
+    --sb-line: var(--si-line, #dbe3ea);
+    --sb-surface: var(--si-surface, #ffffff);
+    --sb-soft: var(--si-surface-2, #f2f5f8);
+    --sb-blue: var(--si-link, #1666a9);
+    --sb-mint: var(--si-mint, #00a879);
+    --sb-amber: var(--si-amber, #c98a1b);
+    --sb-red: #d2503d;
+    --sb-navy: #0d3555;
+    margin: 1.5em 0;
+    color: var(--sb-ink);
+    line-height: 1.65;
+}
+.sb p { margin: 0 0 .5em; }
+.sb p:last-child, .sb ul:last-child, .sb ol:last-child { margin-bottom: 0; }
+.sb .sb-title {
+    font-weight: 700;
+    font-size: .78em;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    margin-bottom: .45em;
+}
+
+/* Section banner. */
+.sb-banner {
+    padding: 2em 2em 1.8em;
+    border-radius: 18px;
+    color: #fff;
+    background: radial-gradient(120% 140% at 100% 0%, rgba(0, 230, 154, .28), transparent 55%), linear-gradient(135deg, #0d3555, #12507a);
+}
+/* The banner is always dark: its text stays light whatever the page's own text colour rules say. */
+.sb.sb-banner .sb-eyebrow { font-weight: 700; font-size: .75em; letter-spacing: .1em; text-transform: uppercase; color: #7ff0c8 !important; margin: 0; }
+.sb.sb-banner h2 { color: #fff !important; margin: .3em 0 .35em; font-size: 1.7em; line-height: 1.15; }
+.sb.sb-banner .sb-lead { color: rgba(255, 255, 255, .88) !important; font-size: 1.05em; max-width: 60ch; }
+
+/* Callout, tip, warning, summary. */
+.sb-note {
+    padding: 1em 1.2em;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--sb-accent) 30%, var(--sb-line));
+    background: color-mix(in srgb, var(--sb-accent) 9%, var(--sb-surface));
+}
+.sb-note .sb-title { color: var(--sb-accent); }
+.sb-info { --sb-accent: var(--sb-blue); }
+.sb-tip { --sb-accent: var(--sb-mint); }
+.sb-warn { --sb-accent: var(--sb-amber); }
+.sb-summary { --sb-accent: var(--sb-navy); background: var(--sb-soft); border-color: var(--sb-line); }
+.sb-summary .sb-title { color: var(--sb-ink); }
+
+/* Key points. */
+.sb-keypoints { padding: 1.1em 1.3em; border-radius: 14px; background: var(--sb-soft); }
+.sb-keypoints ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .55em; }
+.sb-keypoints li { position: relative; padding-inline-start: 1.8em; }
+.sb-keypoints li::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: .25em;
+    width: 1.15em;
+    height: 1.15em;
+    border-radius: 50%;
+    background: var(--sb-mint) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E") center / 70% no-repeat;
+}
+
+/* Steps. */
+.sb-steps { list-style: none; padding: 0; counter-reset: sb-step; display: grid; gap: .9em; }
+.sb-steps > li { counter-increment: sb-step; position: relative; padding-inline-start: 3em; min-height: 2.2em; }
+.sb-steps > li::before {
+    content: counter(sb-step);
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
+    width: 2.1em;
+    height: 2.1em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    color: var(--sb-surface);
+    background: var(--sb-ink);
+}
+.sb-steps > li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: 1.02em;
+    top: 2.3em;
+    bottom: -.8em;
+    width: 2px;
+    background: var(--sb-line);
+}
+.sb-steps .sb-title { text-transform: none; letter-spacing: 0; font-size: 1em; margin-bottom: .15em; }
+
+/* Do and don't. */
+.sb-dodont { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1em; }
+.sb-do, .sb-dont { padding: 1em 1.2em; border-radius: 14px; border: 1px solid var(--sb-line); }
+.sb-do { background: color-mix(in srgb, var(--sb-mint) 9%, var(--sb-surface)); border-color: color-mix(in srgb, var(--sb-mint) 35%, var(--sb-line)); }
+.sb-dont { background: color-mix(in srgb, var(--sb-red) 8%, var(--sb-surface)); border-color: color-mix(in srgb, var(--sb-red) 30%, var(--sb-line)); }
+.sb-do .sb-title { color: var(--sb-mint); }
+.sb-dont .sb-title { color: var(--sb-red); }
+.sb-dodont ul { margin: 0; padding-inline-start: 1.2em; }
+
+/* Scenario. */
+.sb-scenario {
+    padding: 1.2em 1.4em;
+    border-radius: 14px;
+    border: 1px dashed color-mix(in srgb, var(--sb-blue) 45%, var(--sb-line));
+    background: var(--sb-surface);
+}
+.sb-scenario .sb-title { color: var(--sb-blue); }
+.sb-scenario .sb-ask { font-weight: 700; margin-top: .7em; }
+
+/* Quote. */
+.sb-quote { padding: .4em 0; border: 0; margin-inline: 0; }
+.sb-quote > p:first-child { font-family: var(--si-serif, Georgia, serif); font-size: 1.45em; line-height: 1.35; }
+.sb-quote > p:first-child::before { content: "\201C"; color: var(--sb-mint); margin-inline-end: .05em; }
+.sb-quote > p:first-child::after { content: "\201D"; color: var(--sb-mint); }
+.sb-quote .sb-cite { color: var(--sb-muted); font-size: .9em; }
+.sb-quote .sb-cite::before { content: "\2014\00a0"; }
+
+/* Numbers. */
+.sb-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1em; }
+.sb-stat { padding: 1em 1.2em; border-radius: 14px; background: var(--sb-soft); }
+.sb-stat .sb-value { font-size: 2em; font-weight: 700; line-height: 1.1; color: var(--sb-blue); margin-bottom: .2em; }
+.sb-stat p:last-child { color: var(--sb-muted); font-size: .92em; }
+
+/* Question and answer. */
+.sb-faq { border: 1px solid var(--sb-line); border-radius: 12px; padding: 0 1.1em; background: var(--sb-surface); }
+.sb-faq + .sb-faq { margin-top: -.9em; }
+.sb-faq summary { cursor: pointer; font-weight: 600; padding: .85em 0; list-style-position: inside; }
+.sb-faq[open] summary { border-bottom: 1px solid var(--sb-line); margin-bottom: .7em; }
+.sb-faq > p { padding-bottom: .9em; color: var(--sb-muted); }
+
+/* Two columns. */
+.sb-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.4em; }
+.sb-col { padding: 1.1em 1.3em; border-radius: 14px; border: 1px solid var(--sb-line); background: var(--sb-surface); }
+.sb-col h3 { margin: 0 0 .35em; font-size: 1.1em; }

@@ -11,7 +11,7 @@
         "prevurl": "#", "prevname": "Welcome", "nexturl": "#", "nextname": "Policy", "courseurl": "#"
     }
 }}
-<div class="siraj-player{{#body.embed}} is-stage{{/body.embed}}{{#body.h5p}} is-stage{{/body.h5p}}{{#body.file.pdf}} is-stage{{/body.file.pdf}} has-outline" data-region="siraj-player" data-cmid="{{cmid}}" data-done="{{#isdone}}1{{/isdone}}">
+<div class="siraj-player{{#body.embed}} is-stage{{/body.embed}}{{#body.h5p}} is-stage{{/body.h5p}}{{#body.file.pdf}} is-stage{{/body.file.pdf}} has-outline outline-closed" data-region="siraj-player" data-cmid="{{cmid}}" data-done="{{#isdone}}1{{/isdone}}">
     {{! Course outline: every step by section, where you are, what is done. Collapsible; a drawer on small screens. }}
     <nav class="siraj-outline" id="siraj-outline" aria-label="{{#str}}coursecontents, local_siraj{{/str}}">
         <div class="siraj-outline-head">
@@ -25,10 +25,14 @@
                 <h2><span dir="auto">{{name}}</span>{{#total}}<small>{{done}}/{{total}}</small>{{/total}}</h2>
                 <ol>
                     {{#items}}
-                    <li><a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}"{{#current}} aria-current="step"{{/current}}>
+                    {{#locked}}<li><span class="siraj-outline-locked">
+                        <span class="siraj-outline-dot" aria-hidden="true">{{{icon_lock}}}</span>
+                        <span class="siraj-outline-text"><b dir="auto">{{name}}</b><small>{{type}}</small></span>
+                    </span></li>{{/locked}}
+                    {{^locked}}<li><a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}"{{#current}} aria-current="step"{{/current}}>
                         <span class="siraj-outline-dot" aria-hidden="true">{{{icon_check}}}</span>
                         <span class="siraj-outline-text"><b dir="auto">{{name}}</b><small>{{type}}</small></span>
-                    </a></li>
+                    </a></li>{{/locked}}
                     {{/items}}
                 </ol>
             </section>
@@ -46,7 +50,7 @@
             </div>
             {{! Step dots: one per step, done / current / to do; each opens that step. }}
             <div class="siraj-dots" aria-label="{{position}}">
-                {{#outline}}{{#items}}<a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}" title="{{name}}"{{#current}} aria-current="step"{{/current}}><span class="visually-hidden">{{name}}</span></a>{{/items}}{{/outline}}
+                {{#outline}}{{#items}}{{#locked}}<span class="is-locked" title="{{name}}"></span>{{/locked}}{{^locked}}<a href="{{url}}" class="{{#done}}is-done{{/done}}{{#current}} is-current{{/current}}" title="{{name}}"{{#current}} aria-current="step"{{/current}}><span class="visually-hidden">{{name}}</span></a>{{/locked}}{{/items}}{{/outline}}
                 <span class="siraj-dots-label">{{position}}</span>
             </div>
             <div class="siraj-player-tools">

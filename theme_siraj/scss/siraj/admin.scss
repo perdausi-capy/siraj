@@ -208,3 +208,11 @@ table.wsoverview {
 
 // Admin pages use the whole window on large screens (the rest of Siraj stops at 1480px).
 body.pagelayout-admin #topofscroll.main-inner { max-width: none; padding-inline: clamp(0px, 1.5vw, 32px); }
+
+// Admin home: Moodle's notices that don't apply to Siraj (its phone app, MoodleNet, the plugin marketplace, feedback to
+// Moodle HQ). Security, upgrade and update notices stay, and so does Moodle's copyright line.
+// (Separate selectors: Moodle's SCSS compiler fails on :has() inside :is().)
+#page-admin-index #region-main .alert:has(input[name="query"][value="enablemobilewebservice"]),
+#page-admin-index #region-main .alert:has(a[href*="moodle-tool_moodlenet"]),
+#page-admin-index #region-main .alert:has(a[href*="marketplace.moodle.com"]),
+#page-admin-index #region-main .alert:has(a[href$="/admin/userfeedback"]) { display: none; }

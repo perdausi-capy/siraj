@@ -83,14 +83,21 @@ class progress {
         $total = 0;
         $done = 0;
         $next = null;
-        foreach ($this->steps() as $cm) {
-            if (!$this->completion->is_enabled($cm)) {
+        // Every tracked activity counts, including restricted ones still locked: otherwise a learner would reach 100%
+        // (and the certificate) before a locked final quiz even opens.
+        foreach ($this->modinfo->get_cms() as $cm) {
+            if (!$cm->url || $cm->deletioninprogress || !$this->completion->is_enabled($cm)
+                    || (!$cm->uservisible && !$cm->is_visible_on_course_page())) {
+                continue;
+            }
+            $section = $this->modinfo->get_section_info($cm->sectionnum);
+            if (!$section->uservisible || $section->is_delegated()) {
                 continue;
             }
             $total++;
             if ($this->is_done($cm)) {
                 $done++;
-            } else if (!$next) {
+            } else if (!$next && $cm->uservisible) {
                 $next = $cm;
             }
         }
@@ -106,6 +113,35 @@ class progress {
      */
     public static function open_url(\cm_info $cm): string {
         return (new \moodle_url('/local/siraj/learn.php', ['cmid' => $cm->id]))->out(false);
+    }
+
+    /**
+     * Why a restricted activity is locked, as plain text ("Available after you complete ...").
+     *
+     * @param \cm_info $cm
+     * @param \stdClass $course
+     * @return string
+     */
+    public static function lock_reason(\cm_info $cm, \stdClass $course): string {
+        // "Complete these first" (the usual case): name the activities.
+        $tree = $cm->availability ? json_decode($cm->availability) : null;
+        if ($tree && ($tree->op ?? '') === '&' && !empty($tree->c)) {
+            $names = [];
+            foreach ($tree->c as $c) {
+                if (($c->type ?? '') !== 'completion' || empty($c->cm) || !isset($cm->get_modinfo()->cms[$c->cm])) {
+                    $names = [];
+                    break;
+                }
+                $names[] = $cm->get_modinfo()->cms[$c->cm]->get_formatted_name(['escape' => false]);
+            }
+            if ($names) {
+                return get_string('unlocksafter', 'local_siraj', implode(', ', $names));
+            }
+        }
+        // Anything else (dates, grades, groups ...): Moodle's own wording, as one line of plain text.
+        $info = $cm->availableinfo ? \core_availability\info::format_info($cm->availableinfo, $course) : '';
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags(str_replace('</li>', '; ', $info))), " ;");
+        return $text !== '' ? $text : get_string('locked', 'local_siraj');
     }
 
     /**

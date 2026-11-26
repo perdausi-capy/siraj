@@ -68,13 +68,74 @@
             <h1>{{tagline}}</h1>
             <p>{{subline}}</p>
         </section>
-        <section class="siraj-signin-card" id="region-main">
+        <section class="siraj-signin-card{{#forgot}} siraj-fp{{#posted}} is-posted{{/posted}}{{/forgot}}" id="region-main">
+            {{^forgot}}
             <div class="siraj-eyebrow">{{#str}}welcometo, theme_siraj, {{sitename}}{{/str}}</div>
             <h2>{{#str}}goodtohaveyou, theme_siraj{{/str}}</h2>
             <p class="siraj-sub">{{#str}}signinsub, theme_siraj{{/str}}</p>
+            {{/forgot}}
+            {{#forgot}}
+            {{! One page, four steps (Moodle decides which): the card shows the heading for the step on screen. }}
+            <div class="siraj-eyebrow">{{#str}}fp_eyebrow, theme_siraj{{/str}}</div>
+            <div class="siraj-fp-v v-request"><h2>{{#str}}fp_title, theme_siraj{{/str}}</h2><p class="siraj-fp-sub">{{#str}}fp_sub, theme_siraj{{/str}}</p></div>
+            <div class="siraj-fp-v v-sent"><span class="siraj-fp-icon" aria-hidden="true">{{{icon_mail}}}</span><h2>{{#str}}fp_sent_title, theme_siraj{{/str}}</h2><p class="siraj-fp-sub">{{#str}}fp_sent_sub, theme_siraj{{/str}}</p></div>
+            <div class="siraj-fp-v v-set"><h2>{{#str}}fp_set_title, theme_siraj{{/str}}</h2><p class="siraj-fp-sub">{{#str}}fp_set_sub, theme_siraj{{/str}}</p></div>
+            <div class="siraj-fp-v v-note"><h2>{{#str}}fp_note_title, theme_siraj{{/str}}</h2></div>
+            {{/forgot}}
             <div class="login-wrapper"><div class="login-container">
                 {{{ output.main_content }}}
             </div></div>
+            {{#forgot}}
+            <a class="siraj-fp-back" href="{{loginurl}}"><span aria-hidden="true">←</span> {{#str}}fp_back, theme_siraj{{/str}}</a>
+            <script>
+            (function() {
+                // Moodle asks for the username or the email in two separate boxes: show one box, and send what was
+                // typed as the email when it has an @ in it. Without JavaScript both boxes stay, as Moodle made them.
+                var card = document.currentScript.closest('.siraj-fp');
+                var f = card.querySelector('form.mform');
+                if (f) {
+                    f.querySelectorAll('[type="submit"]:not([name="cancel"])').forEach(function(b) {
+                        b.classList.add('siraj-btn-flame');
+                    });
+                }
+                if (!f || !f.elements.username || !f.elements.email || f.elements.password2) {
+                    return;
+                }
+                var user = f.elements.username, email = f.elements.email;
+                card.classList.add('is-one');
+                var label = card.querySelector('#id_username_label');
+                if (label) {
+                    label.textContent = {{#quote}}{{#str}}fp_field, theme_siraj{{/str}}{{/quote}};
+                }
+                user.setAttribute('autocomplete', 'username email');
+                user.setAttribute('required', 'required');
+                var btn = f.elements.submitbuttonusername;
+                if (btn) {
+                    btn.value = {{#quote}}{{#str}}fp_send, theme_siraj{{/str}}{{/quote}};
+                    btn.classList.add('siraj-btn-flame');
+                }
+                // Back after a check that failed: the email that was typed, and its message, go to the one box.
+                if (!user.value && email.value) {
+                    user.value = email.value;
+                }
+                var err = card.querySelector('#id_error_email'), uerr = card.querySelector('#id_error_username');
+                if (err && uerr && err.textContent.trim() && !uerr.textContent.trim()) {
+                    uerr.textContent = err.textContent;
+                    uerr.style.display = 'block';
+                    user.classList.add('is-invalid');
+                }
+                f.addEventListener('submit', function() {
+                    var v = user.value.trim();
+                    if (v.indexOf('@') > 0) {
+                        email.value = v;
+                        user.value = '';
+                    } else {
+                        email.value = '';
+                    }
+                });
+            })();
+            </script>
+            {{/forgot}}
         </section>
     </main>
     <footer class="siraj-signin-foot">
